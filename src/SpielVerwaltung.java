@@ -20,6 +20,10 @@ public class SpielVerwaltung {
     int humanPlayersCount;
 
     public void run() {
+        Kartendeck kartendeck = new Kartendeck();
+        kartendeck.kartenDeckErstellen();
+        kartendeck.printKartendeck();
+
 
         askPlayersCount();
         askPlayersNames();
@@ -58,6 +62,7 @@ public class SpielVerwaltung {
                 case 2:
                     System.out.println("Specify the card: first letter of color + card number (no spaces). " +
                             "Special cards: +2 or +4; reverse: <->");
+                    break;
                 case 3:
                 case 4:
                 case 5:
