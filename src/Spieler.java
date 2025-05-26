@@ -1,11 +1,16 @@
+import java.util.ArrayList;
+
 public class Spieler {
 
     private String name;
     private boolean isBot;
 
+    private ArrayList<Karte> kartenInDerHand;
+
     public Spieler(String name, boolean isBot) {
         this.name = name;
         this.isBot = isBot;
+        this.kartenInDerHand = new ArrayList<>();
     }
 
     public Spieler() {
@@ -25,6 +30,18 @@ public class Spieler {
 
     public void setBot(boolean bot) {
         isBot = bot;
+    }
+
+    public ArrayList<Karte> getKartenInDerHand() {
+        return kartenInDerHand;
+    }
+
+    public void addKarte(Karte karte) {
+        kartenInDerHand.add(karte);
+    }
+
+    public void setKartenInDerHand(ArrayList<Karte> kartenInDerHand) {
+        this.kartenInDerHand = kartenInDerHand;
     }
 
     @Override

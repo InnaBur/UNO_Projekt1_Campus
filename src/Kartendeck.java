@@ -1,10 +1,22 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class Kartendeck {
 
     //es gibt 25 gleich-gefärbt Karten
     // in der Methode kartenErstellen werden 1 Karte "0", 9 Karten "1-9", 3 spez Karten erstellt
     //und dann diese methode wird 2 Mal aufgeführt
-    final int COLORED_CARDS = 12;
-    Karte[] karten = new Karte[108];
+    static final int COLORED_CARDS = 12;
+    final int ANZAHL_DER_SPIELER = 4;
+    static final int ANZAHL_DER_KARTEN_IN_DER_HAND = 7;
+    //  Karte[] karten = new Karte[108];
+    Karte[] karten;
+
+    public Kartendeck() {
+        this.karten = new Karte[108];
+    }
 
     //int counter - fuer Platz in Kartendeck (fangt mit 0 an, dann 10 Karten von Farbe erstellen werden,
     // dann counter ist 10, while wir haben schon 10 Platze besetzen und brauchen naechste 10
@@ -24,14 +36,12 @@ public class Kartendeck {
         //4+ Karten und 4 karten Farbwechsel werden erstellt
         counter = spezialKartenErstellen("+4", counter);
         spezialKartenErstellen("fw", counter);
-
-
     }
 
     //4 Karten +4 und 4 karten Farbwechsel werden erstellt
     public int spezialKartenErstellen(String kartenName, int counter) {
         for (int i = 0; i < 4; i++) {
-            int currentPlatz = counter + i+1;
+            int currentPlatz = counter + i + 1;
             karten[currentPlatz] = new Karte(kartenName, true);
         }
         return counter + 4; //weil 4 Karten erstellt wurden
@@ -74,15 +84,40 @@ public class Kartendeck {
 
     }
 
+    /* Das Array wird mit Arrays.asList() in eine Liste umgewandelt
+    (keine neue Liste,erzeugte List-Objekt ist nur ein Wrapper um das Originalarray.)
+     Danach wird das Deck mit shuffle() gemischt (wirken sich direkt auf das Array aus).
+     */
     public void kartenDeckMischen() {
-
+        List<Karte> deckList = Arrays.asList(karten);
+        Collections.shuffle(deckList);
     }
 
+    public void kartenAusteilen(Spieler[] spielers) {
+
+      /*  Wir beginnen mit 0 Karten auf dem Nachziehstapel und durchlaufen dann zwei Loops
+         zuerst geben wir die ersten 7 Karten des gemischten Nachziehstapels an den ersten Spieler,
+         dann erhöhen wir die Position des Nachziehstapels um 7 und
+         geben die nächsten 7 Karten an den nächsten Spieler, usw.
+         Die ausgeteilten Karten behält jeder Spieler in der Hand.
+         Dann werden diese ersten Karten, die aus der Kartenreihe auf die Hand gegeben wurden,
+         aus der Reihe entfernt
+
+       */
+        int karteInArray = 0;
+        for (int i = 0; i < ANZAHL_DER_SPIELER; i++ ) {
+            for (int j = karteInArray; j < ANZAHL_DER_KARTEN_IN_DER_HAND + karteInArray; j++) {
+                spielers[i].addKarte(karten[j]);
+            }
+            karteInArray += ANZAHL_DER_KARTEN_IN_DER_HAND; //um nächste 7 Karten in Array austeilen
+        }
+    }
+
+
+    //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden
     public void printKartendeck() {
-        int count = 0;
         for (Karte karte : karten) {
             System.out.println(karte);
-            count++;
         }
     }
 

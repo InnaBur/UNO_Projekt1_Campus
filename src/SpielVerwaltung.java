@@ -4,11 +4,11 @@ import java.util.Scanner;
 public class SpielVerwaltung {
 
     //gemeinsame Anzahl der Spieler im Spiel
-    final int PLAYERS_COUNT = 4;
+    final int ANZAHL_DER_SPIELER = 4;
     Scanner scanner = new Scanner(System.in);
 
     //Array für Reihenfolge und für gespeicherte Spieler
-    Spieler[] spielers = new Spieler[4];
+    Spieler[] spielers = new Spieler[ANZAHL_DER_SPIELER];
 
     // aktueller Spieler
     Spieler currentPlayer;
@@ -20,13 +20,9 @@ public class SpielVerwaltung {
     int humanPlayersCount;
 
     public void run() {
-        Kartendeck kartendeck = new Kartendeck();
-        kartendeck.kartenDeckErstellen();
-        kartendeck.printKartendeck();
 
+        prepareGame();
 
-        askPlayersCount();
-        askPlayersNames();
 
         // Diese Methode erstellt Reihenfolge (randomly) - IN PROGRESS
         System.out.println("The queue of players is being created..");
@@ -38,7 +34,10 @@ public class SpielVerwaltung {
             // aktueller Spieler (TEMPORARY for Tests ist initializer als Spieler 1 von dem Array !!!!
             Spieler currentPlayer = spielers[0];
             //Auswahl Menu
+            System.out.println("------------------------------");
+            System.out.println("Oberste Karte ist " + "HIER SOLLTE OBERSTE KARTE DES KARTENDECKS SEIN");
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
+
             int auswahl = 0;
             do {
                 System.out.println("------------------------------------------");
@@ -71,13 +70,21 @@ public class SpielVerwaltung {
                     isExit = true;
             }
         } while (!isExit);
+    }
 
+    private void prepareGame() {
+        Kartendeck kartendeck = new Kartendeck();
+        kartendeck.kartenDeckErstellen();
+        kartendeck.printKartendeck();
+        kartendeck.kartenDeckMischen();
 
+        askPlayersCount();
+        askPlayersNames();
     }
 
     // Diese Methode fragt Names der Spieler und fühlt das Array für Reihenfolge und für gespeicherte Spieler
     private void askPlayersNames() {
-        for (int i = 0; i < PLAYERS_COUNT; i++) {  // gemeinsame Anzahl der Spieler im Spiel
+        for (int i = 0; i < ANZAHL_DER_SPIELER; i++) {  // gemeinsame Anzahl der Spieler im Spiel
             for (int j = i; j < humanPlayersCount; j++) { // menschliche Spieler
                 System.out.println("Enter the name of player " + (j + 1)); //j+1 - um Spieler 1 statt Spieler 0 zu sein
 
@@ -86,7 +93,7 @@ public class SpielVerwaltung {
             }
 
             //  Bots (if exist) werden erstellt
-            if (i < PLAYERS_COUNT) {
+            if (i < ANZAHL_DER_SPIELER) {
                 spielers[i] = new Spieler("Player " + (i + 1), true);
             }
         }
