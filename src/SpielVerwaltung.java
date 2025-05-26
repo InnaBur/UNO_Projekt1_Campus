@@ -69,11 +69,7 @@ public class SpielVerwaltung {
                 case 0:
                     System.out.println("Game is over!");
                     isExit = true;
-
-
             }
-
-
         } while (!isExit);
 
 
