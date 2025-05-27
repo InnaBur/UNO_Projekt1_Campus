@@ -74,9 +74,8 @@ public class SpielVerwaltung {
 
     private void prepareGame() {
         Kartendeck kartendeck = new Kartendeck();
-        kartendeck.kartenDeckErstellen();
         kartendeck.printKartendeck();
-        kartendeck.kartenDeckMischen();
+
 
         askPlayersCount();
         askPlayersNames();
