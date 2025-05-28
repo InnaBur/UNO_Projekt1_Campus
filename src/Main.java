@@ -3,6 +3,7 @@ public class Main {
         System.out.println("Game starts");
 
         new SpielVerwaltung().run();
+//dev
 
 
         //burlaka
