@@ -1,17 +1,17 @@
 import java.util.Arrays;
 import java.util.Scanner;
 
-public class SpielVerwaltung {
+public class GameController {
 
     //gemeinsame Anzahl der Spieler im Spiel
     final int ANZAHL_DER_SPIELER = 4;
     Scanner scanner = new Scanner(System.in);
 
     //Array für Reihenfolge und für gespeicherte Spieler
-    Spieler[] spielers = new Spieler[ANZAHL_DER_SPIELER];
+    Player[] spielers = new Player[ANZAHL_DER_SPIELER];
 
     // aktueller Spieler
-    Spieler currentPlayer;
+    Player currentPlayer;
 
     //die Bedingung für das Beenden des Spiels.
     boolean isExit = false;
@@ -20,7 +20,7 @@ public class SpielVerwaltung {
     int humanPlayersCount;
 
     public void run() {
-        Kartendeck kartendeck = new Kartendeck();
+        CardsDeck kartendeck = new CardsDeck();
         prepareGame(kartendeck);
 
 
@@ -36,7 +36,7 @@ public class SpielVerwaltung {
             kartendeck.spielersKartenZeigen(currentPlayer);
             //Auswahl Menu
             System.out.println("------------------------------");
-            System.out.println("Oberste Karte ist " + kartendeck.zeigenObereKarte());
+            System.out.println("Oberste Karte ist " + kartendeck.showTopCard());
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
 
             int auswahl = 0;
@@ -59,6 +59,8 @@ public class SpielVerwaltung {
 
             switch (auswahl) {
                 case 1:
+                    currentPlayer.addKarte(kartendeck.getTopCard());
+                    kartendeck.deleteCard(kartendeck.getTopCard());
                 case 2:
                     System.out.println("Specify the card: first letter of color + card number (no spaces). " +
                             "Special cards: +2 or +4; reverse: <->");
@@ -73,7 +75,7 @@ public class SpielVerwaltung {
         } while (!isExit);
     }
 
-    private void prepareGame(Kartendeck kartendeck) {
+    private void prepareGame(CardsDeck kartendeck) {
 
 
         askPlayersCount();
@@ -89,13 +91,13 @@ public class SpielVerwaltung {
             for (int j = i; j < humanPlayersCount; j++) { // menschliche Spieler
                 System.out.println("Enter the name of player " + (j + 1)); //j+1 - um Spieler 1 statt Spieler 0 zu sein
 
-                spielers[j] = new Spieler(scanner.next(), false); //  neuen menschlichen Spieler wird erstellt
+                spielers[j] = new Player(scanner.next(), false); //  neuen menschlichen Spieler wird erstellt
                 i++; //
             }
 
             //  Bots (if exist) werden erstellt
             if (i < ANZAHL_DER_SPIELER) {
-                spielers[i] = new Spieler("Player " + (i + 1), true);
+                spielers[i] = new Player("Player " + (i + 1), true);
             }
         }
         System.out.println(Arrays.toString(spielers));

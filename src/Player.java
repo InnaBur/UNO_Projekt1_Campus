@@ -1,19 +1,19 @@
 import java.util.ArrayList;
 
-public class Spieler {
+public class Player {
 
     private String name;
     private boolean isBot;
 
-    private ArrayList<Karte> kartenInDerHand;
+    private ArrayList<Card> kartenInDerHand;
 
-    public Spieler(String name, boolean isBot) {
+    public Player(String name, boolean isBot) {
         this.name = name;
         this.isBot = isBot;
         this.kartenInDerHand = new ArrayList<>();
     }
 
-    public Spieler() {
+    public Player() {
     }
 
     public String getName() {
@@ -32,15 +32,15 @@ public class Spieler {
         isBot = bot;
     }
 
-    public ArrayList<Karte> getKartenInDerHand() {
+    public ArrayList<Card> getKartenInDerHand() {
         return kartenInDerHand;
     }
 
-    public void addKarte(Karte karte) {
+    public void addKarte(Card karte) {
         kartenInDerHand.add(karte);
     }
 
-    public void setKartenInDerHand(ArrayList<Karte> kartenInDerHand) {
+    public void setKartenInDerHand(ArrayList<Card> kartenInDerHand) {
         this.kartenInDerHand = kartenInDerHand;
     }
 
