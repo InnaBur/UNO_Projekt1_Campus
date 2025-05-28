@@ -4,6 +4,5 @@ public class Main {
 
         new SpielVerwaltung().run();
 
-        System.out.println("Hallo from Anna");
     }
 }
