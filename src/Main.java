@@ -5,6 +5,6 @@ public class Main {
         new SpielVerwaltung().run();
 
 
-        //HEllo from Kaja
+        //Hello from Kaja test
     }
 }
