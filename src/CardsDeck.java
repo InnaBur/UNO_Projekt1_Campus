@@ -6,14 +6,14 @@ public class CardsDeck {
     static final int NUMBER_OF_CARDS_IN_HAND = 7;
     //array für Farben-Buchstaben
     static final char[] COLORS = {'R', 'B', 'Y', 'G'};
-    final int NUMBER_OF_PLAYERS = 4;
+    static final int NUMBER_OF_PLAYERS = 4;
     //Kartendeck list
     private ArrayList<Card> cardsDeck;
 
     public CardsDeck() {
         this.cardsDeck = new ArrayList<>();
         createCardDeck();
-        kartenDeckMischen();
+        shuffleCardDeck();
     }
 
     public ArrayList<Card> getCardsDeck() {
@@ -50,22 +50,22 @@ public class CardsDeck {
         }
 
         //4+ Karten und 4 karten Farbwechsel werden erstellt
-        spezialeSchwarzeKartenErstellen("+4");
-        spezialeSchwarzeKartenErstellen("fw");
+        createSpecialBlackCards("+4");
+        createSpecialBlackCards("fw");
     }
 
     //4 Karten +4 und 4 karten Farbwechsel werden erstellt
-    public void spezialeSchwarzeKartenErstellen(String kartenName) {
+    public void createSpecialBlackCards(String cardName) {
         for (int i = 0; i < 4; i++) {
-            cardsDeck.add(new Card(kartenName, true));
+            cardsDeck.add(new Card(cardName, true));
         }
     }
 
     public void createColoredCards(char color) {
 
         for (int i = 0; i < 9; i++) {
-            Card karte = new Card("" + color + (i + 1), false);
-            cardsDeck.add(karte);
+            Card card = new Card("" + color + (i + 1), false);
+            cardsDeck.add(card);
         }
         cardsDeck.add(new Card(color + "+2", true));  //+2 karten ziehen
         cardsDeck.add(new Card(color + "<->", true));  //Reihenfolge wechseln
@@ -77,27 +77,27 @@ public class CardsDeck {
     }
 
 
-    public void karteZiehen() {
+    public void drawCard() {
 
     }
 
-    public void kartenDeckMischen() {
+    public void shuffleCardDeck() {
         Collections.shuffle(cardsDeck);
     }
 
-    public void kartenAusteilen(Player[] spielers) {
+    public void dealCards(Player[] spielers) {
 
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
             for (int j = 0; j < NUMBER_OF_CARDS_IN_HAND; j++) {
-                spielers[i].addKarte(cardsDeck.get(0));
+                spielers[i].addCard(cardsDeck.get(0));
                 cardsDeck.remove(0);
             }
         }
     }
 
-    public void spielersKartenZeigen(Player spieler) {
-        System.out.print(spieler.getName() + ", Sie haben diese Karten: ");
-        for (Card karte: spieler.getKartenInDerHand()) {
+    public void showPlayerCards(Player player) {
+        System.out.print(player.getName() + ", You have these cards: ");
+        for (Card karte: player.getCardsInHand()) {
             System.out.print(karte.getCardName() + " ");
         }
         System.out.println("\n");
@@ -105,10 +105,10 @@ public class CardsDeck {
 
 
     //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden
-    public void printKartendeck() {
+    public void printCardDeck() {
         int count = 0;
-        for (Card karte : cardsDeck) {
-            System.out.println(karte);
+        for (Card card : cardsDeck) {
+            System.out.println(card);
             count++;
         }
         System.out.println(count);
