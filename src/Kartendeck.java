@@ -1,21 +1,36 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Kartendeck {
 
-    //es gibt 25 gleich-gefärbt Karten
-    // in der Methode kartenErstellen werden 1 Karte "0", 9 Karten "1-9", 3 spez Karten erstellt
-    //und dann diese methode wird 2 Mal aufgeführt
-    static final int COLORED_CARDS = 12;
     static final int ANZAHL_DER_KARTEN_IN_DER_HAND = 7;
     //array für Farben-Buchstaben
     static final char[] COLORS = {'R', 'B', 'Y', 'G'};
     final int ANZAHL_DER_SPIELER = 4;
     //Kartendeck list
-    ArrayList<Karte> karten;
+    private ArrayList<Karte> karten;
 
     public Kartendeck() {
         this.karten = new ArrayList<>();
         kartenDeckErstellen();
+        kartenDeckMischen();
+    }
+
+    public ArrayList<Karte> getKarten() {
+        return karten;
+    }
+
+    //верхня карта з колоди
+    public Karte getObereKarte() {
+        return karten.get(0);
+    }
+
+    //верхня карта з колоди як її бачить гравець
+    public String zeigenObereKarte() {
+        return karten.get(0).getKarteName();
+    }
+    public void setKarten(ArrayList<Karte> karten) {
+        this.karten = karten;
     }
 
 
@@ -57,11 +72,42 @@ public class Kartendeck {
         karten.add(new Karte("" + color + 0, false));
     }
 
+
+    public void karteZiehen() {
+
+    }
+
+    public void kartenDeckMischen() {
+        Collections.shuffle(karten);
+    }
+
+    public void kartenAusteilen(Spieler[] spielers) {
+
+        for (int i = 0; i < ANZAHL_DER_SPIELER; i++) {
+            for (int j = 0; j < ANZAHL_DER_KARTEN_IN_DER_HAND; j++) {
+                spielers[i].addKarte(karten.get(0));
+                karten.remove(0);
+            }
+        }
+    }
+
+    public void spielersKartenZeigen(Spieler spieler) {
+        System.out.print(spieler.getName() + ", Sie haben diese Karten: ");
+        for (Karte karte: spieler.getKartenInDerHand()) {
+            System.out.print(karte.getKarteName() + " ");
+        }
+        System.out.println("\n");
+    }
+
+
     //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden
     public void printKartendeck() {
+        int count = 0;
         for (Karte karte : karten) {
             System.out.println(karte);
+            count++;
         }
+        System.out.println(count);
     }
 
 }
