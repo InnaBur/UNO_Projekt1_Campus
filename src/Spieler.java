@@ -44,6 +44,7 @@ public class Spieler {
         this.kartenInDerHand = kartenInDerHand;
     }
 
+
     @Override
     public String toString() {
         return "Spieler{" +

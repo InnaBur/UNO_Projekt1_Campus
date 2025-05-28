@@ -20,8 +20,8 @@ public class SpielVerwaltung {
     int humanPlayersCount;
 
     public void run() {
-
-        prepareGame();
+        Kartendeck kartendeck = new Kartendeck();
+        prepareGame(kartendeck);
 
 
         // Diese Methode erstellt Reihenfolge (randomly) - IN PROGRESS
@@ -32,10 +32,11 @@ public class SpielVerwaltung {
         // Spielverlauf
         do {
             // aktueller Spieler (TEMPORARY for Tests ist initializer als Spieler 1 von dem Array !!!!
-            Spieler currentPlayer = spielers[0];
+             currentPlayer = spielers[0];
+            kartendeck.spielersKartenZeigen(currentPlayer);
             //Auswahl Menu
             System.out.println("------------------------------");
-            System.out.println("Oberste Karte ist " + "HIER SOLLTE OBERSTE KARTE DES KARTENDECKS SEIN");
+            System.out.println("Oberste Karte ist " + kartendeck.zeigenObereKarte());
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
 
             int auswahl = 0;
@@ -72,13 +73,14 @@ public class SpielVerwaltung {
         } while (!isExit);
     }
 
-    private void prepareGame() {
-        Kartendeck kartendeck = new Kartendeck();
-        kartendeck.printKartendeck();
+    private void prepareGame(Kartendeck kartendeck) {
 
 
         askPlayersCount();
         askPlayersNames();
+
+        kartendeck.kartenAusteilen(spielers);
+
     }
 
     // Diese Methode fragt Names der Spieler und fühlt das Array für Reihenfolge und für gespeicherte Spieler
