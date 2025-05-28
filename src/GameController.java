@@ -4,11 +4,11 @@ import java.util.Scanner;
 public class GameController {
 
     //gemeinsame Anzahl der Spieler im Spiel
-    final int ANZAHL_DER_SPIELER = 4;
+    final int NUMBER_OF_PLAYERS = 4;
     Scanner scanner = new Scanner(System.in);
 
     //Array für Reihenfolge und für gespeicherte Spieler
-    Player[] spielers = new Player[ANZAHL_DER_SPIELER];
+    Player[] players = new Player[NUMBER_OF_PLAYERS];
 
     // aktueller Spieler
     Player currentPlayer;
@@ -20,8 +20,8 @@ public class GameController {
     int humanPlayersCount;
 
     public void run() {
-        CardsDeck kartendeck = new CardsDeck();
-        prepareGame(kartendeck);
+        CardsDeck cardsDeck = new CardsDeck();
+        prepareGame(cardsDeck);
 
 
         // Diese Methode erstellt Reihenfolge (randomly) - IN PROGRESS
@@ -32,11 +32,11 @@ public class GameController {
         // Spielverlauf
         do {
             // aktueller Spieler (TEMPORARY for Tests ist initializer als Spieler 1 von dem Array !!!!
-             currentPlayer = spielers[0];
-            kartendeck.spielersKartenZeigen(currentPlayer);
+             currentPlayer = players[0];
+            cardsDeck.showPlayerCards(currentPlayer);
             //Auswahl Menu
             System.out.println("------------------------------");
-            System.out.println("Oberste Karte ist " + kartendeck.showTopCard());
+            System.out.println("The top card is " + cardsDeck.showTopCard());
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
 
             int auswahl = 0;
@@ -59,8 +59,8 @@ public class GameController {
 
             switch (auswahl) {
                 case 1:
-                    currentPlayer.addKarte(kartendeck.getTopCard());
-                    kartendeck.deleteCard(kartendeck.getTopCard());
+                    currentPlayer.addCard(cardsDeck.getTopCard());
+                    cardsDeck.deleteCard(cardsDeck.getTopCard());
                 case 2:
                     System.out.println("Specify the card: first letter of color + card number (no spaces). " +
                             "Special cards: +2 or +4; reverse: <->");
@@ -75,32 +75,32 @@ public class GameController {
         } while (!isExit);
     }
 
-    private void prepareGame(CardsDeck kartendeck) {
+    private void prepareGame(CardsDeck cardsDeck) {
 
 
         askPlayersCount();
         askPlayersNames();
 
-        kartendeck.kartenAusteilen(spielers);
+        cardsDeck.dealCards(players);
 
     }
 
     // Diese Methode fragt Names der Spieler und fühlt das Array für Reihenfolge und für gespeicherte Spieler
     private void askPlayersNames() {
-        for (int i = 0; i < ANZAHL_DER_SPIELER; i++) {  // gemeinsame Anzahl der Spieler im Spiel
+        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {  // gemeinsame Anzahl der Spieler im Spiel
             for (int j = i; j < humanPlayersCount; j++) { // menschliche Spieler
                 System.out.println("Enter the name of player " + (j + 1)); //j+1 - um Spieler 1 statt Spieler 0 zu sein
 
-                spielers[j] = new Player(scanner.next(), false); //  neuen menschlichen Spieler wird erstellt
+                players[j] = new Player(scanner.next(), false); //  neuen menschlichen Spieler wird erstellt
                 i++; //
             }
 
             //  Bots (if exist) werden erstellt
-            if (i < ANZAHL_DER_SPIELER) {
-                spielers[i] = new Player("Player " + (i + 1), true);
+            if (i < NUMBER_OF_PLAYERS) {
+                players[i] = new Player("Player " + (i + 1), true);
             }
         }
-        System.out.println(Arrays.toString(spielers));
+        System.out.println(Arrays.toString(players));
     }
 
     // Diese Methode fragt, wie viel menschliche Spieler gibt es und andere Spieler sind Bots
@@ -122,6 +122,6 @@ public class GameController {
             bots = 4 - humanPlayersCount;
         }
 
-        System.out.println(humanPlayersCount + " menschliche Spieler und " + bots + " bots sind dran");
+        System.out.println(humanPlayersCount + " Human player and " + bots + " bots are playing");
     }
 }
