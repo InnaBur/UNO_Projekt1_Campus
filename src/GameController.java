@@ -1,4 +1,6 @@
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.Scanner;
 
 public class GameController {
@@ -9,20 +11,21 @@ public class GameController {
 
     //Array für Reihenfolge und für gespeicherte Spieler
     Player[] players = new Player[NUMBER_OF_PLAYERS];
-
     // aktueller Spieler
     Player currentPlayer;
-
+    ;
     //die Bedingung für das Beenden des Spiels.
     boolean isExit = false;
-
     // menschliche Spieler
     int humanPlayersCount;
+    private Deque<Card> drawPile = new ArrayDeque<>();
 
     public void run() {
         CardsDeck cardsDeck = new CardsDeck();
         prepareGame(cardsDeck);
 
+        //first card from the cards deck is a first card in drawPile
+        drawPile.add(cardsDeck.getTopCard());
 
         // Diese Methode erstellt Reihenfolge (randomly) - IN PROGRESS
         System.out.println("The queue of players is being created..");
@@ -31,13 +34,17 @@ public class GameController {
 
         // Spielverlauf
         do {
-            // aktueller Spieler (TEMPORARY for Tests ist initializer als Spieler 1 von dem Array !!!!
-             currentPlayer = players[0];
-            cardsDeck.showPlayerCards(currentPlayer);
+            // aktueller Spieler (TEMPORARY for Tests ist initializer als Spieler 1 !!!!)
+            currentPlayer = players[0];
+
+
+
             //Auswahl Menu
             System.out.println("------------------------------");
-            System.out.println("The top card is " + cardsDeck.showTopCard());
+            assert drawPile.peek() != null;
+            System.out.println("The top card is " + drawPile.peek().getCardName());
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
+            cardsDeck.showPlayerCards(currentPlayer);
 
             int auswahl = 0;
             do {
@@ -59,8 +66,29 @@ public class GameController {
 
             switch (auswahl) {
                 case 1:
+                    String userInput = "";
+                    //Kann ein Spieler keine
+                    //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
                     currentPlayer.addCard(cardsDeck.getTopCard());
-                    cardsDeck.deleteCard(cardsDeck.getTopCard());
+                    cardsDeck.showPlayerCards(currentPlayer);
+
+                    //Diese Karte kann Spieler
+                    //sofort wieder ausspielen, sofern diese passt.
+                    do {
+                        System.out.println("Do you want to PLAY this card? Press 'y' or 'n'");
+                        userInput = scanner.next().toLowerCase();
+                    }
+                    while (!userInput.equals("n") && !userInput.equals("y"));
+
+                    //If the player wants to play a card, they place it from their hand onto the table;
+                    // if not, the next player in turn becomes the currentPlayer.
+                    if (userInput.equals("y")) {
+
+                    } else {
+                        //next player plays
+                    }
+
+                    break;
                 case 2:
                     System.out.println("Specify the card: first letter of color + card number (no spaces). " +
                             "Special cards: +2 or +4; reverse: <->");
@@ -76,7 +104,6 @@ public class GameController {
     }
 
     private void prepareGame(CardsDeck cardsDeck) {
-
 
         askPlayersCount();
         askPlayersNames();
@@ -124,4 +151,5 @@ public class GameController {
 
         System.out.println(humanPlayersCount + " Human player and " + bots + " bots are playing");
     }
+
 }
