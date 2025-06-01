@@ -10,6 +10,7 @@ public class CardsDeck {
     //Kartendeck list
     private ArrayList<Card> cardsDeck;
 
+
     public CardsDeck() {
         this.cardsDeck = new ArrayList<>();
         createCardDeck();
@@ -20,9 +21,12 @@ public class CardsDeck {
         return cardsDeck;
     }
 
-    //верхня карта з колоди
+    //top card from the cards deck be added into draw pill or into players hand
+    // and be removed from the card deck
     public Card getTopCard() {
-        return cardsDeck.get(0);
+        Card top = cardsDeck.get(0);
+        cardsDeck.remove(cardsDeck.get(0));
+        return top;
     }
 
     public void deleteCard(Card karte) {
