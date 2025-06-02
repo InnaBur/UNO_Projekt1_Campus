@@ -1,28 +1,31 @@
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.Scanner;
 
-public class SpielVerwaltung {
+public class GameController {
 
     //gemeinsame Anzahl der Spieler im Spiel
-    final int ANZAHL_DER_SPIELER = 4;
+    final int NUMBER_OF_PLAYERS = 4;
     Scanner scanner = new Scanner(System.in);
 
     //Array für Reihenfolge und für gespeicherte Spieler
-    Spieler[] spielers = new Spieler[ANZAHL_DER_SPIELER];
-
+    Player[] players = new Player[NUMBER_OF_PLAYERS];
     // aktueller Spieler
-    Spieler currentPlayer;
-
+    Player currentPlayer;
+    ;
     //die Bedingung für das Beenden des Spiels.
     boolean isExit = false;
-
     // menschliche Spieler
     int humanPlayersCount;
+    private Deque<Card> drawPile = new ArrayDeque<>();
 
     public void run() {
-        Kartendeck kartendeck = new Kartendeck();
-        prepareGame(kartendeck);
+        CardsDeck cardsDeck = new CardsDeck();
+        prepareGame(cardsDeck);
 
+        //first card from the cards deck is a first card in drawPile
+        drawPile.add(cardsDeck.getTopCard());
 
         // Diese Methode erstellt Reihenfolge (randomly) - IN PROGRESS
         System.out.println("The queue of players is being created..");
@@ -31,13 +34,17 @@ public class SpielVerwaltung {
 
         // Spielverlauf
         do {
-            // aktueller Spieler (TEMPORARY for Tests ist initializer als Spieler 1 von dem Array !!!!
-             currentPlayer = spielers[0];
-            kartendeck.spielersKartenZeigen(currentPlayer);
+            // aktueller Spieler (TEMPORARY for Tests ist initializer als Spieler 1 !!!!)
+            currentPlayer = players[0];
+
+
+
             //Auswahl Menu
             System.out.println("------------------------------");
-            System.out.println("Oberste Karte ist " + kartendeck.zeigenObereKarte());
+            assert drawPile.peek() != null;
+            System.out.println("The top card is " + drawPile.peek().getCardName());
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
+            cardsDeck.showPlayerCards(currentPlayer);
 
             int auswahl = 0;
             do {
@@ -59,6 +66,29 @@ public class SpielVerwaltung {
 
             switch (auswahl) {
                 case 1:
+                    String userInput = "";
+                    //Kann ein Spieler keine
+                    //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
+                    currentPlayer.addCard(cardsDeck.getTopCard());
+                    cardsDeck.showPlayerCards(currentPlayer);
+
+                    //Diese Karte kann Spieler
+                    //sofort wieder ausspielen, sofern diese passt.
+                    do {
+                        System.out.println("Do you want to PLAY this card? Press 'y' or 'n'");
+                        userInput = scanner.next().toLowerCase();
+                    }
+                    while (!userInput.equals("n") && !userInput.equals("y"));
+
+                    //If the player wants to play a card, they place it from their hand onto the table;
+                    // if not, the next player in turn becomes the currentPlayer.
+                    if (userInput.equals("y")) {
+
+                    } else {
+                        //next player plays
+                    }
+
+                    break;
                 case 2:
                     System.out.println("Specify the card: first letter of color + card number (no spaces). " +
                             "Special cards: +2 or +4; reverse: <->");
@@ -73,32 +103,31 @@ public class SpielVerwaltung {
         } while (!isExit);
     }
 
-    private void prepareGame(Kartendeck kartendeck) {
-
+    private void prepareGame(CardsDeck cardsDeck) {
 
         askPlayersCount();
         askPlayersNames();
 
-        kartendeck.kartenAusteilen(spielers);
+        cardsDeck.dealCards(players);
 
     }
 
     // Diese Methode fragt Names der Spieler und fühlt das Array für Reihenfolge und für gespeicherte Spieler
     private void askPlayersNames() {
-        for (int i = 0; i < ANZAHL_DER_SPIELER; i++) {  // gemeinsame Anzahl der Spieler im Spiel
+        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {  // gemeinsame Anzahl der Spieler im Spiel
             for (int j = i; j < humanPlayersCount; j++) { // menschliche Spieler
                 System.out.println("Enter the name of player " + (j + 1)); //j+1 - um Spieler 1 statt Spieler 0 zu sein
 
-                spielers[j] = new Spieler(scanner.next(), false); //  neuen menschlichen Spieler wird erstellt
+                players[j] = new Player(scanner.next(), false); //  neuen menschlichen Spieler wird erstellt
                 i++; //
             }
 
             //  Bots (if exist) werden erstellt
-            if (i < ANZAHL_DER_SPIELER) {
-                spielers[i] = new Spieler("Player " + (i + 1), true);
+            if (i < NUMBER_OF_PLAYERS) {
+                players[i] = new Player("Player " + (i + 1), true);
             }
         }
-        System.out.println(Arrays.toString(spielers));
+        System.out.println(Arrays.toString(players));
     }
 
     // Diese Methode fragt, wie viel menschliche Spieler gibt es und andere Spieler sind Bots
@@ -120,6 +149,7 @@ public class SpielVerwaltung {
             bots = 4 - humanPlayersCount;
         }
 
-        System.out.println(humanPlayersCount + " menschliche Spieler und " + bots + " bots sind dran");
+        System.out.println(humanPlayersCount + " Human player and " + bots + " bots are playing");
     }
+
 }
