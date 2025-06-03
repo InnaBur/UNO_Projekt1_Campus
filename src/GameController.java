@@ -18,91 +18,114 @@ public class GameController {
     boolean isExit = false;
     // menschliche Spieler
     int humanPlayersCount;
-    private Deque<Card> driscardPile = new ArrayDeque<>();
+    private Deque<Card> discardPile = new ArrayDeque<>();
+
+    private PlayerManager playerManager;
 
     public void run() {
         CardsDeck cardsDeck = new CardsDeck();
         prepareGame(cardsDeck);
 
-        //first card from the cards deck is a first card in drawPile
-        driscardPile.add(cardsDeck.getTopCard());
+        // Erster Kartenstapel
+        discardPile.add(cardsDeck.getTopCard());
 
-        // Diese Methode erstellt Reihenfolge (randomly) - IN PROGRESS
-        System.out.println("The queue of players is being created..");
+        // Spieler verwalten (mit zufälliger Reihenfolge)
 
+        currentPlayer = playerManager.getCurrentPlayer();
+
+        // Reihenfolge ausgeben
         System.out.println("The players take their turns in the following order: ");
+        playerManager.printPlayerOrder();
 
-        // Spielverlauf
+        // Spielschleife
         do {
-            // aktueller Spieler (TEMPORARY for Tests ist initializer als Spieler 1 !!!!)
-            currentPlayer = players[0];
-
-
-
-            //Auswahl Menu
-            System.out.println("------------------------------");
-            assert driscardPile.peek() != null;
-            System.out.println("The top card is " + driscardPile.peek().getCardName());
-            System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
+            System.out.println("\n------------------------------");
+            assert discardPile.peek() != null;
+            System.out.println("The top card is: " + discardPile.peek().getCardName());
+            System.out.println(currentPlayer.getName() + ", it's your move!");
             cardsDeck.showPlayerCards(currentPlayer);
 
-            int auswahl = 10;
+            int auswahl = -1;
             do {
-                System.out.println("------------------------------------------");
-                System.out.println("If you want to DRAW the card  - press 1\n" +
-                        "If you want to PLAY the card  - press 2\n" +
-                        "If you want to catch the previous player BLUFFing - press 3\n" +
-                        "If you have only one card left, to say 'UNO' - press 4\n" +
-                        //schummeln controllieren !!!!
-                        "If you want to suggest a move or action - press 5\n" +
-                        "If you want to exit - press 0\n");
-
+                System.out.println("""
+                ------------------------------
+                Make your choice:
+                [1] Draw a card
+                [2] Play a card
+                [3] Accuse previous player of bluffing
+                [4] Say UNO
+                [5] Suggest a move
+                [0] Exit the game
+            """);
                 try {
                     auswahl = scanner.nextInt();
                 } catch (Exception e) {
-                    System.out.println("Try once more " + e.getMessage());  // wir brauchen unsere Exception
-                    scanner.next();
+                    System.out.println("Invalid input. Try again.");
+                    scanner.next(); // Eingabe verwerfen
                 }
             } while (auswahl < 0 || auswahl > 5);
 
             switch (auswahl) {
-                case 1:
-                    String userInput = "";
-                    //Kann ein Spieler keine
-                    //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
-                    currentPlayer.addCard(cardsDeck.getTopCard());
+                case 1 -> {
+                    // Eine Karte ziehen
+                    Card drawnCard = cardsDeck.getTopCard();
+                    currentPlayer.addCard(drawnCard);
+                    System.out.println("You drew: " + drawnCard.getCardName());
                     cardsDeck.showPlayerCards(currentPlayer);
 
-                    //Diese Karte kann Spieler
-                    //sofort wieder ausspielen, sofern diese passt.
-                    do {
-                        System.out.println("Do you want to PLAY this card? Press 'y' or 'n'");
-                        userInput = scanner.next().toLowerCase();
-                    }
-                    while (!userInput.equals("n") && !userInput.equals("y"));
+                    // Nur fragen, ob die gezogene Karte gespielt werden soll, wenn sie auch spielbar ist
+                    if (drawnCard.isPlayableOn(discardPile.peek())) {
+                        String userInput;
+                        do {
+                            System.out.println("Do you want to play this card? (y/n)");
+                            userInput = scanner.next().toLowerCase();
+                        } while (!userInput.equals("y") && !userInput.equals("n"));
 
-                    //If the player wants to play a card, they place it from their hand onto the table;
-                    // if not, the next player in turn becomes the currentPlayer.
-                    if (userInput.equals("y")) {
-
+                        if (userInput.equals("y")) {
+                            currentPlayer.removeCard(drawnCard);
+                            discardPile.push(drawnCard);
+                            handlePlayedCard(drawnCard, cardsDeck);
+                        } else {
+                            // Spieler will Karte nicht spielen → nächste Runde
+                            currentPlayer = playerManager.getNextPlayer();
+                        }
                     } else {
-                        //next player plays
+                        System.out.println("This card cannot be played now.");
+                        currentPlayer = playerManager.getNextPlayer();
                     }
+                }
 
-                    break;
-                case 2:
-                    System.out.println("Specify the card: first letter of color + card number (no spaces). " +
-                            "Special cards: +2 or +4; reverse: <->");
-                    break;
-                case 3:
-                case 4:
-                case 5:
-                case 0:
+                case 2 -> {
+                    // Karte manuell aus Hand spielen
+                    System.out.println("Specify the card to play (e.g., r5, g+2, <->, x):");
+                    String inputCardName = scanner.next();
+                    Card selectedCard = currentPlayer.getCardByName(inputCardName);
+
+                    if (selectedCard != null) {
+                        if (selectedCard.isPlayableOn(discardPile.peek())) {
+                            currentPlayer.removeCard(selectedCard);
+                            discardPile.push(selectedCard);
+                            handlePlayedCard(selectedCard, cardsDeck);
+                        } else {
+                            System.out.println("This card cannot be played on the current top card.");
+                        }
+                    } else {
+                        System.out.println("You do not have this card.");
+                    }
+                }
+
+                case 3 -> System.out.println("Bluff check logic not implemented yet.");
+                case 4 -> System.out.println(currentPlayer.getName() + " said UNO!");
+                case 5 -> System.out.println("Suggestion logic not implemented.");
+                case 0 -> {
                     System.out.println("Game is over!");
                     isExit = true;
+                }
             }
+
         } while (!isExit);
     }
+
 
     private void prepareGame(CardsDeck cardsDeck) {
 
@@ -110,6 +133,9 @@ public class GameController {
         askPlayersNames();
 
         cardsDeck.dealCards(players);
+
+        playerManager = new PlayerManager(players);
+        playerManager.printPlayerOrder();
 
     }
 
@@ -152,5 +178,39 @@ public class GameController {
 
         System.out.println(humanPlayersCount + " Human player and " + bots + " bots are playing");
     }
+
+    public void handlePlayedCard(Card playedCard, CardsDeck cardsDeck) {
+        String cardName = playedCard.getCardName();
+
+        if (cardName.contains("<->")) {
+            playerManager.switchDirection();
+            System.out.println("Direction changed! Now: " + (playerManager.isClockwise() ? "clockwise" : "counterclockwise"));
+            currentPlayer = playerManager.getNextPlayer();
+
+        } else if (cardName.contains("x")) {
+            System.out.println("Player skipped!");
+            currentPlayer = playerManager.skipNextPlayer();
+
+        } else if (cardName.contains("+2")) {
+            Player next = playerManager.getNextPlayer();
+            next.addCard(cardsDeck.getTopCard());
+            next.addCard(cardsDeck.getTopCard());
+            System.out.println(next.getName() + " draws 2 cards!");
+            currentPlayer = playerManager.getNextPlayer();
+
+        } else if (cardName.contains("+4")) {
+            Player next = playerManager.getNextPlayer();
+            for (int i = 0; i < 4; i++) {
+                next.addCard(cardsDeck.getTopCard());
+            }
+            System.out.println(next.getName() + " draws 4 cards!");
+            currentPlayer = playerManager.getNextPlayer();
+
+        } else {
+            currentPlayer = playerManager.getNextPlayer();  // normale Karte
+        }
+    }
+
+
 
 }

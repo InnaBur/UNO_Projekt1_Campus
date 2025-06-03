@@ -36,4 +36,27 @@ public class Card {
         return cardName;
     }
 
+
+    public boolean isPlayableOn(Card topCard) {
+        String thisName = this.cardName;
+        String topName = topCard.getCardName();
+
+        // Falls Karte ein Farbwechsel ist, darf sie immer gespielt werden
+        if (thisName.contains("fw")){
+            return true;
+        }
+
+        // Farbe = erstes Zeiche
+        char thisColor = thisName.charAt(0);
+        char topColor = topName.charAt(0);
+
+        // Wert oder Aktion ( "5", "+2", "<->", "x")
+        String thisValue = thisName.substring(1);
+        String topValue = topName.substring(1);
+
+        // Spielbar wenn gleiche Farbe oder gleicher Wert/Aktion
+        return thisColor == topColor || thisValue.equals(topValue);
+    }
+
+
 }
