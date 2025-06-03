@@ -17,6 +17,10 @@ public class CardsDeck {
         shuffleCardDeck();
     }
 
+    public CardsDeck(ArrayList<Card> cardsDeck) {
+        this.cardsDeck = cardsDeck;
+    }
+
     public ArrayList<Card> getCardsDeck() {
         return cardsDeck;
     }
@@ -33,7 +37,7 @@ public class CardsDeck {
         cardsDeck.remove(karte);
     }
 
-    //верхня карта з колоди як її бачить гравець
+    //die oberste Karte vom Stapel, wie sie der Spieler sieht
     public String showTopCard() {
         return cardsDeck.get(0).getCardName();
     }
@@ -68,7 +72,7 @@ public class CardsDeck {
     public void createColoredCards(char color) {
 
         for (int i = 0; i < 9; i++) {
-            Card card = new Card("" + color + (i + 1), false);
+            Card card = new Card("" + color + (i + 1), false); // weil Karte 0 schon erstellt ist
             cardsDeck.add(card);
         }
         cardsDeck.add(new Card(color + "+2", true));  //+2 karten ziehen

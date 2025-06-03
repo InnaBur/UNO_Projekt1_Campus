@@ -18,14 +18,14 @@ public class GameController {
     boolean isExit = false;
     // menschliche Spieler
     int humanPlayersCount;
-    private Deque<Card> drawPile = new ArrayDeque<>();
+    private Deque<Card> driscardPile = new ArrayDeque<>();
 
     public void run() {
         CardsDeck cardsDeck = new CardsDeck();
         prepareGame(cardsDeck);
 
         //first card from the cards deck is a first card in drawPile
-        drawPile.add(cardsDeck.getTopCard());
+        driscardPile.add(cardsDeck.getTopCard());
 
         // Diese Methode erstellt Reihenfolge (randomly) - IN PROGRESS
         System.out.println("The queue of players is being created..");
@@ -41,18 +41,19 @@ public class GameController {
 
             //Auswahl Menu
             System.out.println("------------------------------");
-            assert drawPile.peek() != null;
-            System.out.println("The top card is " + drawPile.peek().getCardName());
+            assert driscardPile.peek() != null;
+            System.out.println("The top card is " + driscardPile.peek().getCardName());
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
             cardsDeck.showPlayerCards(currentPlayer);
 
-            int auswahl = 0;
+            int auswahl = 10;
             do {
                 System.out.println("------------------------------------------");
                 System.out.println("If you want to DRAW the card  - press 1\n" +
                         "If you want to PLAY the card  - press 2\n" +
                         "If you want to catch the previous player BLUFFing - press 3\n" +
                         "If you have only one card left, to say 'UNO' - press 4\n" +
+                        //schummeln controllieren !!!!
                         "If you want to suggest a move or action - press 5\n" +
                         "If you want to exit - press 0\n");
 
