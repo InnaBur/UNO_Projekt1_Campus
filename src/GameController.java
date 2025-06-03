@@ -46,7 +46,7 @@ public class GameController {
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
             currentPlayer.showHand();
 
-            int auswahl = -1;
+            int auswahl = -1; //initialize
             do {
                 System.out.println("""
                             ------------------------------
@@ -68,34 +68,6 @@ public class GameController {
             } while (auswahl < 0 || auswahl > 6);
 
             switch (auswahl) {
-//                 case 1 -> {
-//                     // Eine Karte ziehen
-//                     Card drawnCard = cardsDeck.getTopCard();
-//                     currentPlayer.addCard(drawnCard);
-//                     System.out.println("You drew: " + drawnCard.getCardName());
-//                     cardsDeck.showPlayerCards(currentPlayer);
-
-//                     // Nur fragen, ob die gezogene Karte gespielt werden soll, wenn sie auch spielbar ist
-//                     if (drawnCard.isPlayableOn(discardPile.peek())) {
-//                         String userInput;
-//                         do {
-//                             System.out.println("Do you want to play this card? (y/n)");
-//                             userInput = scanner.next().toLowerCase();
-//                         } while (!userInput.equals("y") && !userInput.equals("n"));
-
-//                         if (userInput.equals("y")) {
-//                             currentPlayer.removeCard(drawnCard);
-//                             discardPile.push(drawnCard);
-//                             handlePlayedCard(drawnCard, cardsDeck);
-//                         } else {
-//                             // Spieler will Karte nicht spielen → nächste Runde
-//                             currentPlayer = playerManager.getNextPlayer();
-//                         }
-//                     } else {
-//                         System.out.println("This card cannot be played now.");
-//                         currentPlayer = playerManager.getNextPlayer();
-//                     }
-//                 }
 
                 case 1:
                     String userInput = "";
@@ -103,23 +75,31 @@ public class GameController {
                     //Kann ein Spieler keine
                     //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
                     Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCard());
+                    System.out.println("You drew: " + currentUsersCard);
                     cardsDeck.getCardsDeck().remove(cardsDeck.getTopCard());
                     currentPlayer.showHand();
                     //Diese Karte kann Spieler
                     //sofort wieder ausspielen, sofern diese passt.
-                    do {
-                        System.out.println("Do you want to PLAY this card? Press 'y' or 'n'");
-                        userInput = scanner.next().toLowerCase();
-                    }
-                    while (!userInput.equals("n") && !userInput.equals("y"));
+                    if (currentUsersCard.isPlayableOn(discardPile.peek())) {
+                        do {
+                            System.out.println("Do you want to PLAY this card? Press 'y' or 'n'");
+                            userInput = scanner.next().toLowerCase();
+                        }
+                        while (!userInput.equals("n") && !userInput.equals("y"));
 
-                    //If the player wants to play a card, they place it from their hand onto the table;
-                    // if not, the next player in turn becomes the currentPlayer.
-                    if (userInput.equals("y")) {
-                        discardPile.addFirst(currentUsersCard);
-                        currentPlayer.getCardsInHand().remove(currentUsersCard);
+                        //If the player wants to play a card, they place it from their hand onto the table;
+                        // if not, the next player in turn becomes the currentPlayer.
+                        if (userInput.equals("y")) {
+                            discardPile.addFirst(currentUsersCard);
+                            currentPlayer.removeCard(currentUsersCard);
+                            handlePlayedCard(currentUsersCard, cardsDeck);
+                        } else {
+                            currentPlayer = playerManager.getNextPlayer();
+                        }
                     } else {
-                    }
+                         System.out.println("This card cannot be played now.");
+                         currentPlayer = playerManager.getNextPlayer();
+                     }
                     break;
 
                 case 2: {

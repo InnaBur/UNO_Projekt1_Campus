@@ -2,8 +2,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class PlayerManager {
-
-
     ArrayList<Player> playerList;
     boolean isClockwise;
     int currentPlayerIndex;
