@@ -214,12 +214,19 @@ public class GameController {
         String cardName = playedCard.getCardName();
 
         if (cardName.contains("<->")) {
+            // Spieler A spielt Richtungswechselkarte
+            // Richtung ändern
             playerManager.switchDirection();
-            System.out.println("Direction changed! Now: " + (playerManager.isClockwise() ? "clockwise" : "counterclockwise"));
+
+            // Spieler D (neuer Nachbar in der neuen Richtung) ist dran
             currentPlayer = playerManager.getNextPlayer();
 
-        } else if (cardName.contains("x")) {
-            System.out.println("Player skipped!");
+            System.out.println("Direction changed! Now: " + (playerManager.isClockwise() ? "clockwise" : "counterclockwise"));
+
+
+
+    } else if (cardName.contains("x")) {
+            System.out.println(playerManager.getCurrentPlayer().getName()+" skipped!");
             currentPlayer = playerManager.skipNextPlayer();
 
         } else if (cardName.contains("+2")) {
