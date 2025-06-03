@@ -38,14 +38,22 @@ public class Player {
         return cardsInHand;
     }
 
-    public void addCard(Card card) {
+    public Card addCard(Card card) {
         cardsInHand.add(card);
+        return card;
     }
 
     public void setCardsInHand(ArrayList<Card> cardsInHand) {
         this.cardsInHand = cardsInHand;
     }
 
+    public void showHand() {
+        System.out.print(name + ", You have these cards: ");
+        for (Card karte: cardsInHand) {
+            System.out.print(karte.getCardName() + " ");
+        }
+        System.out.println("\n");
+    }
     @Override
     public String toString() {
         return "Player{" +

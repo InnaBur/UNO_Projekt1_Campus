@@ -25,7 +25,7 @@ public class GameController {
         prepareGame(cardsDeck);
 
         //first card from the cards deck is a first card in drawPile
-        driscardPile.add(cardsDeck.getTopCard());
+        driscardPile.addFirst(cardsDeck.getTopCard());
 
         // Diese Methode erstellt Reihenfolge (randomly) - IN PROGRESS
         System.out.println("The queue of players is being created..");
@@ -41,10 +41,11 @@ public class GameController {
 
             //Auswahl Menu
             System.out.println("------------------------------");
+
             assert driscardPile.peek() != null;
             System.out.println("The top card is " + driscardPile.peek().getCardName());
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
-            cardsDeck.showPlayerCards(currentPlayer);
+           currentPlayer.showHand();
 
             int auswahl = 10;
             do {
@@ -53,8 +54,8 @@ public class GameController {
                         "If you want to PLAY the card  - press 2\n" +
                         "If you want to catch the previous player BLUFFing - press 3\n" +
                         "If you have only one card left, to say 'UNO' - press 4\n" +
-                        //schummeln controllieren !!!!
-                        "If you want to suggest a move or action - press 5\n" +
+                        "If you want to challenge the previous player for bluffing - press 5\n" +
+                        "If you want to suggest a move or action - press 6\n" +
                         "If you want to exit - press 0\n");
 
                 try {
@@ -63,16 +64,17 @@ public class GameController {
                     System.out.println("Try once more " + e.getMessage());  // wir brauchen unsere Exception
                     scanner.next();
                 }
-            } while (auswahl < 0 || auswahl > 5);
+            } while (auswahl < 0 || auswahl > 6);
 
             switch (auswahl) {
                 case 1:
                     String userInput = "";
+
                     //Kann ein Spieler keine
                     //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
-                    currentPlayer.addCard(cardsDeck.getTopCard());
-                    cardsDeck.showPlayerCards(currentPlayer);
-
+                    Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCard());
+                    cardsDeck.getCardsDeck().remove(cardsDeck.getTopCard());
+                    currentPlayer.showHand();
                     //Diese Karte kann Spieler
                     //sofort wieder ausspielen, sofern diese passt.
                     do {
@@ -84,6 +86,8 @@ public class GameController {
                     //If the player wants to play a card, they place it from their hand onto the table;
                     // if not, the next player in turn becomes the currentPlayer.
                     if (userInput.equals("y")) {
+                            driscardPile.addFirst(currentUsersCard);
+                            currentPlayer.getCardsInHand().remove(currentUsersCard);
 
                     } else {
                         //next player plays
@@ -97,6 +101,7 @@ public class GameController {
                 case 3:
                 case 4:
                 case 5:
+                case 6:
                 case 0:
                     System.out.println("Game is over!");
                     isExit = true;
