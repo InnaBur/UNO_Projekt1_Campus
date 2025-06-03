@@ -48,12 +48,14 @@ public class Player {
     }
 
     public void showHand() {
-        System.out.print(name + ", You have these cards: ");
+        System.out.print(name + ", Your cards are: ");
         for (Card karte: cardsInHand) {
-            System.out.print(karte.getCardName() + " ");
+            String farbigeKarte = CardsDeck.getColoredCard(karte.getCardName());  // Farbige Darstellung
+            System.out.print(farbigeKarte + " ");
         }
-        System.out.println("\n");
+        System.out.println("\u001B[0m\n"); // Reset am Ende, falls letzte Karte z. B. schwarz ist
     }
+
     @Override
     public String toString() {
         return "Player{" +

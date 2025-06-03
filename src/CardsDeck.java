@@ -110,6 +110,27 @@ public class CardsDeck {
         }
         System.out.println("\n");
     }
+// methode für Farbanzeige:
+    public static String getColoredCard(String cardName) {
+        String colorCode;
+
+        // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, fw)
+        if (cardName.startsWith("R")) {
+            colorCode = "\u001B[31m"; // Rot
+        } else if (cardName.startsWith("G")) {
+            colorCode = "\u001B[32m"; // Grün
+        } else if (cardName.startsWith("B")) {
+            colorCode = "\u001B[34m"; // Blau
+        } else if (cardName.startsWith("Y")) {
+            colorCode = "\u001B[33m"; // Gelb
+        } else {
+            colorCode = "\u001B[30m"; // Schwarz für +4, fw
+        }
+
+        return colorCode + cardName + "\u001B[0m"; // Reset am Ende der Farbe
+    }
+
+
 
 
     //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden

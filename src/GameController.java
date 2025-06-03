@@ -43,13 +43,13 @@ public class GameController {
 
             assert discardPile.peek() != null;
             System.out.println("The top card is " + discardPile.peek().getCardName());
-            System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
+            System.out.println(currentPlayer.getName() + ", it's your turn! ");
             currentPlayer.showHand();
 
             int auswahl = -1;
             do {
                 System.out.println("""
-                            ------------------------------
+                        
                             Make your choice:
                             [1] Draw a card
                             [2] Play a card
