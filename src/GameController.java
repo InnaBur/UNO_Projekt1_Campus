@@ -27,7 +27,7 @@ public class GameController {
         prepareGame(cardsDeck);
 
         //first card from the cards deck is a first card in drawPile
-        driscardPile.addFirst(cardsDeck.getTopCard());
+        discardPile.addFirst(cardsDeck.getTopCard());
 
         currentPlayer = playerManager.getCurrentPlayer();
 
@@ -41,23 +41,23 @@ public class GameController {
             //Auswahl Menu
             System.out.println("------------------------------");
 
-            assert driscardPile.peek() != null;
-            System.out.println("The top card is " + driscardPile.peek().getCardName());
+            assert discardPile.peek() != null;
+            System.out.println("The top card is " + discardPile.peek().getCardName());
             System.out.println(currentPlayer.getName() + ", it's your move! Make your choice: ");
-           currentPlayer.showHand();
+            currentPlayer.showHand();
 
             int auswahl = -1;
             do {
                 System.out.println("""
-                ------------------------------
-                Make your choice:
-                [1] Draw a card
-                [2] Play a card
-                [3] Accuse previous player of bluffing
-                [4] Say UNO
-                [5] Suggest a move
-                [0] Exit the game
-            """);
+                            ------------------------------
+                            Make your choice:
+                            [1] Draw a card
+                            [2] Play a card
+                            [3] Accuse previous player of bluffing
+                            [4] Say UNO
+                            [5] Suggest a move
+                            [0] Exit the game
+                        """);
 
                 try {
                     auswahl = scanner.nextInt();
@@ -116,10 +116,13 @@ public class GameController {
                     //If the player wants to play a card, they place it from their hand onto the table;
                     // if not, the next player in turn becomes the currentPlayer.
                     if (userInput.equals("y")) {
-                            driscardPile.addFirst(currentUsersCard);
-                            currentPlayer.getCardsInHand().remove(currentUsersCard);
+                        discardPile.addFirst(currentUsersCard);
+                        currentPlayer.getCardsInHand().remove(currentUsersCard);
+                    } else {
+                    }
+                    break;
 
-                case 2 -> {
+                case 2: {
                     // Karte manuell aus Hand spielen
                     System.out.println("Specify the card to play (e.g., r5, g+2, <->, x):");
                     String inputCardName = scanner.next();
@@ -137,16 +140,18 @@ public class GameController {
                         System.out.println("You do not have this card.");
                     }
                 }
-                    break;
-                      
-                case 3:System.out.println("Bluff check logic not implemented yet.");
-                case 4:System.out.println(currentPlayer.getName() + " said UNO!");
-                case 5:System.out.println("Suggestion logic not implemented.");
+                break;
+
+                case 3:
+                    System.out.println("Bluff check logic not implemented yet.");
+                case 4:
+                    System.out.println(currentPlayer.getName() + " said UNO!");
+                case 5:
+                    System.out.println("Suggestion logic not implemented.");
                 case 6:
                 case 0:
                     System.out.println("Game is over!");
                     isExit = true;
-                }
             }
 
         } while (!isExit);
@@ -236,7 +241,6 @@ public class GameController {
             currentPlayer = playerManager.getNextPlayer();  // normale Karte
         }
     }
-
 
 
 }
