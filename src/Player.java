@@ -5,6 +5,8 @@ public class Player {
     private String name;
     private boolean isBot;
 
+    //punkte!!
+
     private ArrayList<Card> cardsInHand;
 
     public Player(String name, boolean isBot) {
