@@ -6,6 +6,7 @@ public class Player {
     private boolean isBot;
 
     //punkte!!
+    private int points;
 
     private ArrayList<Card> cardsInHand;
 
@@ -13,6 +14,7 @@ public class Player {
         this.name = name;
         this.isBot = isBot;
         this.cardsInHand = new ArrayList<>();
+        this.points =0;
     }
 
     public Player() {
@@ -75,6 +77,16 @@ public class Player {
 
     public void removeCard(Card card) {
         cardsInHand.remove(card);
+    }
+
+
+    // Punktesystem:
+    public int getPoints() {
+        return points;
+    }
+
+    public void addPoints(int p) {
+        this.points += p;
     }
 
 }

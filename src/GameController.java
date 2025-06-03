@@ -22,6 +22,8 @@ public class GameController {
 
     private PlayerManager playerManager;
 
+    private ScoreCalculator scoreCalculator = new ScoreCalculator();
+
     public void run() {
         CardsDeck cardsDeck = new CardsDeck();
         prepareGame(cardsDeck);
@@ -133,6 +135,30 @@ public class GameController {
                             currentPlayer.removeCard(selectedCard);
                             discardPile.push(selectedCard);
                             handlePlayedCard(selectedCard, cardsDeck);
+                            // Prüfen, ob Spieler alle Karten losgeworden ist
+                            if (currentPlayer.getCardsInHand().isEmpty()) {
+                                System.out.println(currentPlayer.getName() + " has won the round!");
+
+                                // Punktevergabe
+                                ScoreCalculator scoreCalculator = new ScoreCalculator();
+                                int awardedPoints = scoreCalculator.awardPointsToWinner(Arrays.asList(players), currentPlayer);
+                                System.out.println(currentPlayer.getName() + " receives " + awardedPoints + " points!");
+
+                                // Rangliste ausgeben
+                                scoreCalculator.printRanking(Arrays.asList(players));
+
+                                // Spielgewinner prüfen
+                                Player gameWinner = scoreCalculator.checkForGameWinner(Arrays.asList(players));
+                                if (gameWinner != null) {
+                                    System.out.println("WoW! " + gameWinner.getName() + " has won the game with " + gameWinner.getPoints() + " points!");
+                                    isExit = true;
+                                } else {
+                                    // Nur Runde ist vorbei, Spiel kann weitergehen
+                                    System.out.println("Next round will start...");
+                                   // isExit = true;  // Optional: oder neue Runde vorbereiten
+                                }
+                            }
+
                         } else {
                             System.out.println("This card cannot be played on the current top card.");
                         }
