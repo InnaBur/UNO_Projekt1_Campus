@@ -61,4 +61,18 @@ public class Player {
                 ", isBot=" + isBot +
                 '}';
     }
+
+    public Card getCardByName(String name) {
+        for (Card c : cardsInHand) {
+            if (c.getCardName().equalsIgnoreCase(name)) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public void removeCard(Card card) {
+        cardsInHand.remove(card);
+    }
+
 }

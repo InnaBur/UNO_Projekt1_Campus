@@ -3,5 +3,6 @@ public class Main {
         System.out.println("Game starts");
 
         new GameController().run();
+
     }
 }
