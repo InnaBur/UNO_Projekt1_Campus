@@ -110,7 +110,7 @@ public class CardsDeck {
         }
         System.out.println("\n");
     }
-// methode für Farbanzeige:
+// methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen, mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
     public static String getColoredCard(String cardName) {
         String colorCode;
 
@@ -124,7 +124,7 @@ public class CardsDeck {
         } else if (cardName.startsWith("Y")) {
             colorCode = "\u001B[33m"; // Gelb
         } else {
-            colorCode = "\u001B[30m"; // Schwarz für +4, fw
+            colorCode = "\u001B[37m"; // Weiss für +4, fw
         }
 
         return colorCode + cardName + "\u001B[0m"; // Reset am Ende der Farbe

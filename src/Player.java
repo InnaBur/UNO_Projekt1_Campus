@@ -53,7 +53,7 @@ public class Player {
             String farbigeKarte = CardsDeck.getColoredCard(karte.getCardName());  // Farbige Darstellung
             System.out.print(farbigeKarte + " ");
         }
-        System.out.println("\u001B[0m\n"); // Reset am Ende, falls letzte Karte z. B. schwarz ist
+        System.out.println("\u001B[0m\n"); // Reset am Ende, weil letzte Karte in Farbe ist
     }
 
     @Override

@@ -248,6 +248,39 @@ public class GameController {
             currentPlayer = playerManager.getNextPlayer();  // normale Karte
         }
     }
+    public static void printGameInstructions() {
+        System.out.println("====================================");
+        System.out.println("          UNO GAME      ");
+        System.out.println("====================================\n");
 
+        System.out.println("Welcome to the UNO game!");
+        System.out.println("Here’s how to enter cards and actions:\n");
+
+        System.out.println("Playing cards:");
+        System.out.println("- R5     → Red 5");
+        System.out.println("- Rx     → Red Skip card");
+        System.out.println("- R<->   → Red Reverse card");
+        System.out.println("- +2     → Draw Two card");
+        System.out.println("- +4     → Draw Four ");
+        System.out.println("- fw     → Choose color\n");
+
+        System.out.println("Player actions:");
+        System.out.println("- 1 → Draw a card");
+        System.out.println("- 2 → Play a card");
+        System.out.println("- 3 → Bluff");
+        System.out.println("- 4 → UNO - Last card in hand");
+        System.out.println("- 5 → Give advice (e.g., suggest a color)");
+        System.out.println("- 6 → ");
+        System.out.println("- 0 → Exit the game\n");
+
+        System.out.println(" Color codes:");
+        System.out.println("- R = Red");
+        System.out.println("- G = Green");
+        System.out.println("- B = Blue");
+        System.out.println("- Y = Yellow");
+        System.out.println("- +4 and fw are wild cards\n");
+
+        System.out.println("Have fun and good luck!\n");
+    }
 
 }
