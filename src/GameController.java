@@ -20,7 +20,8 @@ public class GameController {
     int humanPlayersCount;
     private Deque<Card> discardPile = new ArrayDeque<>();
 
-    private PlayerManager playerManager;
+    private PlayerManager playerManager = new PlayerManager(players);
+
 
     private ScoreCalculator scoreCalculator = new ScoreCalculator();
 
@@ -34,8 +35,8 @@ public class GameController {
         currentPlayer = playerManager.getCurrentPlayer();
 
         // Reihenfolge ausgeben
-        System.out.println("The players take their turns in the following order: ");
-        playerManager.printPlayerOrder();
+       // System.out.println("The players take their turns in the following order: ");
+       // playerManager.printPlayerOrder();
 
         // Spielschleife
         do {
@@ -140,7 +141,7 @@ public class GameController {
                                 System.out.println(currentPlayer.getName() + " has won the round!");
 
                                 // Punktevergabe
-                                ScoreCalculator scoreCalculator = new ScoreCalculator();
+
                                 int awardedPoints = scoreCalculator.awardPointsToWinner(Arrays.asList(players), currentPlayer);
                                 System.out.println(currentPlayer.getName() + " receives " + awardedPoints + " points!");
 
