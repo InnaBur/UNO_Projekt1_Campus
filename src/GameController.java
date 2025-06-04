@@ -24,7 +24,11 @@ public class GameController {
 
     public static void printGameInstructions() {
 
-        System.out.println("=== UNO GAME ===\n");
+        System.out.println("\n/***********************************\\");
+        System.out.println("*                                   *");
+        System.out.println("*          === UNO GAME ===         *");
+        System.out.println("*                                   *");
+        System.out.println("\\***********************************/\n");
 
         System.out.println("Goal of the Game:");
         System.out.println("Be the first player to reach 500 points by discarding all your cards in each round.");
@@ -34,32 +38,33 @@ public class GameController {
         System.out.println("- Each player receives 7 cards.");
         System.out.println("- The rest form the draw pile.");
         System.out.println("- One card is placed face-up as the discard pile.");
-        System.out.println("- The first player is chosen randomly.\n");
+        System.out.println("- The first player is chosen randomly.");
+        System.out.println("- Players take turns in clockwise or counter-clockwise order, depending on the game direction.\n");
 
         System.out.println(" Gameplay:");
         System.out.println("- You can play a card if it matches the color or number of the top discard.");
         System.out.println("- Special wild card choose color can be played anytime, but wild draw four has rules.");
-        System.out.println("- If you can't play, draw one card. If it's playable, you may use it.");
+        System.out.println("- If you can't play, then draw one card. If it's playable, you may use it.");
         System.out.println("- Say 'UNO!' when you have one card left. If you forget and get caught, draw 1 penalty card.\n");
 
         System.out.println(" Action Cards:");
         System.out.println("1. Draw Two: Next player draws 2 cards and skips their turn.");
         System.out.println("2. Reverse: Changes the direction of play.");
         System.out.println("3. Skip: Next player loses their turn.");
-        System.out.println("4. Wild Choose the next color to play.");
-        System.out.println("5. Wild Draw Four: Choose color + next player draws 4 cards. Only play if you have no matching color.\n");
+        System.out.println("4. Wild Color: choose the next color to play on discard pile.");
+        System.out.println("5. Wild Draw Four: Choose color and next player draws 4 cards. Only play if you have no matching color.\n");
 
         System.out.println(" Penalties:");
         System.out.println("- Forgot to say UNO: Draw 1 cards if caught.");
         System.out.println("- Suggesting moves to others: Draw 2 cards.");
-        System.out.println("- Playing invalid card: Take the card back + draw 1 penalty card.");
-        System.out.println("- Wrong +4 usage: If challenged and guilty, draw 4 cards. If innocent, challenger draws 6 cards.\n");
+        System.out.println("- Playing invalid card: Take the card back and draw 1 penalty card.");
+        System.out.println("- Wrong usage of wild draw four card: If challenged and guilty, draw 4 cards. If innocent, challenger draws 6 cards.\n");
 
         System.out.println(" Scoring:");
         System.out.println("- Number cards: Number value.");
         System.out.println("- Draw Two, Reverse and Skip: 20 points each.");
-        System.out.println("- Wild Choose Color and Wild Draw Four: 50 points each.");
-        System.out.println("- First to 500 points wins.\n");
+        System.out.println("- Wild Color and Wild Draw Four: 50 points each.");
+        System.out.println("- First player with 500 points wins.\n");
 
         System.out.println("Here’s how to enter cards and actions:\n");
 
@@ -67,7 +72,7 @@ public class GameController {
         System.out.println("- R5     → Red 5");
         System.out.println("- Rx     → Red Skip card");
         System.out.println("- R<->   → Red Reverse card");
-        System.out.println("- +2     → Draw Two card");
+        System.out.println("- R+2     → Draw Two card");
         System.out.println("- +4     → Draw Four ");
         System.out.println("- fw     → Choose color\n");
 
@@ -112,7 +117,10 @@ public class GameController {
             System.out.println("------------------------------");
 
             assert discardPile.peek() != null;
-            System.out.println("The top card is " + discardPile.peek().getCardName());
+            //System.out.println("The top card is [" + discardPile.peek().getCardName()+ "]");
+            // Show top card in color
+            String coloredTopCard = CardsDeck.getColoredCard(discardPile.peek().getCardName());
+            System.out.println("The top card is [" + coloredTopCard + "]");
             System.out.println(currentPlayer.getName() + ", it's your turn! ");
             currentPlayer.showHand();
 
@@ -126,6 +134,7 @@ public class GameController {
                             [3] Accuse previous player of bluffing
                             [4] Say UNO
                             [5] Suggest a move
+                            [6] Game Instructions
                             [0] Exit the game
                         """);
 
@@ -145,7 +154,7 @@ public class GameController {
                     //Kann ein Spieler keine
                     //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
                     Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCard());
-                    System.out.println("You drew: " + currentUsersCard);
+                    System.out.println("Your new Card from the draw pile: " + currentUsersCard);
                     cardsDeck.getCardsDeck().remove(cardsDeck.getTopCard());
                     currentPlayer.showHand();
 
@@ -153,7 +162,7 @@ public class GameController {
                     //sofort wieder ausspielen, sofern diese passt.
                     if (currentUsersCard.isPlayableOn(discardPile.peek())) {
                         do {
-                            System.out.println("Do you want to PLAY this card? Press 'y' or 'n'");
+                            System.out.println("Do you want to PLAY this card? Press 'Y' for yes or 'N' for no");
                             userInput = scanner.next().toLowerCase();
                         }
                         while (!userInput.equals("n") && !userInput.equals("y"));
@@ -175,7 +184,7 @@ public class GameController {
 
                 case 2: {
                     // Karte manuell aus Hand spielen
-                    System.out.println("Specify the card to play (e.g., r5, g+2, <->, x):");
+                    System.out.println("Specify the card to play (e.g., r5, g+2, B<->, Gx):");
                     String inputCardName = scanner.next();
                     Card selectedCard = currentPlayer.getCardByName(inputCardName);
 
@@ -186,7 +195,7 @@ public class GameController {
                             handlePlayedCard(selectedCard, cardsDeck);
                             // Prüfen, ob Spieler alle Karten losgeworden ist
                             if (currentPlayer.getCardsInHand().isEmpty()) {
-                                System.out.println(currentPlayer.getName() + " has won the round!");
+                                System.out.println(currentPlayer.getName() + " has won the round! Congratulations! ");
 
                                 // Punktevergabe
 
@@ -209,7 +218,7 @@ public class GameController {
                             }
 
                         } else {
-                            System.out.println("This card cannot be played on the current top card.");
+                            System.out.println("This card cannot be played on the discard pile.");
                         }
                     } else {
                         System.out.println("You do not have this card.");
@@ -227,7 +236,7 @@ public class GameController {
                     printGameInstructions();
                     break;
                 case 0:
-                    System.out.println("Game is over!");
+                    System.out.println("GAME OVER!");
                     isExit = true;
             }
 
@@ -250,7 +259,7 @@ public class GameController {
     private void askPlayersNames() {
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {  // gemeinsame Anzahl der Spieler im Spiel
             for (int j = i; j < humanPlayersCount; j++) { // menschliche Spieler
-                System.out.println("Enter the name of player " + (j + 1)); //j+1 - um Spieler 1 statt Spieler 0 zu sein
+                System.out.println("Enter player name " + (j + 1)); //j+1 - um Spieler 1 statt Spieler 0 zu sein
 
                 players[j] = new Player(scanner.next(), false); //  neuen menschlichen Spieler wird erstellt
                 i++; //
@@ -271,7 +280,7 @@ public class GameController {
 
         do {
             try {
-                System.out.println("How many human players play. Choose between 1 and 4.");
+                System.out.println("Choose between 1 and 4 players: ");
                 humanPlayersCount = scanner.nextInt();
             } catch (Exception e) {
                 System.out.println("Try once more " + e.getMessage());  // wir brauchen unsere Exception
@@ -283,7 +292,13 @@ public class GameController {
             bots = 4 - humanPlayersCount;
         }
 
-        System.out.println(humanPlayersCount + " Human player and " + bots + " bots are playing");
+        String humanText = (humanPlayersCount == 1) ? "Human player" : "Human players";
+        String botText = (bots == 1) ? "bot" : "bots";
+
+        System.out.println(humanPlayersCount + " " + humanText + " and " + bots + " " + botText + " are playing. Enjoy!\n");
+
+
+       // System.out.println(humanPlayersCount + " Human player and " + bots + " bots are playing");
     }
 
     public void handlePlayedCard(Card playedCard, CardsDeck cardsDeck) {
@@ -319,8 +334,34 @@ public class GameController {
             System.out.println(next.getName() + " draws 4 cards!");
             currentPlayer = playerManager.getNextPlayer();
 
+        }
+        // When the player plays "CC", ask for the color and update the card name
+        else if (cardName.equals("CC")) {
+            // Let the player choose a color
+            String newColor = askForColor(); // Returns "R", "G", "B", or "Y"
+
+            // Update the card name to include the chosen color
+            playedCard.setCardName(newColor + "CC");
+
+            System.out.println(currentPlayer.getName() + " changed color to: " + newColor);
+            currentPlayer = playerManager.getNextPlayer();
+
         } else {
             currentPlayer = playerManager.getNextPlayer();  // normale Karte
+        }
+
+    }
+// Helper-Method for CC-card
+    public String askForColor() {
+        System.out.println(currentPlayer.getName() + ", choose the next color: [R]ed, [G]reen, [B]lue, [Y]ellow");
+
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            String input = scanner.nextLine().toUpperCase();
+            if (input.equals("R") || input.equals("G") || input.equals("B") || input.equals("Y")) {
+                return input;
+            }
+            System.out.println("Invalid input. Enter R, G, B, or Y.");
         }
     }
 

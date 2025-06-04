@@ -42,7 +42,7 @@ public class Card {
         String topName = topCard.getCardName();
 
         // Falls Karte ein Farbwechsel ist, darf sie immer gespielt werden
-        if (thisName.contains("fw")){
+        if (thisName.contains("CC")){
             return true;
         }
 

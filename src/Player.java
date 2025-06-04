@@ -51,9 +51,9 @@ public class Player {
 
     public void showHand() {
         System.out.print(name + ", Your cards are: ");
-        for (Card karte: cardsInHand) {
-            String farbigeKarte = CardsDeck.getColoredCard(karte.getCardName());  // Farbige Darstellung
-            System.out.print(farbigeKarte + " ");
+        for (Card x: cardsInHand) {
+            String colorCardOutput = CardsDeck.getColoredCard(x.getCardName());  // Farbige Darstellung
+            System.out.print("[" + colorCardOutput + "] ");
         }
         System.out.println("\u001B[0m\n"); // Reset am Ende, weil letzte Karte in Farbe ist
     }

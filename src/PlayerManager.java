@@ -40,7 +40,7 @@ public class PlayerManager {
     public void printPlayerOrder() {
         // Wenn isClockwise == true, dann steht im Text "Clock-wise", sonst == false "Counter-clock-wise
         System.out.println("Game direction: " + (isClockwise ? "Clock-wise" : "Counter-clock-wise"));
-        System.out.println("Player order:");
+        System.out.println("Player order is listed in clockwise direction:");
         for (Player p : playerList) {
             System.out.println("- " + p.getName());
         }

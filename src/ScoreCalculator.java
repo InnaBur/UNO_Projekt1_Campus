@@ -63,7 +63,7 @@ public class ScoreCalculator {
         System.out.println("\n--- Player Ranking ---");
         int rank = 1;
         for (Player p : sorted) {
-            System.out.println(rank + ". " + p.getName() + " - " + p.getPoints() + " points");
+            System.out.println(rank + ". " + p.getName() + " - " + p.getPoints() + " points.");
             rank++;
         }
         System.out.println("----------------------\n");
