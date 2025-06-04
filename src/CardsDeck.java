@@ -28,6 +28,10 @@ public class CardsDeck {
     //top card from the cards deck be added into draw pill or into players hand
     // and be removed from the card deck
     public Card getTopCardAndRemoveFromList() {
+        if (cardsDeck.isEmpty()) {
+            throw new IllegalStateException("Deck is empty, no cards to draw!");
+        }
+
         Card top = cardsDeck.get(0);
         cardsDeck.remove(cardsDeck.get(0));
         return top;
@@ -59,7 +63,7 @@ public class CardsDeck {
 
         //4+ Karten und 4 karten Farbwechsel werden erstellt
         createSpecialBlackCards("+4");
-        createSpecialBlackCards("fw");
+        createSpecialBlackCards("CC");
     }
 
     //4 Karten +4 und 4 karten Farbwechsel werden erstellt
@@ -127,7 +131,7 @@ public class CardsDeck {
             colorCode = "\u001B[37m"; // Weiss für +4, fw
         }
 
-        return colorCode + cardName + "\u001B[0m"; // Reset am Ende der Farbe
+        return colorCode + cardName  + "\u001B[0m"; // Reset am Ende der Farbe
     }
 
 

@@ -30,7 +30,10 @@ public class GameController {
             System.out.println("------------------------------");
 
             assert discardPile.peek() != null;
-            System.out.println("The top card is " + discardPile.peek().getCardName());
+            //System.out.println("The top card is [" + discardPile.peek().getCardName()+ "]");
+            // Show top card in color
+            String coloredTopCard = CardsDeck.getColoredCard(discardPile.peek().getCardName());
+            System.out.println("The top card is [" + coloredTopCard + "]");
             System.out.println(currentPlayer.getName() + ", it's your turn! ");
             currentPlayer.showHand();
 
@@ -68,13 +71,16 @@ public class GameController {
                     Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList());
                     System.out.println("You drew: " + currentUsersCard);
                     cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList());
+
+                    System.out.println("Your new Card from the draw pile: " + currentUsersCard);
+
                     currentPlayer.showHand();
 
                     //Diese Karte kann Spieler
                     //sofort wieder ausspielen, sofern diese passt.
                     if (currentUsersCard.isPlayableOn(discardPile.peek())) {
                         do {
-                            System.out.println("Do you want to PLAY this card? Press 'y' or 'n'");
+                            System.out.println("Do you want to PLAY this card? Press 'Y' for yes or 'N' for no");
                             userInput = scanner.next().toLowerCase();
                         }
                         while (!userInput.equals("n") && !userInput.equals("y"));
@@ -96,7 +102,7 @@ public class GameController {
 
                 case 2: {
                     // Karte manuell aus Hand spielen
-                    System.out.println("Specify the card to play (e.g., r5, g+2, <->, x):");
+                    System.out.println("Specify the card to play (e.g., r5, g+2, B<->, Gx):");
                     String inputCardName = scanner.next();
                     Card selectedCard = currentPlayer.getCardByName(inputCardName);
 
@@ -193,8 +199,8 @@ public class GameController {
             playerManager.printPlayerOrder();
 
         } else if (cardName.contains("x")) {
-            System.out.println(playerManager.getCurrentPlayer().getName() + " skipped!");
-            currentPlayer = playerManager.skipNextPlayer();
+            System.out.println(playerManager.getNextPlayer().getName() + " skipped!");
+            currentPlayer = playerManager.getNextPlayer();
 
         } else if (cardName.contains("+2")) {
             Player next = playerManager.getNextPlayer();
@@ -211,8 +217,34 @@ public class GameController {
             System.out.println(next.getName() + " draws 4 cards!");
             currentPlayer = playerManager.getNextPlayer();
 
+        }
+        // When the player plays "CC", ask for the color and update the card name
+        else if (cardName.equals("CC")) {
+            // Let the player choose a color
+            String newColor = askForColor(); // Returns "R", "G", "B", or "Y"
+
+            // Update the card name to include the chosen color
+            playedCard.setCardName(newColor + "CC");
+
+            System.out.println(currentPlayer.getName() + " changed color to: " + newColor);
+            currentPlayer = playerManager.getNextPlayer();
+
         } else {
             currentPlayer = playerManager.getNextPlayer();  // normale Karte
+        }
+
+    }
+// Helper-Method for CC-card
+    public String askForColor() {
+        System.out.println(currentPlayer.getName() + ", choose the next color: [R]ed, [G]reen, [B]lue, [Y]ellow");
+
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            String input = scanner.nextLine().toUpperCase();
+            if (input.equals("R") || input.equals("G") || input.equals("B") || input.equals("Y")) {
+                return input;
+            }
+            System.out.println("Invalid input. Enter R, G, B, or Y.");
         }
     }
 

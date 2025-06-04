@@ -2,7 +2,11 @@ public class Instructions {
 
     public static void printGameInstructions() {
 
-        System.out.println("=== UNO GAME ===\n");
+        System.out.println("\n/***********************************\\");
+        System.out.println("*                                   *");
+        System.out.println("*          === UNO GAME ===         *");
+        System.out.println("*                                   *");
+        System.out.println("\\***********************************/\n");
 
         System.out.println("Goal of the Game:");
         System.out.println("Be the first player to reach 500 points by discarding all your cards in each round.");
@@ -12,32 +16,33 @@ public class Instructions {
         System.out.println("- Each player receives 7 cards.");
         System.out.println("- The rest form the draw pile.");
         System.out.println("- One card is placed face-up as the discard pile.");
-        System.out.println("- The first player is chosen randomly.\n");
+        System.out.println("- The first player is chosen randomly.");
+        System.out.println("- Players take turns in clockwise or counter-clockwise order, depending on the game direction.\n");
 
         System.out.println(" Gameplay:");
         System.out.println("- You can play a card if it matches the color or number of the top discard.");
         System.out.println("- Special wild card choose color can be played anytime, but wild draw four has rules.");
-        System.out.println("- If you can't play, draw one card. If it's playable, you may use it.");
+        System.out.println("- If you can't play, then draw one card. If it's playable, you may use it.");
         System.out.println("- Say 'UNO!' when you have one card left. If you forget and get caught, draw 1 penalty card.\n");
 
         System.out.println(" Action Cards:");
         System.out.println("1. Draw Two: Next player draws 2 cards and skips their turn.");
         System.out.println("2. Reverse: Changes the direction of play.");
         System.out.println("3. Skip: Next player loses their turn.");
-        System.out.println("4. Wild Choose the next color to play.");
-        System.out.println("5. Wild Draw Four: Choose color + next player draws 4 cards. Only play if you have no matching color.\n");
+        System.out.println("4. Wild Color: choose the next color to play on discard pile.");
+        System.out.println("5. Wild Draw Four: Choose color and next player draws 4 cards. Only play if you have no matching color.\n");
 
         System.out.println(" Penalties:");
         System.out.println("- Forgot to say UNO: Draw 1 cards if caught.");
         System.out.println("- Suggesting moves to others: Draw 2 cards.");
-        System.out.println("- Playing invalid card: Take the card back + draw 1 penalty card.");
-        System.out.println("- Wrong +4 usage: If challenged and guilty, draw 4 cards. If innocent, challenger draws 6 cards.\n");
+        System.out.println("- Playing invalid card: Take the card back and draw 1 penalty card.");
+        System.out.println("- Wrong usage of wild draw four card: If challenged and guilty, draw 4 cards. If innocent, challenger draws 6 cards.\n");
 
         System.out.println(" Scoring:");
         System.out.println("- Number cards: Number value.");
         System.out.println("- Draw Two, Reverse and Skip: 20 points each.");
-        System.out.println("- Wild Choose Color and Wild Draw Four: 50 points each.");
-        System.out.println("- First to 500 points wins.\n");
+        System.out.println("- Wild Color and Wild Draw Four: 50 points each.");
+        System.out.println("- First player with 500 points wins.\n");
 
         System.out.println("Here’s how to enter cards and actions:\n");
 
@@ -45,7 +50,7 @@ public class Instructions {
         System.out.println("- R5     → Red 5");
         System.out.println("- Rx     → Red Skip card");
         System.out.println("- R<->   → Red Reverse card");
-        System.out.println("- +2     → Draw Two card");
+        System.out.println("- R+2     → Draw Two card");
         System.out.println("- +4     → Draw Four ");
         System.out.println("- fw     → Choose color\n");
 
@@ -69,5 +74,6 @@ public class Instructions {
 
         System.out.println("Have fun and good luck!\n");
     }
+
 
 }
