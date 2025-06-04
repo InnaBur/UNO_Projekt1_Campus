@@ -36,13 +36,6 @@ public class PlayerManager {
         return getCurrentPlayer();
     }
 
-    // Spieler überspringen, bei x-Karte (Aussetzen)
-    public Player skipNextPlayer() {
-        // Schritt 1: einmal weiter gehen (übersprungener Spieler)
-        getNextPlayer();
-        // Schritt 2: noch einmal weiter gehen (tatsächlicher nächster Spieler)
-        return getNextPlayer();
-    }
 
     public void printPlayerOrder() {
         // Wenn isClockwise == true, dann steht im Text "Clock-wise", sonst == false "Counter-clock-wise

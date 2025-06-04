@@ -271,7 +271,7 @@ public class GameController {
 
         do {
             try {
-                System.out.println("How many human players play?");
+                System.out.println("How many human players play. Choose between 1 and 4.");
                 humanPlayersCount = scanner.nextInt();
             } catch (Exception e) {
                 System.out.println("Try once more " + e.getMessage());  // wir brauchen unsere Exception
@@ -301,8 +301,8 @@ public class GameController {
 
 
         } else if (cardName.contains("x")) {
-            System.out.println(playerManager.getCurrentPlayer().getName() + " skipped!");
-            currentPlayer = playerManager.skipNextPlayer();
+            System.out.println(playerManager.getNextPlayer().getName() + " skipped!");
+            currentPlayer = playerManager.getNextPlayer();
 
         } else if (cardName.contains("+2")) {
             Player next = playerManager.getNextPlayer();
