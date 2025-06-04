@@ -27,7 +27,7 @@ public class CardsDeck {
 
     //top card from the cards deck be added into draw pill or into players hand
     // and be removed from the card deck
-    public Card getTopCard() {
+    public Card getTopCardAndRemoveFromList() {
         if (cardsDeck.isEmpty()) {
             throw new IllegalStateException("Deck is empty, no cards to draw!");
         }
@@ -36,8 +36,6 @@ public class CardsDeck {
         cardsDeck.remove(cardsDeck.get(0));
         return top;
     }
-
-
 
     public void deleteCard(Card karte) {
         cardsDeck.remove(karte);
@@ -99,11 +97,11 @@ public class CardsDeck {
         Collections.shuffle(cardsDeck);
     }
 
-    public void dealCards(Player[] spielers) {
+    public void dealCards(ArrayList<Player> players) {
 
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
             for (int j = 0; j < NUMBER_OF_CARDS_IN_HAND; j++) {
-                spielers[i].addCard(cardsDeck.get(0));
+                players.get(i).addCard(cardsDeck.get(0));
                 cardsDeck.remove(0);
             }
         }
