@@ -1,34 +1,28 @@
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.Scanner;
 
 public class GameController {
 
-    //gemeinsame Anzahl der Spieler im Spiel
-    final int NUMBER_OF_PLAYERS = 4;
     Scanner scanner = new Scanner(System.in);
-
-    //Array für Reihenfolge und für gespeicherte Spieler
-    Player[] players = new Player[NUMBER_OF_PLAYERS];
-    private PlayerManager playerManager = new PlayerManager(players);
-    ;
+    private final PlayerManager playerManager = new PlayerManager();
     // aktueller Spieler
-    Player currentPlayer;
+    private Player currentPlayer;
     //die Bedingung für das Beenden des Spiels.
-    boolean isExit = false;
+    private boolean isExit = false;
     // menschliche Spieler
-    int humanPlayersCount;
-    private Deque<Card> discardPile = new ArrayDeque<>();
+    private final Deque<Card> discardPile = new ArrayDeque<>();
     private ScoreCalculator scoreCalculator = new ScoreCalculator();
 
 
     public void run() {
+
         CardsDeck cardsDeck = new CardsDeck();
+
         prepareGame(cardsDeck);
 
-        //first card from the cards deck is a first card in drawPile
-        discardPile.addFirst(cardsDeck.getTopCard());
+
+
 
         currentPlayer = playerManager.getCurrentPlayer();
 
@@ -47,7 +41,7 @@ public class GameController {
             System.out.println(currentPlayer.getName() + ", it's your turn! ");
             currentPlayer.showHand();
 
-            int auswahl = -1; //initialize
+            int choice = -1; //initialize
             do {
                 System.out.println("""
                                                 
@@ -57,27 +51,29 @@ public class GameController {
                             [3] Accuse previous player of bluffing
                             [4] Say UNO
                             [5] Suggest a move
+                            [6] Check the bluff
+                            [7] Instructions
                             [0] Exit the game
                         """);
 
                 try {
-                    auswahl = scanner.nextInt();
+                    choice = scanner.nextInt();
                 } catch (Exception e) {
                     System.out.println("Invalid input. Try again.");
                     scanner.next(); // Eingabe verwerfen
                 }
-            } while (auswahl < 0 || auswahl > 6);
+            } while (isChoiceInMenuCorrect(choice));
 
-            switch (auswahl) {
+            switch (choice) {
 
                 case 1:
-                    String userInput = "";
+                    String userInput;
 
                     //Kann ein Spieler keine
                     //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
-                    Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCard());
+                    Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList());
                     System.out.println("You drew: " + currentUsersCard);
-                    cardsDeck.getCardsDeck().remove(cardsDeck.getTopCard());
+                    cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList());
                     currentPlayer.showHand();
 
                     //Diese Karte kann Spieler
@@ -121,22 +117,22 @@ public class GameController {
 
                                 // Punktevergabe
 
-                                int awardedPoints = scoreCalculator.awardPointsToWinner(Arrays.asList(players), currentPlayer);
-                                System.out.println(currentPlayer.getName() + " receives " + awardedPoints + " points!");
-
-                                // Rangliste ausgeben
-                                scoreCalculator.printRanking(Arrays.asList(players));
-
-                                // Spielgewinner prüfen
-                                Player gameWinner = scoreCalculator.checkForGameWinner(Arrays.asList(players));
-                                if (gameWinner != null) {
-                                    System.out.println("WoW! " + gameWinner.getName() + " has won the game with " + gameWinner.getPoints() + " points!");
-                                    isExit = true;
-                                } else {
-                                    // Nur Runde ist vorbei, Spiel kann weitergehen
-                                    System.out.println("Next round will start...");
-                                    // isExit = true;  // Optional: oder neue Runde vorbereiten
-                                }
+//                                int awardedPoints = scoreCalculator.awardPointsToWinner(Arrays.asList(players), currentPlayer);
+//                                System.out.println(currentPlayer.getName() + " receives " + awardedPoints + " points!");
+//
+//                                // Rangliste ausgeben
+//                                scoreCalculator.printRanking(Arrays.asList(players));
+//
+//                                // Spielgewinner prüfen
+//                                Player gameWinner = scoreCalculator.checkForGameWinner(Arrays.asList(players));
+//                                if (gameWinner != null) {
+//                                    System.out.println("WoW! " + gameWinner.getName() + " has won the game with " + gameWinner.getPoints() + " points!");
+//                                    isExit = true;
+//                                } else {
+//                                    // Nur Runde ist vorbei, Spiel kann weitergehen
+//                                    System.out.println("Next round will start...");
+//                                    // isExit = true;  // Optional: oder neue Runde vorbereiten
+//                                }
                             }
 
                         } else {
@@ -155,6 +151,8 @@ public class GameController {
                 case 5:
                     System.out.println("Suggestion logic not implemented.");
                 case 6:
+                    break;
+                case 7:
                     Instructions.printGameInstructions();
                     break;
                 case 0:
@@ -165,56 +163,20 @@ public class GameController {
         } while (!isExit);
     }
 
+    private boolean isChoiceInMenuCorrect(int choice) {
+        return choice < 0 || choice > 7;
+    }
+
+    /*In this method, the number of human players and bots is determined,
+    names are set, cards are dealt and the order of players,
+    the top card of the discard deck is set
+    */
     private void prepareGame(CardsDeck cardsDeck) {
-
-        askPlayersCount();
-        askPlayersNames();
-
-        cardsDeck.dealCards(players);
-
-        playerManager = new PlayerManager(players);
+        playerManager.preparePlayers();
         playerManager.printPlayerOrder();
+        cardsDeck.dealCards(playerManager.getPlayerList());
+        discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList());         //first card from the cards deck is a first card in drawPile
 
-    }
-
-    // Diese Methode fragt Names der Spieler und fühlt das Array für Reihenfolge und für gespeicherte Spieler
-    private void askPlayersNames() {
-        for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {  // gemeinsame Anzahl der Spieler im Spiel
-            for (int j = i; j < humanPlayersCount; j++) { // menschliche Spieler
-                System.out.println("Enter the name of player " + (j + 1)); //j+1 - um Spieler 1 statt Spieler 0 zu sein
-
-                players[j] = new Player(scanner.next(), false); //  neuen menschlichen Spieler wird erstellt
-                i++; //
-            }
-
-            //  Bots (if exist) werden erstellt
-            if (i < NUMBER_OF_PLAYERS) {
-                players[i] = new Player("Player " + (i + 1), true);
-            }
-        }
-        System.out.println(Arrays.toString(players));
-    }
-
-    // Diese Methode fragt, wie viel menschliche Spieler gibt es und andere Spieler sind Bots
-    private void askPlayersCount() {
-
-        int bots = 0;
-
-        do {
-            try {
-                System.out.println("How many human players play?");
-                humanPlayersCount = scanner.nextInt();
-            } catch (Exception e) {
-                System.out.println("Try once more " + e.getMessage());  // wir brauchen unsere Exception
-                scanner.next();
-            }
-        } while (humanPlayersCount < 1 || humanPlayersCount > 4);
-
-        if (humanPlayersCount < 4) {
-            bots = 4 - humanPlayersCount;
-        }
-
-        System.out.println(humanPlayersCount + " Human player and " + bots + " bots are playing");
     }
 
     public void handlePlayedCard(Card playedCard, CardsDeck cardsDeck) {
@@ -237,15 +199,15 @@ public class GameController {
 
         } else if (cardName.contains("+2")) {
             Player next = playerManager.getNextPlayer();
-            next.addCard(cardsDeck.getTopCard());
-            next.addCard(cardsDeck.getTopCard());
+            next.addCard(cardsDeck.getTopCardAndRemoveFromList());
+            next.addCard(cardsDeck.getTopCardAndRemoveFromList());
             System.out.println(next.getName() + " draws 2 cards!");
             currentPlayer = playerManager.getNextPlayer();
 
         } else if (cardName.contains("+4")) {
             Player next = playerManager.getNextPlayer();
             for (int i = 0; i < 4; i++) {
-                next.addCard(cardsDeck.getTopCard());
+                next.addCard(cardsDeck.getTopCardAndRemoveFromList());
             }
             System.out.println(next.getName() + " draws 4 cards!");
             currentPlayer = playerManager.getNextPlayer();
