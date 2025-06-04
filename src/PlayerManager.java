@@ -7,21 +7,37 @@ public class PlayerManager {
     Scanner scanner = new Scanner(System.in);
     private ArrayList<Player> playerList;
     private boolean isClockwise;
-    private int currentPlayerIndex;
+//    private int currentPlayerIndex;
     private int humanPlayersCount;
+    private Player currentPlayer;
 
     public PlayerManager() {
         playerList = new ArrayList<>();
 //        Collections.addAll(playerList, players); // Array in List umwandeln
 //        Collections.shuffle(playerList); // Spielerreihenfolge mischen. Das geht nur mit einer List, nicht direkt mit einem Array!
         isClockwise = false; // Startet gegen den Uhrzeigersinn
-        currentPlayerIndex = 0;
+    }
+
+    public void setCurrentPlayer() {
+        if (!playerList.isEmpty()) {
+            this.currentPlayer = playerList.get(0);
+        } else {
+            this.currentPlayer = null;
+        }
     }
 
     public void preparePlayers() {
+
         askPlayersCount();
         askPlayersNames();
+
+
+        setSequenceAndFirstPlayer();
+    }
+
+    private void setSequenceAndFirstPlayer() {
         Collections.shuffle(playerList);
+        setCurrentPlayer();
     }
 
 
@@ -44,7 +60,6 @@ public class PlayerManager {
         }
     }
 
-
     public void askPlayersCount() {
 
         int bots = 0;
@@ -57,7 +72,7 @@ public class PlayerManager {
                 System.out.println("Try once more " + e.getMessage());  // wir brauchen unsere Exception
                 scanner.next();
             }
-        } while (humanPlayersCount < 1 || humanPlayersCount > 4);
+        } while (humanPlayersCount < 0 || humanPlayersCount > 4);
 
         if (humanPlayersCount < 4) {
             bots = 4 - humanPlayersCount;
@@ -69,8 +84,14 @@ public class PlayerManager {
 
     // Gibt den aktuellen Spieler zurück, der am Zug ist.
     // Die Liste playerList enthält alle Spieler. Der currentPlayerIndex zeigt auf den Spieler, der aktuell an der Reihe ist
+
+
+//    public Player getCurrentPlayer() {
+//        return playerList.get(currentPlayerIndex);
+//    }
+
     public Player getCurrentPlayer() {
-        return playerList.get(currentPlayerIndex);
+        return currentPlayer;
     }
 
     // Wechselt die Spielrichtung
@@ -79,17 +100,32 @@ public class PlayerManager {
         isClockwise = !isClockwise;
     }
 
+
+//    public Player getNextPlayer() {
+//        if (isClockwise) {
+//            // Uhrzeigersinn: Index + 1 (mit Modulo, damit es nach dem letzten Spieler wieder bei 0 beginnt - Rundenlogik. (1 + 1) % 4 = 2
+//            currentPlayerIndex = (currentPlayerIndex + 1) % playerList.size();
+//            System.out.println("currentPlayerIndex " + currentPlayerIndex + currentPlayer);
+//        } else {
+//            // Gegen den Uhrzeigersinn: Index - 1 (Modulo verhindert negative Zahlen). (0 - 1 + 4) % 4 = 3
+//            currentPlayerIndex = (currentPlayerIndex - 1 + playerList.size()) % playerList.size();
+//            System.out.println("currentPlayerIndex " + currentPlayerIndex + getCurrentPlayer());
+//        }
+//        return getCurrentPlayer();
+//    }
+
     public Player getNextPlayer() {
-        if (isClockwise) {
+        int index = playerList.indexOf(currentPlayer);
+        if (!isClockwise) {
             // Uhrzeigersinn: Index + 1 (mit Modulo, damit es nach dem letzten Spieler wieder bei 0 beginnt - Rundenlogik. (1 + 1) % 4 = 2
-            currentPlayerIndex = (currentPlayerIndex + 1) % playerList.size();
-            System.out.println("currentPlayerIndex " + currentPlayerIndex);
+            currentPlayer = playerList.get((index + 1) % playerList.size());
+            System.out.println("currentPlayer "  + currentPlayer);
         } else {
             // Gegen den Uhrzeigersinn: Index - 1 (Modulo verhindert negative Zahlen). (0 - 1 + 4) % 4 = 3
-            currentPlayerIndex = (currentPlayerIndex - 1 + playerList.size()) % playerList.size();
-            System.out.println("currentPlayerIndex " + currentPlayerIndex);
+            currentPlayer = playerList.get((index - 1 + playerList.size()) % playerList.size());
+            System.out.println("currentPlayerIndex "  + getCurrentPlayer());
         }
-        return getCurrentPlayer();
+        return currentPlayer;
     }
 
     // Spieler überspringen, bei x-Karte (Aussetzen)
@@ -105,19 +141,22 @@ public class PlayerManager {
         System.out.println("Game direction: " + (isClockwise ? "Clock-wise" : "Counter-clock-wise"));
         System.out.println("Player order:");
         if (isClockwise) {
-            for (Player p : playerList) {
-                System.out.println("- " + p.getName());
-
+            for (int i = playerList.size() - 1; i >= 0; i--) {
+                System.out.println("- " + playerList.get(i).getName() + " ");
             }
         } else {
-            for (int i = playerList.size()-1; i >= 0; i--) {
-                System.out.println("- " + playerList.get(i).getName() + " ");
+            for (Player p : playerList) {
+                System.out.println("- " + p.getName());
             }
         }
     }
 
     public boolean isClockwise() {
         return isClockwise;
+    }
+
+    public void setClockwise(boolean clockwise) {
+        isClockwise = clockwise;
     }
 
     public int getNUMBER_OF_PLAYERS() {
@@ -132,17 +171,14 @@ public class PlayerManager {
         this.playerList = playerList;
     }
 
-    public void setClockwise(boolean clockwise) {
-        isClockwise = clockwise;
-    }
+//    public int getCurrentPlayerIndex() {
+//        currentPlayerIndex = playerList.indexOf(getCurrentPlayer());
+//        return currentPlayerIndex;
+//    }
 
-    public int getCurrentPlayerIndex() {
-        return currentPlayerIndex;
-    }
-
-    public void setCurrentPlayerIndex(int currentPlayerIndex) {
-        this.currentPlayerIndex = currentPlayerIndex;
-    }
+//    public void setCurrentPlayerIndex(int currentPlayerIndex) {
+//        this.currentPlayerIndex = currentPlayerIndex;
+//    }
 
     public int getHumanPlayersCount() {
         return humanPlayersCount;

@@ -4,14 +4,14 @@ import java.util.Scanner;
 
 public class GameController {
 
-    Scanner scanner = new Scanner(System.in);
     private final PlayerManager playerManager = new PlayerManager();
+    // menschliche Spieler
+    private final Deque<Card> discardPile = new ArrayDeque<>();
+    Scanner scanner = new Scanner(System.in);
     // aktueller Spieler
     private Player currentPlayer;
     //die Bedingung für das Beenden des Spiels.
     private boolean isExit = false;
-    // menschliche Spieler
-    private final Deque<Card> discardPile = new ArrayDeque<>();
     private ScoreCalculator scoreCalculator = new ScoreCalculator();
 
 
@@ -21,16 +21,9 @@ public class GameController {
 
         prepareGame(cardsDeck);
 
-
-
-
         currentPlayer = playerManager.getCurrentPlayer();
 
-        // Reihenfolge ausgeben
-        // System.out.println("The players take their turns in the following order: ");
-        // playerManager.printPlayerOrder();
 
-        // Spielschleife
         do {
 
             //Auswahl Menu
@@ -53,6 +46,7 @@ public class GameController {
                             [5] Suggest a move
                             [6] Check the bluff
                             [7] Instructions
+                            [8] Pause
                             [0] Exit the game
                         """);
 
@@ -155,8 +149,12 @@ public class GameController {
                 case 7:
                     Instructions.printGameInstructions();
                     break;
+                case 8:
+                    //pause
+                    //saveYoDatenbank;
                 case 0:
                     System.out.println("Game is over!");
+                    //saveYoDatenbank;
                     isExit = true;
             }
 
@@ -164,7 +162,7 @@ public class GameController {
     }
 
     private boolean isChoiceInMenuCorrect(int choice) {
-        return choice < 0 || choice > 7;
+        return choice < 0 || choice > 8;
     }
 
     /*In this method, the number of human players and bots is determined,
@@ -174,6 +172,7 @@ public class GameController {
     private void prepareGame(CardsDeck cardsDeck) {
         playerManager.preparePlayers();
         playerManager.printPlayerOrder();
+
         cardsDeck.dealCards(playerManager.getPlayerList());
         discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList());         //first card from the cards deck is a first card in drawPile
 
@@ -191,7 +190,7 @@ public class GameController {
             currentPlayer = playerManager.getNextPlayer();
 
             System.out.println("Direction changed! Now: " + (playerManager.isClockwise() ? "clockwise" : "counterclockwise"));
-
+            playerManager.printPlayerOrder();
 
         } else if (cardName.contains("x")) {
             System.out.println(playerManager.getCurrentPlayer().getName() + " skipped!");
