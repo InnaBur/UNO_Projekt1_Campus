@@ -6,6 +6,7 @@ public class Player {
     private boolean isBot;
 
     //punkte!!
+    private int points;
 
     private ArrayList<Card> cardsInHand;
 
@@ -13,6 +14,7 @@ public class Player {
         this.name = name;
         this.isBot = isBot;
         this.cardsInHand = new ArrayList<>();
+        this.points =0;
     }
 
     public Player() {
@@ -48,12 +50,14 @@ public class Player {
     }
 
     public void showHand() {
-        System.out.print(name + ", You have these cards: ");
+        System.out.print(name + ", Your cards are: ");
         for (Card karte: cardsInHand) {
-            System.out.print(karte.getCardName() + " ");
+            String farbigeKarte = CardsDeck.getColoredCard(karte.getCardName());  // Farbige Darstellung
+            System.out.print(farbigeKarte + " ");
         }
-        System.out.println("\n");
+        System.out.println("\u001B[0m\n"); // Reset am Ende, weil letzte Karte in Farbe ist
     }
+
     @Override
     public String toString() {
         return "Player{" +
@@ -73,6 +77,16 @@ public class Player {
 
     public void removeCard(Card card) {
         cardsInHand.remove(card);
+    }
+
+
+    // Punktesystem:
+    public int getPoints() {
+        return points;
+    }
+
+    public void addPoints(int p) {
+        this.points += p;
     }
 
 }
