@@ -82,13 +82,13 @@ public class GameController {
                     if (currentUsersCard.isPlayableOn(discardPile.peek())) {
                         do {
                             System.out.println("Do you want to PLAY this card? Press 'Y' for yes or 'N' for no");
-                            userInput = scanner.next().toLowerCase();
+                            userInput = scanner.next();
                         }
-                        while (!userInput.equals("n") && !userInput.equals("y"));
+                        while (!userInput.equalsIgnoreCase("n") && !userInput.equalsIgnoreCase("y"));
 
                         //If the player wants to play a card, they place it from their hand onto the table;
                         // if not, the next player in turn becomes the currentPlayer.
-                        if (userInput.equals("y")) {
+                        if (userInput.equalsIgnoreCase("y")) {
                             discardPile.addFirst(currentUsersCard);
                             currentPlayer.removeCard(currentUsersCard);
                             handlePlayedCard(currentUsersCard, cardsDeck);
@@ -102,8 +102,8 @@ public class GameController {
                     break;
 
                 case 2: {
-                    System.out.println("Specify the card to play (e.g., r5, g+2, B<->, Gx):");
-                    String inputCardName = scanner.next();
+                    System.out.println("Specify the card to play (e.g., r5, g+2, Bd, Gx):");
+                    String inputCardName = scanner.next().toUpperCase();
                     Card selectedCard = currentPlayer.getCardByName(inputCardName);
 
                     // Check if selected card exists in player's hand and is playable on top of discard pile

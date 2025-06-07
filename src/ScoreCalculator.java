@@ -20,8 +20,8 @@ public class ScoreCalculator {
 
             // Farbige Spezialkarten (jeweils 20 Punkte)
             cardPoints.put(color + "+2", 20);
-            cardPoints.put(color + "d", 20);
-            cardPoints.put(color + "x", 20);
+            cardPoints.put(color + "D", 20);
+            cardPoints.put(color + "X", 20);
         }
 
         // Spezialkarten (jeweils 50 Punkte)

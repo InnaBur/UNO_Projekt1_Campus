@@ -118,14 +118,16 @@ public class CardsDeck {
     public static String createColoredOutputForCard(String cardName) {
         String colorCode;
 
+        String upperCardName = cardName.toUpperCase(); // absichern für Testung: Fälle wie "cc" oder "g5"
+
         // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, fw)
-        if (cardName.startsWith("R")) {
+        if (upperCardName.startsWith("R")) {
             colorCode = "\u001B[31m"; // Rot
-        } else if (cardName.startsWith("G")) {
+        } else if (upperCardName.startsWith("G")) {
             colorCode = "\u001B[32m"; // Grün
-        } else if (cardName.startsWith("B")) {
+        } else if (upperCardName.startsWith("B")) {
             colorCode = "\u001B[34m"; // Blau
-        } else if (cardName.startsWith("Y")) {
+        } else if (upperCardName.startsWith("Y")) {
             colorCode = "\u001B[33m"; // Gelb
         } else {
             colorCode = "\u001B[37m"; // Weiss für +4, CC
@@ -149,53 +151,3 @@ public class CardsDeck {
 
 }
 
-/* HashMap einbauen, um den Punktewert jeder Karte zu definieren, sodass du später einfach die Punkte der in der Hand verbleibenden Karten berechnen kannst. Dafür zeige ich dir:
-
- HashMap<String, Integer> mit Kartenwerten erstellt.
-
- HashMap für Kartenwerte
-Füge diese HashMap als private static final Variable zur Klasse CardsDeck hinzu:
-
-private static final java.util.HashMap<String, Integer> CARD_POINTS = new java.util.HashMap<>();
-
-static {
-    // Nummernkarten:
-    for (char color : COLORS) {
-        for (int i = 0; i <= 9; i++) {
-            CARD_POINTS.put("" + color + i, i);
-        }
-        for (int i = 1; i <= 9; i++) {
-            CARD_POINTS.put("" + color + i, i); // Jede Nummer doppelt, aber HashMap überschreibt
-        }
-
-        // Spezialkarten mit 20 Punkten
-        CARD_POINTS.put(color + "+2", 20);   // Zieh Zwei
-        CARD_POINTS.put(color + "<->", 20);  // Retour
-        CARD_POINTS.put(color + "x", 20);    // Aussetzen
-    }
-
-    // Schwarze Spezialkarten mit 50 Punkten
-    CARD_POINTS.put("+4", 50);  // Zieh Vier Farbenwahl
-    CARD_POINTS.put("fw", 50);  // Farbenwahl
-}
-
- Methode zur Berechnung der verbleibenden Punkte
-
-// Berechnet die Punkte aller Karten, die ein Spieler noch auf der Hand hat
-public int calculatePoints(ArrayList<Card> hand) {
-    int totalPoints = 0;
-
-    for (Card card : hand) {
-        String name = card.getCardName();
-        totalPoints += CARD_POINTS.getOrDefault(name, 0);  // Falls Karte unbekannt ist, zähle 0
-    }
-
-    return totalPoints;
-}
-
-
-Beispielverwendung:
-ein Spieler hat seine Kartenhand player.getCardsInHand():
-
-int punkte = cardsDeck.calculatePoints(player.getCardsInHand());
-System.out.println("Verbleibende Punkte von " + player.getName() + ": " + punkte);*/
