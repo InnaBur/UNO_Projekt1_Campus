@@ -6,7 +6,7 @@ public class Player {
     private boolean isBot;
 
     //punkte!!
-    private int points;
+    private int points; // <--- stores accumulated points
 
     private ArrayList<Card> cardsInHand;
 
@@ -52,7 +52,7 @@ public class Player {
     public void showHand() {
         System.out.print(name + ", Your cards are: ");
         for (Card x: cardsInHand) {
-            String colorCardOutput = CardsDeck.getColoredCard(x.getCardName());  // Farbige Darstellung
+            String colorCardOutput = CardsDeck.createColoredOutputForCard(x.getCardName());  // Farbige Darstellung
             System.out.print("[" + colorCardOutput + "] ");
         }
         System.out.println("\u001B[0m\n"); // Reset am Ende, weil letzte Karte in Farbe ist
@@ -85,6 +85,10 @@ public class Player {
         return points;
     }
 
+    public void setPoints(int points) {
+        this.points = points;
+    }
+    //If your game loop does not recreate the Player objects each round, and instead uses the same Player instances, then the added points will stay with the player.
     public void addPoints(int p) {
         this.points += p;
     }
