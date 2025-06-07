@@ -35,7 +35,7 @@ public class PlayerManager {
         setSequenceAndFirstPlayer();
     }
 
-    private void setSequenceAndFirstPlayer() {
+    public void setSequenceAndFirstPlayer() {
         Collections.shuffle(playerList);
         setCurrentPlayer();
     }
@@ -138,17 +138,24 @@ public class PlayerManager {
 
     public void printPlayerOrder() {
         // Wenn isClockwise == true, dann steht im Text "Clock-wise", sonst == false "Counter-clock-wise
-        System.out.println("Game direction: " + (isClockwise ? "Clock-wise" : "Counter-clock-wise"));
-        System.out.println("Player order:");
-        if (isClockwise) {
-            for (int i = playerList.size() - 1; i >= 0; i--) {
-                System.out.println("- " + playerList.get(i).getName() + " ");
+        System.out.println("\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
+        System.out.println("\nPlayer order:");
+        String style = "\u001B[30;47m"; // Black text on light gray background
+        String reset = "\u001B[0m";
+
+        if (!isClockwise) {
+            for (Player p : playerList) {
+                String name = p.getName();
+                System.out.println(style + " [" + name + "] " + reset);
             }
         } else {
-            for (Player p : playerList) {
-                System.out.println("- " + p.getName());
+            for (int i = playerList.size() - 1; i >= 0; i--) {
+                String name = playerList.get(i).getName();
+                System.out.println(style + " [" + name + "] " + reset);
             }
+
         }
+
     }
 
     public boolean isClockwise() {

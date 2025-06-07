@@ -80,8 +80,8 @@ public class CardsDeck {
             cardsDeck.add(card);
         }
         cardsDeck.add(new Card(color + "+2", true));  //+2 karten ziehen
-        cardsDeck.add(new Card(color + "<->", true));  //Reihenfolge wechseln
-        cardsDeck.add(new Card(color + "x", true));  //einen Umzug überspringen
+        cardsDeck.add(new Card(color + "D", true));  //Reihenfolge wechseln
+        cardsDeck.add(new Card(color + "X", true));  //einen Umzug überspringen
     }
 
     public void createZeroCard(char color) {
@@ -115,28 +115,30 @@ public class CardsDeck {
         System.out.println("\n");
     }
 // methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen, mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
-    public static String createColoredOutputForCard(String cardName) {
-        String colorCode;
+public static String createColoredOutputForCard(String cardName) {
+    String colorCode;
 
-        String upperCardName = cardName.toUpperCase(); // absichern für Testung: Fälle wie "cc" oder "g5"
+    String upperCardName = cardName.toUpperCase(); // absichern für Testung
 
-        // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, fw)
-        if (upperCardName.startsWith("R")) {
-            colorCode = "\u001B[31m"; // Rot
-        } else if (upperCardName.startsWith("G")) {
-            colorCode = "\u001B[32m"; // Grün
-        } else if (upperCardName.startsWith("B")) {
-            colorCode = "\u001B[34m"; // Blau
-        } else if (upperCardName.startsWith("Y")) {
-            colorCode = "\u001B[33m"; // Gelb
-        } else {
-            colorCode = "\u001B[37m"; // Weiss für +4, CC
-        }
-
-        return colorCode + cardName  + "\u001B[0m"; // Reset am Ende der Farbe
+    // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, CC)
+    if (upperCardName.startsWith("R")) {
+        colorCode = "\u001B[30;41m"; // Schwarzer Text auf rotem Hintergrund
+    } else if (upperCardName.startsWith("G")) {
+        colorCode = "\u001B[30;42m"; // Schwarzer Text auf grünem Hintergrund
+    } else if (upperCardName.startsWith("B")) {
+        colorCode = "\u001B[30;44m"; // Schwarzer Text auf blauem Hintergrund
+    } else if (upperCardName.startsWith("Y")) {
+        colorCode = "\u001B[30;43m"; // Schwarzer Text auf gelbem Hintergrund
+    } else {
+        colorCode = "\u001B[30;45m"; // Schwarzer Text auf magentafarbenem Hintergrund (für +4, CC)
     }
 
+    return colorCode + upperCardName + "\u001B[0m"; // Reset-Farbe
+}
 
+    public void clearDeck() {
+        cardsDeck.clear();
+    }
 
 
     //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden

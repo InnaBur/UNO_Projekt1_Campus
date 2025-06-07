@@ -35,24 +35,26 @@ public class GameController {
             // Show top card in color
             String coloredTopCard = CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName());
             System.out.println("The top card is [" + coloredTopCard + "]");
-            System.out.println(currentPlayer.getName() + ", it's your turn! ");
+            System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "]\u001B[0m, it's your turn!");
             currentPlayer.showHand();
 
             int choice = -1; //initialize
             do {
+                System.out.println("\u001B[30;47m"); // Black text on light gray background
                 System.out.println("""
-                                                
-                            Make your choice:
-                            [1] Draw a card
-                            [2] Play a card
-                            [3] Check the bluff
-                            [4] Play a card and say UNO
-                            [5] Suggest a move
-                            [6] Instructions
-                            [7] Pause
-                            [8] 
-                            [0] Exit the game
+                                    Make your choice:                 
+                          ┌────────────┬────────────┬────────────┐             
+                          │ [1] Draw   │ [2] Play   │ [3] Bluff  │            
+                          │     a card │     a card │     check  │             
+                          ├────────────┼────────────┼────────────┤            
+                          │ [4] Play   │ [5] Suggest│ [6] Help   │             
+                          │     & UNO  │     a move │     rules  │            
+                          ├────────────┼────────────┼────────────┤             
+                          │ [7] Pause  │ [8]        │ [0] Exit   │            
+                          │            │            │     game   │             
+                          └────────────┴────────────┴────────────┘             
                         """);
+                System.out.print("\u001B[0m"); // Reset colors
 
                 try {
                     choice = scanner.nextInt();
@@ -70,8 +72,8 @@ public class GameController {
                     //Kann ein Spieler keine
                     //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
                     Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList());
-                  //  System.out.println("You drew: " + currentUsersCard);
-                   // cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList()); // Muss hier nochmal rmeove sein?, wenn schon oben in methode karte entfernt wird????
+                    //  System.out.println("You drew: " + currentUsersCard);
+                    // cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList()); // Muss hier nochmal rmeove sein?, wenn schon oben in methode karte entfernt wird????
 
                     System.out.println("Your new Card from the draw pile: " + currentUsersCard);
 
@@ -123,11 +125,11 @@ public class GameController {
                                 //isExit = true;
                             } else {
                                 System.out.println("Starting next round...");
-                                // Optionally: reset game state for next round
+                                startNewRound(playerManager, cardsDeck, discardPile);
                             }
                         } else {
 
-                             handlePlayedCard(selectedCard, cardsDeck);
+                            handlePlayedCard(selectedCard, cardsDeck);
 
                         }
                     } else {
@@ -187,7 +189,7 @@ public class GameController {
     public void handlePlayedCard(Card playedCard, CardsDeck cardsDeck) {
         String cardName = playedCard.getCardName();
 
-        if (cardName.contains("<->")) {
+        if (cardName.contains("D")) {
             // Spieler A spielt Richtungswechselkarte
             // Richtung ändern
             playerManager.switchDirection();
@@ -195,18 +197,18 @@ public class GameController {
             // Spieler D (neuer Nachbar in der neuen Richtung) ist dran
             currentPlayer = playerManager.getNextPlayer();
 
-            System.out.println("Direction changed! Now: " + (playerManager.isClockwise() ? "clockwise" : "counterclockwise"));
+            System.out.println("\u001B[30;41mDirection changed!\u001B[0m Now: " + (playerManager.isClockwise() ? "Clockwise" : "Counter-clockwise"));
             playerManager.printPlayerOrder();
 
-        } else if (cardName.contains("x")) {
-            System.out.println(playerManager.getNextPlayer().getName() + " skipped!");
+        } else if (cardName.contains("X")) {
+            System.out.println("\u001B[30;46m[" + playerManager.getNextPlayer().getName() + "]\u001B[0m loses turn \u001B[30;45mSkipped!\u001B[0m");
             currentPlayer = playerManager.getNextPlayer();
 
         } else if (cardName.contains("+2")) {
             Player next = playerManager.getNextPlayer();
             next.addCard(cardsDeck.getTopCardAndRemoveFromList());
             next.addCard(cardsDeck.getTopCardAndRemoveFromList());
-            System.out.println(next.getName() + " draws 2 cards!");
+            System.out.println(next.getName() + " \u001B[30;41mDraws 2 cards!\u001B[0m");
             currentPlayer = playerManager.getNextPlayer();
 
         } else if (cardName.contains("+4")) {
@@ -215,12 +217,13 @@ public class GameController {
             // Update the card name to include the chosen color,
             playedCard.setCardName(newColor + "+4");
 
-           //IF CHECK BLUFF!!
+
+            //IF CHECK BLUFF implementieren
             Player next = playerManager.getNextPlayer();
             for (int i = 0; i < 4; i++) {
                 next.addCard(cardsDeck.getTopCardAndRemoveFromList());
             }
-            System.out.println(next.getName() + " draws 4 cards!");
+            System.out.println(next.getName() + " \u001B[30;41mDraws 4 cards!\u001B[0m");
             currentPlayer = playerManager.getNextPlayer();
 
         }
@@ -231,8 +234,10 @@ public class GameController {
 
             // Update the card name to include the chosen color
             playedCard.setCardName(newColor + "CC");
+            String newCardName = playedCard.getCardName();
+            CardsDeck.createColoredOutputForCard(newCardName);
 
-            System.out.println(currentPlayer.getName() + " changed color to: " + newColor);
+            System.out.println(currentPlayer.getName() + " \u001B[30;45m! ! ! Color change ! ! !\u001B[0m to: " + CardsDeck.createColoredOutputForCard(newCardName));
             currentPlayer = playerManager.getNextPlayer();
 
         } else {
@@ -240,9 +245,14 @@ public class GameController {
         }
 
     }
-// Helper-Method for CC-card
+
+    // Helper-Method for CC-card
     public String askForColor() {
-        System.out.println(currentPlayer.getName() + ", choose the next color: [R]ed, [G]reen, [B]lue, [Y]ellow");
+        System.out.println(currentPlayer.getName() + ", choose the next color: " +
+                "\u001B[30;41m[R]\u001B[0m Red, " +
+                "\u001B[30;42m[G]\u001B[0m Green, " +
+                "\u001B[30;44m[B]\u001B[0m Blue, " +
+                "\u001B[30;43m[Y]\u001B[0m Yellow");
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -276,7 +286,31 @@ public class GameController {
     }
 
 
+    public void startNewRound(PlayerManager playerManager, CardsDeck cardsDeck, Deque<Card> discardPile) {
+        // Leere das bisherige Karten-Deck
+        // Methode in CardsDeck um das ArrayList komplett zu leeren
+        cardsDeck.clearDeck();
+        // Erstelle ein neues vollständiges Karten-Deck mit allen Karten
+        cardsDeck.createCardDeck();
+        // Mische das neu erstellte Karten-Deck
+        cardsDeck.shuffleCardDeck();
+        // Für jeden Spieler leere die Kartenhand des Spielers (alte Runde)
+        for (Player player : playerManager.getPlayerList()) {
+            player.getCardsInHand().clear();
+        }
+        // Verteile Karten an alle Spieler
+        cardsDeck.dealCards(playerManager.getPlayerList());
+        // Leere Ablagestapel
+        discardPile.clear();
+        // Karte auf den Ablagestapel legen
+        discardPile.push(cardsDeck.getTopCardAndRemoveFromList());
+        //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
+        playerManager.setClockwise(false);
 
+        // Startspieler setzen
+        playerManager.setSequenceAndFirstPlayer(); // Methode spieler setzen
+    }
 
 }
+
 

@@ -11,7 +11,7 @@ public class Player {
     private ArrayList<Card> cardsInHand;
 
     public Player(String name, boolean isBot) {
-        this.name = name;
+        this.name = name.toUpperCase(); // Spielername wird beim Erstellen großgeschrieben
         this.isBot = isBot;
         this.cardsInHand = new ArrayList<>();
         this.points =0;
@@ -25,7 +25,7 @@ public class Player {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.toUpperCase(); // Spielername wird beim Erstellen großgeschrieben
     }
 
     public boolean isBot() {
@@ -50,7 +50,9 @@ public class Player {
     }
 
     public void showHand() {
-        System.out.print(name + ", Your cards are: ");
+       // System.out.print(name + ", Your cards are: ");
+// Schwarzer Text (30), Cyan Hintergrund (46)
+        System.out.print("\u001B[30;46m[" + name + "]\u001B[0m, Your cards are: ");
         for (Card x: cardsInHand) {
             String colorCardOutput = CardsDeck.createColoredOutputForCard(x.getCardName());  // Farbige Darstellung
             System.out.print("[" + colorCardOutput + "] ");
