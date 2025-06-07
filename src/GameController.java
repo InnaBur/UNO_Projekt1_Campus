@@ -1,4 +1,5 @@
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Scanner;
 
@@ -32,7 +33,7 @@ public class GameController {
             assert discardPile.peek() != null;
             //System.out.println("The top card is [" + discardPile.peek().getCardName()+ "]");
             // Show top card in color
-            String coloredTopCard = CardsDeck.getColoredCard(discardPile.peek().getCardName());
+            String coloredTopCard = CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName());
             System.out.println("The top card is [" + coloredTopCard + "]");
             System.out.println(currentPlayer.getName() + ", it's your turn! ");
             currentPlayer.showHand();
@@ -44,12 +45,12 @@ public class GameController {
                             Make your choice:
                             [1] Draw a card
                             [2] Play a card
-                            [3] Accuse previous player of bluffing
-                            [4] Say UNO
+                            [3] Check the bluff
+                            [4] Play a card and say UNO
                             [5] Suggest a move
-                            [6] Check the bluff
-                            [7] Instructions
-                            [8] Pause
+                            [6] Instructions
+                            [7] Pause
+                            [8] 
                             [0] Exit the game
                         """);
 
@@ -69,8 +70,8 @@ public class GameController {
                     //Kann ein Spieler keine
                     //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
                     Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList());
-                    System.out.println("You drew: " + currentUsersCard);
-                    cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList());
+                  //  System.out.println("You drew: " + currentUsersCard);
+                   // cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList()); // Muss hier nochmal rmeove sein?, wenn schon oben in methode karte entfernt wird????
 
                     System.out.println("Your new Card from the draw pile: " + currentUsersCard);
 
@@ -101,48 +102,46 @@ public class GameController {
                     break;
 
                 case 2: {
-                    // Karte manuell aus Hand spielen
                     System.out.println("Specify the card to play (e.g., r5, g+2, B<->, Gx):");
                     String inputCardName = scanner.next();
                     Card selectedCard = currentPlayer.getCardByName(inputCardName);
 
-                    if (selectedCard != null) {
-                        if (selectedCard.isPlayableOn(discardPile.peek())) {
-                            currentPlayer.removeCard(selectedCard);
-                            discardPile.push(selectedCard);
-                            handlePlayedCard(selectedCard, cardsDeck);
-                            // Prüfen, ob Spieler alle Karten losgeworden ist
-                            if (currentPlayer.getCardsInHand().isEmpty()) {
-                                System.out.println(currentPlayer.getName() + " has won the round!");
+                    // Check if selected card exists in player's hand and is playable on top of discard pile
+                    if (selectedCard != null && selectedCard.isPlayableOn(discardPile.peek())) {
+                        // Play the card
+                        currentPlayer.removeCard(selectedCard);
+                        discardPile.push(selectedCard);
 
-                                // Punktevergabe
+                        // Check if player has emptied their hand → they win the round
+                        if (currentPlayer.getCardsInHand().isEmpty()) {
+                            System.out.println(currentPlayer.getName() + " has won the round!");
 
-//                                int awardedPoints = scoreCalculator.awardPointsToWinner(Arrays.asList(players), currentPlayer);
-//                                System.out.println(currentPlayer.getName() + " receives " + awardedPoints + " points!");
-//
-//                                // Rangliste ausgeben
-//                                scoreCalculator.printRanking(Arrays.asList(players));
-//
-//                                // Spielgewinner prüfen
-//                                Player gameWinner = scoreCalculator.checkForGameWinner(Arrays.asList(players));
-//                                if (gameWinner != null) {
-//                                    System.out.println("WoW! " + gameWinner.getName() + " has won the game with " + gameWinner.getPoints() + " points!");
-//                                    isExit = true;
-//                                } else {
-//                                    // Nur Runde ist vorbei, Spiel kann weitergehen
-//                                    System.out.println("Next round will start...");
-//                                    // isExit = true;  // Optional: oder neue Runde vorbereiten
-//                                }
+                            // Handle scoring and check if game ends
+                            boolean isGameOver = handleRoundEnd(playerManager.getPlayerList(), currentPlayer, scoreCalculator);
+                            if (isGameOver) {
+                                // ask for new game????
+                                //isExit = true;
+                            } else {
+                                System.out.println("Starting next round...");
+                                // Optionally: reset game state for next round
                             }
-
                         } else {
-                            System.out.println("This card cannot be played on the current top card.");
+
+                             handlePlayedCard(selectedCard, cardsDeck);
+
                         }
                     } else {
-                        System.out.println("You do not have this card.");
+                        // Invalid or unplayable card is penalty
+                        System.out.println("Invalid card or card cannot be played. You receive 2 penalty cards.");
+                        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList());
+                        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList());
+
+                        // next player
+                        currentPlayer = playerManager.getNextPlayer();
                     }
                 }
                 break;
+
 
                 case 3:
                     System.out.println("Bluff check logic not implemented yet.");
@@ -151,9 +150,10 @@ public class GameController {
                 case 5:
                     System.out.println("Suggestion logic not implemented.");
                 case 6:
+                    Instructions.printGameInstructions();
                     break;
                 case 7:
-                    Instructions.printGameInstructions();
+
                     break;
                 case 8:
                     //pause
@@ -210,6 +210,12 @@ public class GameController {
             currentPlayer = playerManager.getNextPlayer();
 
         } else if (cardName.contains("+4")) {
+            String newColor = askForColor(); // Returns "R", "G", "B", or "Y"
+
+            // Update the card name to include the chosen color,
+            playedCard.setCardName(newColor + "+4");
+
+           //IF CHECK BLUFF!!
             Player next = playerManager.getNextPlayer();
             for (int i = 0; i < 4; i++) {
                 next.addCard(cardsDeck.getTopCardAndRemoveFromList());
@@ -247,6 +253,30 @@ public class GameController {
             System.out.println("Invalid input. Enter R, G, B, or Y.");
         }
     }
+
+    // Called when a round ends (player has no cards)
+    public boolean handleRoundEnd(ArrayList<Player> players, Player currentPlayer, ScoreCalculator scoreCalculator) {
+        // 1. Award points to the current player (winner of the round)
+        int awardedPoints = scoreCalculator.awardPointsToWinner(players, currentPlayer);
+        System.out.println(currentPlayer.getName() + " receives " + awardedPoints + " points!");
+
+        // 2. Print ranking
+        scoreCalculator.printRanking(players);
+
+        // 3. Check if someone won the entire game (500+ points)
+        Player gameWinner = scoreCalculator.checkForGameWinner(players);
+        if (gameWinner != null) {
+            System.out.println("WoW! " + gameWinner.getName() + " has won the game with " + gameWinner.getPoints() + " points!");
+            return true;  // signal game over
+        } else {
+            System.out.println("Next round will start...");
+
+            return false; // game continues
+        }
+    }
+
+
+
 
 }
 

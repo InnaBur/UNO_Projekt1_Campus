@@ -20,17 +20,17 @@ public class ScoreCalculator {
 
             // Farbige Spezialkarten (jeweils 20 Punkte)
             cardPoints.put(color + "+2", 20);
-            cardPoints.put(color + "<->", 20);
+            cardPoints.put(color + "d", 20);
             cardPoints.put(color + "x", 20);
         }
 
-        // Schwarze Spezialkarten (jeweils 50 Punkte)
+        // Spezialkarten (jeweils 50 Punkte)
         cardPoints.put("+4", 50);
-        cardPoints.put("fw", 50);
+        cardPoints.put("CC", 50);
     }
 
     // Berechnet die Gesamtpunktzahl für eine Handkartenliste
-    public int calculatePoints(List<Card> hand) {
+    public int calculatePoints(ArrayList<Card> hand) {
         int total = 0;
 
         for (Card card : hand) {
@@ -42,7 +42,7 @@ public class ScoreCalculator {
     }
 
     // Verleiht dem Gewinner einer Runde die Punkte aller gegnerischen Handkarten
-    public int awardPointsToWinner(List<Player> allPlayers, Player winner) {
+    public int awardPointsToWinner(ArrayList<Player> allPlayers, Player winner) {
         int total = 0;
 
         for (Player p : allPlayers) {
@@ -56,9 +56,21 @@ public class ScoreCalculator {
     }
 
     // Gibt die aktuelle Rangliste der Spieler aus (sortiert nach Punkten absteigend)
-    public void printRanking(List<Player> allPlayers) {
-        List<Player> sorted = new ArrayList<>(allPlayers);
-        sorted.sort((a, b) -> Integer.compare(b.getPoints(), a.getPoints()));
+    public void printRanking(ArrayList<Player> allPlayers) {
+        // Copy list to sort
+        ArrayList<Player> sorted = new ArrayList<>(allPlayers);
+
+        // Simple bubble sort (descending by points)
+        for (int i = 0; i < sorted.size() - 1; i++) {
+            for (int j = 0; j < sorted.size() - 1 - i; j++) {
+                if (sorted.get(j).getPoints() < sorted.get(j + 1).getPoints()) {
+                    // Swap
+                    Player temp = sorted.get(j);
+                    sorted.set(j, sorted.get(j + 1));
+                    sorted.set(j + 1, temp);
+                }
+            }
+        }
 
         System.out.println("\n--- Player Ranking ---");
         int rank = 1;
@@ -70,7 +82,7 @@ public class ScoreCalculator {
     }
 
     // Prüft, ob ein Spieler 500 oder mehr Punkte erreicht hat
-    public Player checkForGameWinner(List<Player> allPlayers) {
+    public Player checkForGameWinner(ArrayList<Player> allPlayers) {
         for (Player p : allPlayers) {
             if (p.getPoints() >= 500) {
                 return p;
@@ -78,5 +90,7 @@ public class ScoreCalculator {
         }
         return null;
     }
-}
 
+
+
+}

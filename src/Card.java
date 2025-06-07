@@ -42,7 +42,7 @@ public class Card {
         String topName = topCard.getCardName();
 
         // Falls Karte ein Farbwechsel ist, darf sie immer gespielt werden
-        if (thisName.contains("CC")){
+        if (thisName.contains("CC") || thisName.contains("+4")){ // +4 darf auch immer gelegt werden (obwohl gegen regel), damit der bluff funktioniert
             return true;
         }
 
