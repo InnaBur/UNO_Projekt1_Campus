@@ -22,6 +22,13 @@ public class Instructions {
         System.out.println("You earn points based on the cards left in your opponents' hands.\n");
 
         System.out.println(BOLD + " Game Setup:" + RESET);
+        System.out.println("You can play with up to 4 players – a mix of live players and bots is allowed.\n");
+        System.out.println("Examples of valid combinations:");
+        System.out.println("- 1 Live Player + 3 Bots");
+        System.out.println("- 2 Live Players + 2 Bots");
+        System.out.println("- 3 Live Players + 1 Bot");
+        System.out.println("- 4 Live Players (no bots)\n");
+
         System.out.println("- Each player receives 7 cards.");
         System.out.println("- The rest form the draw pile.");
         System.out.println("- One card is placed face-up as the discard pile.");

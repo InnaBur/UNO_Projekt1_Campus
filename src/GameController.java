@@ -35,7 +35,7 @@ public class GameController {
             // Show top card in color
             String coloredTopCard = CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName());
             System.out.println("The top card is [" + coloredTopCard + "]");
-            System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "]\u001B[0m, it's your turn!");
+            //handleFirstCardEffect(playerManager,cardsDeck,discardPile); // TESTING
             currentPlayer.showHand();
 
             int choice = -1; //initialize
@@ -184,6 +184,11 @@ public class GameController {
         cardsDeck.dealCards(playerManager.getPlayerList());
         discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList());         //first card from the cards deck is a first card in drawPile
 
+        // Apply its effect ONCE in game loop
+        handleFirstCardEffect(playerManager, cardsDeck, discardPile);
+
+        // Set the currentPlayer correctly after handling effect
+        currentPlayer = playerManager.getCurrentPlayer();
     }
 
     public void handlePlayedCard(Card playedCard, CardsDeck cardsDeck) {
@@ -194,14 +199,15 @@ public class GameController {
             // Richtung ändern
             playerManager.switchDirection();
 
-            // Spieler D (neuer Nachbar in der neuen Richtung) ist dran
-            currentPlayer = playerManager.getNextPlayer();
 
-            System.out.println("\u001B[30;41mDirection changed!\u001B[0m Now: " + (playerManager.isClockwise() ? "Clockwise" : "Counter-clockwise"));
+
+            System.out.println(playerManager.getCurrentPlayer().getName()+" made a \u001B[30;41mDirection change\u001B[0m to " + (playerManager.isClockwise() ? "Clockwise" : "Counter-clockwise"));
+            // Spieler neuer Nachbar in der neuen Richtung ist dran
+            currentPlayer = playerManager.getNextPlayer();
             playerManager.printPlayerOrder();
 
         } else if (cardName.contains("X")) {
-            System.out.println("\u001B[30;46m[" + playerManager.getNextPlayer().getName() + "]\u001B[0m loses turn \u001B[30;45mSkipped!\u001B[0m");
+            System.out.println("\u001B[30;46m[" + playerManager.getNextPlayer().getName() + "]\u001B[0m lost her/his turn: \u001B[30;45mSkipped!\u001B[0m");
             currentPlayer = playerManager.getNextPlayer();
 
         } else if (cardName.contains("+2")) {
@@ -268,7 +274,7 @@ public class GameController {
     public boolean handleRoundEnd(ArrayList<Player> players, Player currentPlayer, ScoreCalculator scoreCalculator) {
         // 1. Award points to the current player (winner of the round)
         int awardedPoints = scoreCalculator.awardPointsToWinner(players, currentPlayer);
-        System.out.println(currentPlayer.getName() + " receives " + awardedPoints + " points!");
+        System.out.println(currentPlayer.getName() + " gets " + awardedPoints + " points!");
 
         // 2. Print ranking
         scoreCalculator.printRanking(players);
@@ -309,6 +315,30 @@ public class GameController {
 
         // Startspieler setzen
         playerManager.setSequenceAndFirstPlayer(); // Methode spieler setzen
+    }
+
+    public void handleFirstCardEffect(PlayerManager playerManager, CardsDeck cardsDeck, Deque<Card> discardPile){
+
+        // Check: if at start the top card is a direction change card (contains 'D')
+        if (discardPile.peek().getCardName().toUpperCase().contains("D")) {
+            playerManager.switchDirection();
+            System.out.println("\u001B[30;41mDirection changed!\u001B[0m Now: " + (playerManager.isClockwise() ? "Clockwise" : "Counter-clockwise"));
+            currentPlayer = playerManager.getNextPlayer();
+            playerManager.printPlayerOrder();
+
+
+        } else if (discardPile.peek().getCardName().toUpperCase().contains("+2")) {
+            Player current = playerManager.getCurrentPlayer();
+            current.addCard(cardsDeck.getTopCardAndRemoveFromList());
+            current.addCard(cardsDeck.getTopCardAndRemoveFromList());
+            System.out.println(currentPlayer.getName() + " \u001B[30;41mDraws 2 cards!\u001B[0m");
+           currentPlayer = playerManager.getNextPlayer();
+
+        } else if (discardPile.peek().getCardName().toUpperCase().contains("X")) {
+            System.out.println("\u001B[30;46m[" + playerManager.getCurrentPlayer().getName() + "]\u001B[0m lost her/his turn:  \u001B[30;45mSkipped!\u001B[0m");
+            currentPlayer = playerManager.getNextPlayer();
+            System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "]\u001B[0m, it's your turn!");
+        }
     }
 
 }
