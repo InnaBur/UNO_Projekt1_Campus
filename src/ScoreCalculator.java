@@ -47,7 +47,9 @@ public class ScoreCalculator {
 
         for (Player p : allPlayers) {
             if (!p.equals(winner)) {
-                total += calculatePoints(p.getCardsInHand());System.out.println("Player " + p.getName() + "'s hand:");
+                total += calculatePoints(p.getCardsInHand());
+                System.out.println("Player " + p.getName() + "'s hand:"); // TESTING
+
                 for (Card c : p.getCardsInHand()) {
                     System.out.println("  - " + c.getCardName());
                 }

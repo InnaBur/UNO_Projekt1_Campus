@@ -69,6 +69,7 @@ public class PlayerManager {
                 System.out.println("How many live players will participate? (1 to 4)");
                 System.out.print("Enter the number of live players: ");
                 humanPlayersCount = scanner.nextInt();
+
             } catch (Exception e) {
                 System.out.println("Try once more " + e.getMessage());  // wir brauchen unsere Exception
                 scanner.next();
@@ -139,11 +140,13 @@ public class PlayerManager {
         int index = playerList.indexOf(currentPlayer);
         if (isClockwise) {
             //In code: Index + 1--> right in array --> real-life Player gives to his left neighbour: clockwise.: Index + 1 (mit Modulo, damit es nach dem letzten Spieler wieder bei 0 beginnt - Rundenlogik. (1 + 1) % 4 = 2
+            // Clockwise: go to the next player in the list
             currentPlayer = playerList.get((index + 1) % playerList.size());
             System.out.println("Current Player: "  + currentPlayer);
 
         } else {
            // In code: Index - 1 --> left in array --> real-life Player gives to his right neighbour: counter-clockwise.: Index - 1 (Modulo verhindert negative Zahlen). (0 - 1 + 4) % 4 = 3
+            // Counterclockwise: go to the previous player in the list
             currentPlayer = playerList.get((index - 1 + playerList.size()) % playerList.size());
             System.out.println("Current Player: "  + getCurrentPlayer());
         }

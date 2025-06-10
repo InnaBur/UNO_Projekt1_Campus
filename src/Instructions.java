@@ -75,7 +75,7 @@ public class Instructions {
         System.out.println("- 2 → Play a card");
         System.out.println("- 3 → Check Bluff");
         System.out.println("- 4 → Play a card AND SAY UNO");
-        System.out.println("- 5 → Give advice (e.g., suggest a color)");
+        System.out.println("- 5 → Give advice");
         System.out.println("- 6 → Game Instructions");
         System.out.println("- 7 → Pause");
         System.out.println("- 0 → Exit the game\n");
