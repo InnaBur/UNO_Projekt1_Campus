@@ -4,7 +4,7 @@ public class Card {
     private boolean isSpecial;
 
     public Card(String cardName, boolean isSpecial) {
-        this.cardName = cardName;
+        this.cardName = cardName.toUpperCase();
         this.isSpecial = isSpecial;
     }
 
@@ -13,7 +13,7 @@ public class Card {
     }
 
     public void setCardName(String cardName) {
-        this.cardName = cardName;
+        this.cardName = cardName.toUpperCase();
     }
 
     public boolean isSpecial() {
@@ -38,11 +38,11 @@ public class Card {
 
 
     public boolean isPlayableOn(Card topCard) {
-        String thisName = this.cardName;
-        String topName = topCard.getCardName();
+        String thisName = this.cardName.toUpperCase();
+        String topName = topCard.getCardName().toUpperCase();
 
         // Falls Karte ein Farbwechsel ist, darf sie immer gespielt werden
-        if (thisName.contains("CC")){
+        if (thisName.contains("CC") || thisName.contains("+4")){ // +4 darf auch immer gelegt werden (obwohl gegen regel), damit der bluff funktioniert
             return true;
         }
 
@@ -50,7 +50,7 @@ public class Card {
         char thisColor = thisName.charAt(0);
         char topColor = topName.charAt(0);
 
-        // Wert oder Aktion ( "5", "+2", "<->", "x")
+        // Wert oder Aktion ( "5", "+2", "d", "x")
         String thisValue = thisName.substring(1);
         String topValue = topName.substring(1);
 
