@@ -43,7 +43,7 @@ public class GameController {
                 System.out.println("\u001B[30;47m"); // Black text on light gray background
                 System.out.println("""
                                     Make your choice:                 
-                          ┌────────────┬────────────┬────────────┐             
+                          ┌────────────┬────────────┬────────────┐               
                           │ [1] Draw   │ [2] Play   │ [3] Bluff  │            
                           │     a card │     a card │     check  │             
                           ├────────────┼────────────┼────────────┤            
@@ -184,7 +184,7 @@ public class GameController {
         cardsDeck.dealCards(playerManager.getPlayerList());
         discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList());         //first card from the cards deck is a first card in drawPile
 
-        // Apply its effect ONCE in game loop
+        // Apply its effect ONCE in game loop - TESTNG
         handleFirstCardEffect(playerManager, cardsDeck, discardPile);
 
         // Set the currentPlayer correctly after handling effect
@@ -298,6 +298,15 @@ public class GameController {
         cardsDeck.clearDeck();
         // Erstelle ein neues vollständiges Karten-Deck mit allen Karten
         cardsDeck.createCardDeck();
+       /* Brauchen wir das? wenn RCC - CC, wenn runde nicht feritg ist und neu gemischt?
+        for (Card card : cardsDeck.getCardsDeck()) {
+            if (card.getCardName().endsWith("CC")) {
+                card.setCardName("CC");
+            } else if (card.getCardName().endsWith("+4")) {
+                card.setCardName("+4");
+            }
+            */
+
         // Mische das neu erstellte Karten-Deck
         cardsDeck.shuffleCardDeck();
         // Für jeden Spieler leere die Kartenhand des Spielers (alte Runde)
@@ -310,6 +319,8 @@ public class GameController {
         discardPile.clear();
         // Karte auf den Ablagestapel legen
         discardPile.push(cardsDeck.getTopCardAndRemoveFromList());
+        // muss auchhier sein? TESTING
+        handleFirstCardEffect(playerManager,cardsDeck,discardPile);
         //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
         playerManager.setClockwise(false);
 
@@ -338,7 +349,18 @@ public class GameController {
             System.out.println("\u001B[30;46m[" + playerManager.getCurrentPlayer().getName() + "]\u001B[0m lost her/his turn:  \u001B[30;45mSkipped!\u001B[0m");
             currentPlayer = playerManager.getNextPlayer();
             System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "]\u001B[0m, it's your turn!");
-        }
+
+        }else if (discardPile.peek().getCardName().toUpperCase().contains("CC")) {
+            // Let the player choose a color
+            String newColor = askForColor(); // Returns "R", "G", "B", or "Y"
+
+            // Update the card name to include the chosen color
+            discardPile.peek().setCardName(newColor + "CC");
+            String newCardName = discardPile.peek().getCardName();
+            CardsDeck.createColoredOutputForCard(newCardName);
+
+            System.out.println(currentPlayer.getName() + " \u001B[30;45m! ! ! Color change ! ! !\u001B[0m to: " + CardsDeck.createColoredOutputForCard(newCardName));
+            currentPlayer = playerManager.getNextPlayer();
     }
 
 }
