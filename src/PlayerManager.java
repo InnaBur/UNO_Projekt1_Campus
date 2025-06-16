@@ -31,8 +31,6 @@ public class PlayerManager {
         askPlayersCount();
         askPlayersNames();
 
-
-        setSequenceAndFirstPlayer();
     }
 
     public void setSequenceAndFirstPlayer() {
@@ -56,8 +54,12 @@ public class PlayerManager {
             }
         }
         for (Player player : playerList) {
-            System.out.println(player);
+            System.out.print(player.getName() + ", ");
         }
+        System.out.print("Welcome in game!");
+        System.out.println();
+        System.out.println("-----------------------------");
+
     }
 
     public void askPlayersCount() {

@@ -7,11 +7,5 @@ public class Main {
         Instructions.printGameInstructions();
         new GameController().run();
 
-
-
-
-
     }
-
-
 }

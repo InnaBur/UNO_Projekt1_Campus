@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 
 public class CardsDeck {
 
@@ -21,15 +22,48 @@ public class CardsDeck {
         this.cardsDeck = cardsDeck;
     }
 
+    // methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen,
+// mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
+    public static String createColoredOutputForCard(String cardName) {
+        String colorCode;
+
+        String upperCardName = cardName.toUpperCase(); // absichern für Testung
+
+        // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, CC)
+        if (upperCardName.startsWith("R")) {
+            colorCode = "\u001B[30;41m"; // Schwarzer Text auf rotem Hintergrund
+        } else if (upperCardName.startsWith("G")) {
+            colorCode = "\u001B[30;42m"; // Schwarzer Text auf grünem Hintergrund
+        } else if (upperCardName.startsWith("B")) {
+            colorCode = "\u001B[30;44m"; // Schwarzer Text auf blauem Hintergrund
+        } else if (upperCardName.startsWith("Y")) {
+            colorCode = "\u001B[30;43m"; // Schwarzer Text auf gelbem Hintergrund
+        } else {
+            colorCode = "\u001B[30;45m"; // Schwarzer Text auf magentafarbenem Hintergrund (für +4, CC)
+        }
+
+        return colorCode + upperCardName + "\u001B[0m"; // Reset-Farbe
+    }
+
     public ArrayList<Card> getCardsDeck() {
         return cardsDeck;
     }
 
+    public void setCardsDeck(ArrayList<Card> cardsDeck) {
+        this.cardsDeck = cardsDeck;
+    }
+
     //top card from the cards deck be added into draw pill or into players hand
     // and be removed from the card deck
-    public Card getTopCardAndRemoveFromList() {
+    public Card getTopCardAndRemoveFromList(Deque<Card> discardPile) {
         if (cardsDeck.isEmpty()) {
-            throw new IllegalStateException("Deck is empty, no cards to draw!");
+            System.out.println("DISKARD BEFOR RESHUFFLE!!!!!! ");
+            printDequeCardDeck(discardPile);
+            reshuffleDiscardPileIntoDrawPile(discardPile);
+            System.out.println("RESHUFFLE!!!!!! ");
+            printCardDeck();
+//
+//            throw new IllegalStateException("Deck is empty, no cards to draw!");
         }
 
         Card top = cardsDeck.get(0);
@@ -45,10 +79,6 @@ public class CardsDeck {
     public String showTopCard() {
         return cardsDeck.get(0).getCardName();
     }
-    public void setCardsDeck(ArrayList<Card> cardsDeck) {
-        this.cardsDeck = cardsDeck;
-    }
-
 
     public void createCardDeck() {
 
@@ -88,9 +118,7 @@ public class CardsDeck {
         cardsDeck.add(new Card("" + color + 0, false));
     }
 
-
     public void drawCard() {
-
     }
 
     public void shuffleCardDeck() {
@@ -107,35 +135,6 @@ public class CardsDeck {
         }
     }
 
-    public void showPlayerCards(Player player) {
-        System.out.print(player.getName() + ", You have these cards: ");
-        for (Card karte: player.getCardsInHand()) {
-            System.out.print(karte.getCardName() + " ");
-        }
-        System.out.println("\n");
-    }
-// methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen, mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
-public static String createColoredOutputForCard(String cardName) {
-    String colorCode;
-
-    String upperCardName = cardName.toUpperCase(); // absichern für Testung
-
-    // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, CC)
-    if (upperCardName.startsWith("R")) {
-        colorCode = "\u001B[30;41m"; // Schwarzer Text auf rotem Hintergrund
-    } else if (upperCardName.startsWith("G")) {
-        colorCode = "\u001B[30;42m"; // Schwarzer Text auf grünem Hintergrund
-    } else if (upperCardName.startsWith("B")) {
-        colorCode = "\u001B[30;44m"; // Schwarzer Text auf blauem Hintergrund
-    } else if (upperCardName.startsWith("Y")) {
-        colorCode = "\u001B[30;43m"; // Schwarzer Text auf gelbem Hintergrund
-    } else {
-        colorCode = "\u001B[30;45m"; // Schwarzer Text auf magentafarbenem Hintergrund (für +4, CC)
-    }
-
-    return colorCode + upperCardName + "\u001B[0m"; // Reset-Farbe
-}
-
     public void clearDeck() {
         cardsDeck.clear();
     }
@@ -151,5 +150,42 @@ public static String createColoredOutputForCard(String cardName) {
         System.out.println(count);
     }
 
+    public void printDequeCardDeck(Deque<Card> list) {
+        int count = 0;
+        for (Card card : list) {
+            System.out.println(card);
+            count++;
+        }
+        System.out.println(count);
+    }
+
+    //neu shuffle cardDeck, if discard is empty
+    void reshuffleDiscardPileIntoDrawPile(Deque<Card> discardPile) {
+
+        Card temp = discardPile.pop();
+
+        for (Card card : discardPile) {
+            if (card.getCardName().endsWith("CC")) {
+                card.setCardName("CC");
+            } else if (card.getCardName().endsWith("+4")) {
+                card.setCardName("+4");
+            }
+            cardsDeck.add(card);
+            System.out.println("RESCH CARD" + card);
+            discardPile.pop();
+        }
+
+//        for (Card card: discardPile) {
+//            cardsDeck.add(card);
+//            System.out.println("RESCH CARD" + card);
+//            discardPile.pop();
+//        }
+        Collections.shuffle(cardsDeck);
+        System.out.println("GESHUFFLED NEEEEEW");
+        printCardDeck();
+        discardPile.add(temp);
+    }
+
 }
+
 
