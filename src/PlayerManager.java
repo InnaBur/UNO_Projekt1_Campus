@@ -219,6 +219,59 @@ public class PlayerManager {
 
 }
 
+/*
+Rundenlogik ohne Modulo:
+
+public Player getNextPlayer() {
+    int index = playerList.indexOf(currentPlayer);
+
+    if (isClockwise) {
+        index = index + 1;
+        // Wenn über das Ende hinaus, auf 0 zurücksetzen
+        if (index >= playerList.size()) {
+            index = 0;
+        }
+    } else {
+        index = index - 1;
+        // Wenn vor Anfang, auf letztes Element springen
+        if (index < 0) {
+            index = playerList.size() - 1;
+        }
+    }
+
+    currentPlayer = playerList.get(index);
+    System.out.println("Current Player: " + currentPlayer);
+    return currentPlayer;
+}
+
+
+public void printPlayerOrder() {
+    System.out.println("\nPlayer order:");
+    String style = "\u001B[30;47m"; // Black text on light gray background
+    String reset = "\u001B[0m";
+
+    int index = playerList.indexOf(currentPlayer);
+
+    for (int i = 0; i < playerList.size(); i++) {
+        System.out.println(style + " [" + playerList.get(index).getName() + "] " + reset);
+
+        if (isClockwise) {
+            index = index + 1;
+            if (index >= playerList.size()) {
+                index = 0;
+            }
+        } else {
+            index = index - 1;
+            if (index < 0) {
+                index = playerList.size() - 1;
+            }
+        }
+    }
+
+    System.out.println("\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
+}
+
+*/
 
 
 
