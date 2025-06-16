@@ -80,8 +80,8 @@ public class CardsDeck {
             cardsDeck.add(card);
         }
         cardsDeck.add(new Card(color + "+2", true));  //+2 karten ziehen
-        cardsDeck.add(new Card(color + "<->", true));  //Reihenfolge wechseln
-        cardsDeck.add(new Card(color + "x", true));  //einen Umzug überspringen
+        cardsDeck.add(new Card(color + "D", true));  //Reihenfolge wechseln
+        cardsDeck.add(new Card(color + "X", true));  //einen Umzug überspringen
     }
 
     public void createZeroCard(char color) {
@@ -115,26 +115,30 @@ public class CardsDeck {
         System.out.println("\n");
     }
 // methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen, mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
-    public static String getColoredCard(String cardName) {
-        String colorCode;
+public static String createColoredOutputForCard(String cardName) {
+    String colorCode;
 
-        // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, fw)
-        if (cardName.startsWith("R")) {
-            colorCode = "\u001B[31m"; // Rot
-        } else if (cardName.startsWith("G")) {
-            colorCode = "\u001B[32m"; // Grün
-        } else if (cardName.startsWith("B")) {
-            colorCode = "\u001B[34m"; // Blau
-        } else if (cardName.startsWith("Y")) {
-            colorCode = "\u001B[33m"; // Gelb
-        } else {
-            colorCode = "\u001B[37m"; // Weiss für +4, fw
-        }
+    String upperCardName = cardName.toUpperCase(); // absichern für Testung
 
-        return colorCode + cardName  + "\u001B[0m"; // Reset am Ende der Farbe
+    // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, CC)
+    if (upperCardName.startsWith("R")) {
+        colorCode = "\u001B[30;41m"; // Schwarzer Text auf rotem Hintergrund
+    } else if (upperCardName.startsWith("G")) {
+        colorCode = "\u001B[30;42m"; // Schwarzer Text auf grünem Hintergrund
+    } else if (upperCardName.startsWith("B")) {
+        colorCode = "\u001B[30;44m"; // Schwarzer Text auf blauem Hintergrund
+    } else if (upperCardName.startsWith("Y")) {
+        colorCode = "\u001B[30;43m"; // Schwarzer Text auf gelbem Hintergrund
+    } else {
+        colorCode = "\u001B[30;45m"; // Schwarzer Text auf magentafarbenem Hintergrund (für +4, CC)
     }
 
+    return colorCode + upperCardName + "\u001B[0m"; // Reset-Farbe
+}
 
+    public void clearDeck() {
+        cardsDeck.clear();
+    }
 
 
     //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden
@@ -149,53 +153,3 @@ public class CardsDeck {
 
 }
 
-/* HashMap einbauen, um den Punktewert jeder Karte zu definieren, sodass du später einfach die Punkte der in der Hand verbleibenden Karten berechnen kannst. Dafür zeige ich dir:
-
- HashMap<String, Integer> mit Kartenwerten erstellt.
-
- HashMap für Kartenwerte
-Füge diese HashMap als private static final Variable zur Klasse CardsDeck hinzu:
-
-private static final java.util.HashMap<String, Integer> CARD_POINTS = new java.util.HashMap<>();
-
-static {
-    // Nummernkarten:
-    for (char color : COLORS) {
-        for (int i = 0; i <= 9; i++) {
-            CARD_POINTS.put("" + color + i, i);
-        }
-        for (int i = 1; i <= 9; i++) {
-            CARD_POINTS.put("" + color + i, i); // Jede Nummer doppelt, aber HashMap überschreibt
-        }
-
-        // Spezialkarten mit 20 Punkten
-        CARD_POINTS.put(color + "+2", 20);   // Zieh Zwei
-        CARD_POINTS.put(color + "<->", 20);  // Retour
-        CARD_POINTS.put(color + "x", 20);    // Aussetzen
-    }
-
-    // Schwarze Spezialkarten mit 50 Punkten
-    CARD_POINTS.put("+4", 50);  // Zieh Vier Farbenwahl
-    CARD_POINTS.put("fw", 50);  // Farbenwahl
-}
-
- Methode zur Berechnung der verbleibenden Punkte
-
-// Berechnet die Punkte aller Karten, die ein Spieler noch auf der Hand hat
-public int calculatePoints(ArrayList<Card> hand) {
-    int totalPoints = 0;
-
-    for (Card card : hand) {
-        String name = card.getCardName();
-        totalPoints += CARD_POINTS.getOrDefault(name, 0);  // Falls Karte unbekannt ist, zähle 0
-    }
-
-    return totalPoints;
-}
-
-
-Beispielverwendung:
-ein Spieler hat seine Kartenhand player.getCardsInHand():
-
-int punkte = cardsDeck.calculatePoints(player.getCardsInHand());
-System.out.println("Verbleibende Punkte von " + player.getName() + ": " + punkte);*/
