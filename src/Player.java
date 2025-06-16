@@ -4,9 +4,7 @@ public class Player {
 
     private String name;
     private boolean isBot;
-
-    //punkte!!
-    private int points; // <--- stores accumulated points
+    private int points;
 
     private ArrayList<Card> cardsInHand;
 
@@ -14,7 +12,7 @@ public class Player {
         this.name = name.toUpperCase(); // Spielername wird beim Erstellen großgeschrieben
         this.isBot = isBot;
         this.cardsInHand = new ArrayList<>();
-        this.points =0;
+        this.points = 0;
     }
 
     public Player() {
@@ -40,20 +38,20 @@ public class Player {
         return cardsInHand;
     }
 
+    public void setCardsInHand(ArrayList<Card> cardsInHand) {
+        this.cardsInHand = cardsInHand;
+    }
+
     public Card addCard(Card card) {
         cardsInHand.add(card);
         return card;
     }
 
-    public void setCardsInHand(ArrayList<Card> cardsInHand) {
-        this.cardsInHand = cardsInHand;
-    }
-
     public void showHand() {
-       // System.out.print(name + ", Your cards are: ");
+        // System.out.print(name + ", Your cards are: ");
 // Schwarzer Text (30), Cyan Hintergrund (46)
         System.out.print("\u001B[30;46m[" + name + "]\u001B[0m, Your cards are: ");
-        for (Card x: cardsInHand) {
+        for (Card x : cardsInHand) {
             String colorCardOutput = CardsDeck.createColoredOutputForCard(x.getCardName());  // Farbige Darstellung
             System.out.print("[" + colorCardOutput + "] ");
         }
@@ -90,6 +88,7 @@ public class Player {
     public void setPoints(int points) {
         this.points = points;
     }
+
     //If your game loop does not recreate the Player objects each round, and instead uses the same Player instances, then the added points will stay with the player.
     public void addPoints(int p) {
         this.points += p;
