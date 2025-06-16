@@ -151,6 +151,7 @@ public class GameController {
                     System.out.println(currentPlayer.getName() + " said UNO!");
                 case 5:
                     System.out.println("Suggestion logic not implemented.");
+                    // zwei strafkarten, und noch immer am spielzug
                 case 6:
                     Instructions.printGameInstructions();
                     break;
@@ -200,8 +201,7 @@ public class GameController {
             playerManager.switchDirection();
 
 
-
-            System.out.println(playerManager.getCurrentPlayer().getName()+" made a \u001B[30;41mDirection change\u001B[0m to " + (playerManager.isClockwise() ? "Clockwise" : "Counter-clockwise"));
+            System.out.println(playerManager.getCurrentPlayer().getName() + " made a \u001B[30;41mDirection change\u001B[0m to " + (playerManager.isClockwise() ? "Clockwise" : "Counter-clockwise"));
             // Spieler neuer Nachbar in der neuen Richtung ist dran
             currentPlayer = playerManager.getNextPlayer();
             playerManager.printPlayerOrder();
@@ -320,7 +320,7 @@ public class GameController {
         // Karte auf den Ablagestapel legen
         discardPile.push(cardsDeck.getTopCardAndRemoveFromList());
         // muss auchhier sein? TESTING
-        handleFirstCardEffect(playerManager,cardsDeck,discardPile);
+        handleFirstCardEffect(playerManager, cardsDeck, discardPile);
         //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
         playerManager.setClockwise(false);
 
@@ -328,7 +328,7 @@ public class GameController {
         playerManager.setSequenceAndFirstPlayer(); // Methode spieler setzen
     }
 
-    public void handleFirstCardEffect(PlayerManager playerManager, CardsDeck cardsDeck, Deque<Card> discardPile){
+    public void handleFirstCardEffect(PlayerManager playerManager, CardsDeck cardsDeck, Deque<Card> discardPile) {
 
         // Check: if at start the top card is a direction change card (contains 'D')
         if (discardPile.peek().getCardName().toUpperCase().contains("D")) {
@@ -343,14 +343,14 @@ public class GameController {
             current.addCard(cardsDeck.getTopCardAndRemoveFromList());
             current.addCard(cardsDeck.getTopCardAndRemoveFromList());
             System.out.println(currentPlayer.getName() + " \u001B[30;41mDraws 2 cards!\u001B[0m");
-           currentPlayer = playerManager.getNextPlayer();
+            currentPlayer = playerManager.getNextPlayer();
 
         } else if (discardPile.peek().getCardName().toUpperCase().contains("X")) {
             System.out.println("\u001B[30;46m[" + playerManager.getCurrentPlayer().getName() + "]\u001B[0m lost her/his turn:  \u001B[30;45mSkipped!\u001B[0m");
             currentPlayer = playerManager.getNextPlayer();
             System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "]\u001B[0m, it's your turn!");
 
-        }else if (discardPile.peek().getCardName().toUpperCase().contains("CC")) {
+        } else if (discardPile.peek().getCardName().toUpperCase().contains("CC")) {
             // Let the player choose a color
             String newColor = askForColor(); // Returns "R", "G", "B", or "Y"
 
@@ -361,8 +361,9 @@ public class GameController {
 
             System.out.println(currentPlayer.getName() + " \u001B[30;45m! ! ! Color change ! ! !\u001B[0m to: " + CardsDeck.createColoredOutputForCard(newCardName));
             currentPlayer = playerManager.getNextPlayer();
-    }
+        }
 
+    }
 }
 
 

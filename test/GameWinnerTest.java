@@ -16,9 +16,9 @@ public class GameWinnerTest {
         players = new ArrayList<>();
 
         // Create 3 players
-        Player p1 = new Player("Alice", true);
-        Player p2 = new Player("Bob", true);
-        Player p3 = new Player("Charlie", true);
+        Player p1 = new Player("ALICE", true);
+        Player p2 = new Player("BOB", true);
+        Player p3 = new Player("CHARLIE", true);
 
         // Assign points
         p1.addPoints(320);
@@ -35,7 +35,7 @@ public class GameWinnerTest {
         Player winner = scoreCalculator.checkForGameWinner(players);
 
         assertNotNull("There should be a winner", winner);
-        assertEquals("Bob", winner.getName());
+        assertEquals("BOB", winner.getName());
         assertTrue("Winner should have 500+ points", winner.getPoints() >= 500);
     }
 
