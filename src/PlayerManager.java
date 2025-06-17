@@ -127,10 +127,9 @@ public class PlayerManager {
         return currentPlayer;
     }
 
-
+    // Wenn isClockwise == true, dann steht im Text "Clock-wise", sonst == false "Counter-clock-wise
+    // System.out.println("\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
     public void printPlayerOrderInColour() {
-        // Wenn isClockwise == true, dann steht im Text "Clock-wise", sonst == false "Counter-clock-wise
-        // System.out.println("\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
         System.out.println("\nPlayer order:");
         String style = "\u001B[30;47m"; // Black text on light gray background
         String reset = "\u001B[0m";

@@ -6,6 +6,5 @@ public class Main {
         System.out.println("Game starts");
         Instructions.printGameInstructions();
         new GameController().run();
-
     }
 }
