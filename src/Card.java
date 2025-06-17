@@ -24,6 +24,28 @@ public class Card {
         isSpecial = special;
     }
 
+
+    //eine Methode, um die Karten zu vergleichen bzw. in Test eine bestimmte Karte im Kartendeck suchen
+   // Mit equals wird geprüft, ob zwei Objekte inhaltlich gleich sind (nicht nur, ob es dieselbe Referenz ist).
+
+    @Override
+    public boolean equals(Object o) {
+        // 1. Wenn die beiden Objekte dieselbe Referenz haben, sind sie gleich
+        if (this == o) return true;
+
+        // 2. Wenn das andere Objekt null ist oder nicht vom selben Typ, sind sie ungleich
+        if (o == null || getClass() != o.getClass()) return false;
+
+        // 3. Das andere Objekt wird in ein Card-Objekt umgewandelt
+        Card card = (Card) o;
+
+        // 4. Vergleiche die beiden wichtigen Felder: isSpecial und cardName
+        //Vergleicht das Attribut isSpecial und auch cardName der aktuellen Karte (this) mit dem Attribut isSpecial der anderen Karte (card).
+        return isSpecial == card.isSpecial && cardName.equals(card.cardName);
+    }
+
+
+
     @Override
     public String toString() {
         return "Card{" +

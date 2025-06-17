@@ -16,9 +16,17 @@ public class testPoints {
         // Vor jedem Test
         scoreCalculator = new ScoreCalculator();
         hand = new ArrayList<>();
-        hand.add(new Card("r5", false));    // Rot 5 -> 5 Punkte
-        hand.add(new Card("G+2", true));    // Grün +2 -> 20 Punkte
-        hand.add(new Card("+4", true));     // Wild Draw Four -> 50 Punkte
+        //Test Case 1
+         //hand.add(new Card("r5", false));    // Rot 5 -> 5 Punkte
+        //hand.add(new Card("G+2", true));    // Grün +2 -> 20 Punkte
+        //hand.add(new Card("+4", true));     // Wild Draw Four -> 50 Punkte
+
+        //Test Case 2
+        hand.add(new Card("y9", false));    //  -> 9 Punkte
+        hand.add(new Card("gD", true));    // Change Direction -> 20 Punkte
+        hand.add(new Card("BX", true));     // Skip -> 20 Punkte
+        hand.add(new Card("CC", true));     // Change Color-> 50 Punkte
+        //Expected:99 points
     }
 
     @Test
@@ -26,8 +34,16 @@ public class testPoints {
         // Berechne Punkte für die Hand
         int points = scoreCalculator.calculatePoints(hand);
 
-        // Erwartete Punkte: 5 + 20 + 50 = 75
-        assertEquals(75, points, "Die Punktzahl sollte 75 sein");
+        // Test Case 1: Erwartete Punkte: 5 + 20 + 50 = 75
+       // assertEquals(75, points, "Points shoud be 75");
+
+        // Test Case 2: Erwartete Punkte: 9 + 20 + 20+  50 = 99
+        assertEquals(99, points, "Points shoud be 99");
+
+
+        System.out.println("Expexted points:" + points);
+        System.out.println("Actual points:" + points);
+
     }
 
     @After

@@ -9,18 +9,17 @@ public class cardDeckTester {
 
 
     ArrayList<Card> cards = new ArrayList<>();
-
-
     @Test
     public void createDeckTest() {
         CardsDeck cardsDeck = new CardsDeck(cards);
-
-
         cardsDeck.createCardDeck();
         String cardName = cardsDeck.getCardsDeck().get(cards.size()-1).getCardName();
         String result = "cc";
 
         // Case-insensitive Vergleich
         Assert.assertEquals(result.toLowerCase(), cardName.toLowerCase());
+        System.out.println("Erwartet:" + result.toLowerCase());
+        System.out.println("Fakt:" + cardName.toLowerCase());
+
     }
 }
