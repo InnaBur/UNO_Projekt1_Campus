@@ -22,7 +22,6 @@ public class PrintManager {
         System.out.println("Invalid input " + s);
     }
 
-
     public static void colorChoice(String name) {
         System.out.println(name + ", choose the next color: " +
                 "\u001B[30;41m[R]\u001B[0m Red, " +
@@ -38,5 +37,20 @@ public class PrintManager {
     public static void printChangeColorMessage(String playersName,  String newCardName) {
         System.out.println(playersName + " \u001B[30;45m! ! ! Color change ! ! !\u001B[0m to: "
                 + CardsDeck.createColoredOutputForCard(newCardName));
+    }
+
+    public static void directionChangeMessage(String name, boolean clockwise) {
+        System.out.println(name
+                + " made a \u001B[30;41mDirection change\u001B[0m to "
+                + (clockwise ? "Clockwise" : "Counter-clockwise"));
+    }
+
+    public static void twoCardsMessage(String name) {
+        System.out.println(name + " \u001B[30;41mDraws 2 cards!\u001B[0m");
+    }
+
+    public static void skippMessage(String name) {
+        System.out.println("\u001B[30;46m[" + name
+                + "]\u001B[0m lost her/his turn: \u001B[30;45mSkipped!\u001B[0m");
     }
 }

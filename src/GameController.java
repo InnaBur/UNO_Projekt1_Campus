@@ -68,6 +68,24 @@ public class GameController {
         playerManager.setSequenceAndFirstPlayer();
     }
 
+    public void startNewRound(CardsDeck cardsDeck) {
+
+        playerManager.setClockwise(false);     //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
+
+        clearPlayersHand();
+        discardPile.clear();
+
+//        playerManager.getCurrentPlayer();
+
+        cardsDeck.dealCards(playerManager.getPlayerList());
+        Collections.shuffle(playerManager.getPlayerList());
+        playerManager.printPlayerOrderInColour();
+        discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList(discardPile));       //first card from the cards deck is a first card in drawPile
+
+        handleFirstCardEffect(cardsDeck);
+    }
+
+
     private void playCard(CardsDeck cardsDeck) {
 
         System.out.println("Specify the card to play (e.g., r5, g+2, Bd, Gx):");
@@ -96,7 +114,7 @@ public class GameController {
 
     // Handle scoring and check if game ends
     private void isGameWinOrNewRound() {
-        boolean isGameWin = handleRoundEnd(playerManager.getPlayerList(), currentPlayer, scoreCalculator);
+        boolean isGameWin = handleRoundEnd(playerManager.getPlayerList());
         if (isGameWin) {
             //!!!!! Daten von DB
             isExit = true;
@@ -205,7 +223,7 @@ public class GameController {
 
         // Spieler A spielt Richtungswechselkarte. Richtung ändern
         if (cardName.contains("D")) {
-           directionChange();
+            directionChange();
 
         } else if (cardName.contains("X")) {
             skippPlayer();
@@ -221,25 +239,20 @@ public class GameController {
             // Update the card name to include the chosen color,
             playedCard.setCardName(newColor + "+4");
 
-
             //IF CHECK BLUFF implementieren
             fourCardsToNextPlayer(cardsDeck);
             currentPlayer = playerManager.getNextPlayer();
-
         }
         // When the player plays "CC", ask for the color and update the card name
         else if (cardName.equals("CC")) {
-
             changeColour(playedCard);
-            // Let the player choose a color
-
 
         } else {
             currentPlayer = playerManager.getNextPlayer();  // normale Karte
         }
-
     }
 
+    // Let the player choose a color
     private void changeColour(Card playedCard) {
         String newColor = askForColor(); // Returns "R", "G", "B", or "Y"
 
@@ -267,19 +280,19 @@ public class GameController {
         Player next = playerManager.getNextPlayer();
         next.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
         next.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-        System.out.println(next.getName() + " \u001B[30;41mDraws 2 cards!\u001B[0m");
+        PrintManager.twoCardsMessage(next.getName());
         currentPlayer = playerManager.getNextPlayer();
     }
 
     private void skippPlayer() {
-        System.out.println("\u001B[30;46m[" + playerManager.getNextPlayer().getName() + "]\u001B[0m lost her/his turn: \u001B[30;45mSkipped!\u001B[0m");
+        PrintManager.skippMessage(playerManager.getNextPlayer().getName());
         currentPlayer = playerManager.getNextPlayer();
     }
 
     private void directionChange() {
         playerManager.switchDirection();
-        System.out.println(playerManager.getCurrentPlayer().getName() + " made a \u001B[30;41mDirection change\u001B[0m to "
-                + (playerManager.isClockwise() ? "Clockwise" : "Counter-clockwise"));
+        PrintManager.directionChangeMessage(playerManager.getCurrentPlayer().getName(), playerManager.isClockwise());
+
         // Spieler neuer Nachbar in der neuen Richtung ist dran
         currentPlayer = playerManager.getNextPlayer();
         playerManager.printPlayerOrderInColour();
@@ -304,7 +317,7 @@ public class GameController {
     }
 
     // Called when a round ends (player has no cards)
-    public boolean handleRoundEnd(ArrayList<Player> players, Player currentPlayer, ScoreCalculator scoreCalculator) {
+    public boolean handleRoundEnd(ArrayList<Player> players) {
         // 1. Award points to the current player (winner of the round)
         int awardedPoints = scoreCalculator.awardPointsToWinner(players, currentPlayer);
         System.out.println(currentPlayer.getName() + " gets " + awardedPoints + " points!");
@@ -315,39 +328,13 @@ public class GameController {
         // 3. Check if someone won the entire game (500+ points)
         Player gameWinner = scoreCalculator.checkForGameWinner(players);
         if (gameWinner != null) {
-            System.out.println("WoW! " + gameWinner.getName() + " has won the game with " + gameWinner.getPoints() + " points!");
+            System.out.println("WoW! " + gameWinner.getName() + " has won the game with "
+                    + gameWinner.getPoints() + " points!");
             return true;  // signal game over
         } else {
             System.out.println("Next round will start...");
-
             return false; // game continues
         }
-    }
-
-
-    public void startNewRound(CardsDeck cardsDeck) {
-
-        // playerManager.setClockwise(false);     //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
-
-        clearPlayersHand();
-        discardPile.clear();
-
-
-        playerManager.getCurrentPlayer();
-
-
-        cardsDeck.dealCards(playerManager.getPlayerList());
-        Collections.shuffle(playerManager.getPlayerList());
-//        playerManager.setSequenceAndFirstPlayer();
-        playerManager.printPlayerOrderInColour();
-        discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList(discardPile));       //first card from the cards deck is a first card in drawPile
-
-        // playerManager.setSequenceAndFirstPlayer();
-        //currentPlayer = playerManager.getCurrentPlayer();
-
-        handleFirstCardEffect(cardsDeck);
-//playerManager.getNextPlayer();
-
     }
 
     private void clearPlayersHand() {
@@ -359,40 +346,38 @@ public class GameController {
     public void handleFirstCardEffect(CardsDeck cardsDeck) {
 
         // Check: if at start the top card is a direction change card (contains 'D')
-        if (discardPile.peek().getCardName().toUpperCase().contains("D")) {
-            playerManager.switchDirection();
-            System.out.println("\u001B[30;41mDirection changed!\u001B[0m Now: " + (playerManager.isClockwise() ? "Clockwise" : "Counter-clockwise"));
-            currentPlayer = playerManager.getNextPlayer();
-            playerManager.printPlayerOrderInColour();
+        if (isTopCardSpecial("D")) {
+            directionChange();
 
+        } else if (isTopCardSpecial("+2")) {
+            firstCardDrawTwo(cardsDeck);
 
-        } else if (discardPile.peek().getCardName().toUpperCase().contains("+2")) {
-            Player current = playerManager.getCurrentPlayer();
-            current.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-            current.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-            System.out.println(currentPlayer.getName() + " \u001B[30;41mDraws 2 cards!\u001B[0m");
-            currentPlayer = playerManager.getNextPlayer();
+        } else if (isTopCardSpecial("X")) {
+            firstCardSkipp();
 
-        } else if (discardPile.peek().getCardName().toUpperCase().contains("X")) {
-            System.out.println("\u001B[30;46m[" + playerManager.getCurrentPlayer().getName() + "]\u001B[0m lost her/his turn:  \u001B[30;45mSkipped!\u001B[0m");
-            currentPlayer = playerManager.getNextPlayer();
-            System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "]\u001B[0m, it's your turn!");
-
-        } else if (discardPile.peek().getCardName().toUpperCase().contains("CC")) {
-            // Let the player choose a color
-            String newColor = askForColor(); // Returns "R", "G", "B", or "Y"
-
-            // Update the card name to include the chosen color
-            discardPile.peek().setCardName(newColor + "CC");
-            String newCardName = discardPile.peek().getCardName();
-            CardsDeck.createColoredOutputForCard(newCardName);
-
-            System.out.println(currentPlayer.getName() + " \u001B[30;45m! ! ! Color change ! ! !\u001B[0m to: " + CardsDeck.createColoredOutputForCard(newCardName));
-            currentPlayer = playerManager.getNextPlayer();
+        } else if (isTopCardSpecial("CC")) {
+            assert discardPile.peek() != null;
+            changeColour(discardPile.peek());
         }
-
     }
 
+    private void firstCardSkipp() {
+        PrintManager.skippMessage(playerManager.getCurrentPlayer().getName());
+        currentPlayer = playerManager.getNextPlayer();
+        //   System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "]\u001B[0m, it's your turn!");
+    }
+
+    private void firstCardDrawTwo(CardsDeck cardsDeck) {
+        Player current = playerManager.getCurrentPlayer();
+        current.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+        current.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+        PrintManager.twoCardsMessage(currentPlayer.getName());
+        currentPlayer = playerManager.getNextPlayer();
+    }
+
+    private boolean isTopCardSpecial(String s) {
+        return discardPile.peek().getCardName().toUpperCase().contains(s);
+    }
 
 }
 
