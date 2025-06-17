@@ -4,7 +4,7 @@ import java.util.Deque;
 
 public class CardsDeck {
 
-    static final int NUMBER_OF_CARDS_IN_HAND = 2;
+    static final int NUMBER_OF_CARDS_IN_HAND = 7;
     //array für Farben-Buchstaben
     static final char[] COLORS = {'R', 'B', 'Y', 'G'};
     static final int NUMBER_OF_PLAYERS = 4;
@@ -23,7 +23,7 @@ public class CardsDeck {
     }
 
     // methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen,
-// mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
+    // mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
     public static String createColoredOutputForCard(String cardName) {
         String colorCode;
 
@@ -150,6 +150,7 @@ public class CardsDeck {
         System.out.println(count);
     }
 
+    //Help method for tests
     public void printDequeCardDeck(Deque<Card> list) {
         int count = 0;
         for (Card card : list) {
@@ -171,18 +172,10 @@ public class CardsDeck {
                 card.setCardName("+4");
             }
             cardsDeck.add(card);
-            System.out.println("RESCH CARD" + card);
             discardPile.pop();
         }
 
-//        for (Card card: discardPile) {
-//            cardsDeck.add(card);
-//            System.out.println("RESCH CARD" + card);
-//            discardPile.pop();
-//        }
         Collections.shuffle(cardsDeck);
-        System.out.println("GESHUFFLED NEEEEEW");
-        printCardDeck();
         discardPile.add(temp);
     }
 
