@@ -57,13 +57,7 @@ public class CardsDeck {
     // and be removed from the card deck
     public Card getTopCardAndRemoveFromList(Deque<Card> discardPile) {
         if (cardsDeck.isEmpty()) {
-            System.out.println("DISKARD BEFOR RESHUFFLE!!!!!! ");
-            printDequeCardDeck(discardPile);
             reshuffleDiscardPileIntoDrawPile(discardPile);
-            System.out.println("RESHUFFLE!!!!!! ");
-            printCardDeck();
-//
-//            throw new IllegalStateException("Deck is empty, no cards to draw!");
         }
 
         Card top = cardsDeck.get(0);

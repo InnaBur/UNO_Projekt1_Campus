@@ -5,13 +5,12 @@ public class GameController {
     private final PlayerManager playerManager = new PlayerManager();
     // menschliche Spieler
     private final Deque<Card> discardPile = new ArrayDeque<>();
+    private final ScoreCalculator scoreCalculator = new ScoreCalculator();
     Scanner scanner = new Scanner(System.in);
     // aktueller Spieler
     private Player currentPlayer;
     //die Bedingung für das Beenden des Spiels.
     private boolean isExit = false;
-    private final ScoreCalculator scoreCalculator = new ScoreCalculator();
-
 
     public void run() {
         CardsDeck cardsDeck = new CardsDeck();
@@ -36,106 +35,24 @@ public class GameController {
         switch (userChoice()) {
 
             case 1:
-                String userInput;
-
-//                    if (cardsDeck.getCardsDeck().isEmpty()) {
-//                        System.out.println("DISKARD BEFOR RESHUFFLE!!!!!! ");
-//                        cardsDeck.printDequeCardDeck(discardPile);
-//                        reshuffleDiscardPileIntoDrawPile();
-//                        System.out.println("RESHUFFLE!!!!!! ");
-//                        cardsDeck.printCardDeck();
-//                    }
-
-                //Kann ein Spieler keine
-                //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
-                Card currentUsersCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-                System.out.println("You drew: " + currentUsersCard);
-                cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile)); // Muss hier nochmal rmeove sein?, wenn schon oben in methode karte entfernt wird????
-
-                System.out.println("Your new Card from the draw pile: " + currentUsersCard);
-
-                currentPlayer.showHand();
-
-                //Diese Karte kann Spieler
-                //sofort wieder ausspielen, sofern diese passt.
-                if (currentUsersCard.isPlayableOn(discardPile.peek())) {
-                    do {
-                        System.out.println("Do you want to PLAY this card? Press 'Y' for yes or 'N' for no");
-                        userInput = scanner.next();
-                    }
-                    while (!userInput.equalsIgnoreCase("n") && !userInput.equalsIgnoreCase("y"));
-
-                    //If the player wants to play a card, they place it from their hand onto the table;
-                    // if not, the next player in turn becomes the currentPlayer.
-                    if (userInput.equalsIgnoreCase("y")) {
-                        discardPile.addFirst(currentUsersCard);
-                        currentPlayer.removeCard(currentUsersCard);
-                        handlePlayedCard(currentUsersCard, cardsDeck);
-                    } else {
-                        currentPlayer = playerManager.getNextPlayer();
-                    }
-                } else {
-                    System.out.println("This card cannot be played now.");
-                    currentPlayer = playerManager.getNextPlayer();
-                }
+                drawCard(cardsDeck);
                 break;
 
-            case 2: {
-                cardsDeck.printDequeCardDeck(discardPile);
-                System.out.println("Specify the card to play (e.g., r5, g+2, Bd, Gx):");
-                String inputCardName = scanner.next().toUpperCase();
-                Card selectedCard = currentPlayer.getCardByName(inputCardName);
-
-                // Check if selected card exists in player's hand and is playable on top of discard pile
-                if (isCardExistAndPlayable(selectedCard)) {
-                    // Play the card
-                    currentPlayer.removeCard(selectedCard);
-                    discardPile.push(selectedCard);
-
-                    // Check if player has emptied their hand → they win the round
-                    if (currentPlayer.getCardsInHand().isEmpty()) {
-                        System.out.println(currentPlayer.getName() + " has won the round!");
-
-                        // Handle scoring and check if game ends
-                        boolean isGameWin = handleRoundEnd(playerManager.getPlayerList(), currentPlayer, scoreCalculator);
-                        if (isGameWin) {
-                            // ask for new game????
-                            //isExit = true;
-                        } else {
-                            System.out.println("Starting next round...");
-                            cardsDeck = new CardsDeck();
-                            System.out.println("!!!!!!!!!!!NEUE RUNDE ");
-                            cardsDeck.printCardDeck();
-                            startNewRound(cardsDeck);
-                            cardsDeck.printDequeCardDeck(discardPile);
-                            System.out.println("!!!!!!!!!!!22222 NEUE RUNDE ");
-                            cardsDeck.printCardDeck();
-                        }
-                    } else {
-
-                        handlePlayedCard(selectedCard, cardsDeck);
-
-                    }
-                } else {
-                    // Invalid or unplayable card is penalty
-                    System.out.println("Invalid card or card cannot be played. You receive 2 penalty cards.");
-                    currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-                    currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-
-                    // next player
-                    currentPlayer = playerManager.getNextPlayer();
-                }
-            }
-            break;
-
+            case 2:
+                playCard(cardsDeck);
+                break;
 
             case 3:
                 System.out.println("Bluff check logic not implemented yet.");
+                break;
             case 4:
                 System.out.println(currentPlayer.getName() + " said UNO!");
+                break;
             case 5:
-                System.out.println("Suggestion logic not implemented.");
+                System.out.println("Suggestions isn't allowed. Draw two cards!");
                 // zwei strafkarten, und noch immer am spielzug
+                drawTwoCardsPenalty(cardsDeck);
+                break;
             case 6:
                 Instructions.printGameInstructions();
                 break;
@@ -150,6 +67,109 @@ public class GameController {
                 //saveYoDatenbank;
                 isExit = true;
         }
+    }
+
+    private void playCard(CardsDeck cardsDeck) {
+
+        System.out.println("Specify the card to play (e.g., r5, g+2, Bd, Gx):");
+        String inputCardName = scanner.next().toUpperCase();
+        Card selectedCard = currentPlayer.getCardByName(inputCardName);
+
+        // Check if selected card exists in player's hand and is playable on top of discard pile
+        if (isCardExistAndPlayable(selectedCard)) {
+            currentPlayer.removeCard(selectedCard);
+            discardPile.push(selectedCard);
+
+            // Check if player has emptied their hand → they win the round
+            if (isPlayersHandEmpty()) {
+                System.out.println(currentPlayer.getName() + " has won the round!");
+                isGameWinOrNewRound();
+            } else {
+                handlePlayedCard(selectedCard, cardsDeck);
+            }
+        } else {
+            // Invalid or unplayable card is penalty
+            invalidCardFromUserAndPenalty(cardsDeck);
+
+        }
+
+    }
+
+    // Handle scoring and check if game ends
+    private void isGameWinOrNewRound() {
+        boolean isGameWin = handleRoundEnd(playerManager.getPlayerList(), currentPlayer, scoreCalculator);
+        if (isGameWin) {
+            //!!!!! Daten von DB
+            isExit = true;
+        } else {
+            CardsDeck  cardsDeck = new CardsDeck();
+            startNewRound(cardsDeck);
+        }
+    }
+
+    private void invalidCardFromUserAndPenalty(CardsDeck cardsDeck) {
+        System.out.println("Invalid card or card cannot be played. You receive 2 penalty cards.");
+        drawTwoCardsPenalty(cardsDeck);
+        // next player
+        currentPlayer = playerManager.getNextPlayer();
+    }
+
+    private void drawTwoCardsPenalty(CardsDeck cardsDeck) {
+        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+    }
+
+    private boolean isPlayersHandEmpty() {
+        return currentPlayer.getCardsInHand().isEmpty();
+    }
+
+    //Kann ein Spieler keine
+    //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
+    private void drawCard(CardsDeck cardsDeck) {
+
+
+        Card drawnCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+        System.out.println("You drew: " + drawnCard);
+        cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile)); // Muss hier nochmal rmeove sein?, wenn schon oben in methode karte entfernt wird????
+
+        System.out.println("Your new Card from the draw pile: " + drawnCard);
+        currentPlayer.showHand();
+
+        //Diese Karte kann Spieler
+        //sofort wieder ausspielen, sofern diese passt.
+        optionDirectPlayableOnTopCard(drawnCard, cardsDeck);
+    }
+
+    private void optionDirectPlayableOnTopCard(Card drawnCard, CardsDeck cardsDeck) {
+
+        assert discardPile.peek() != null;
+        if (drawnCard.isPlayableOn(discardPile.peek())) {
+            String userInput = optionUserInputYesOrNo();
+
+
+            //If the player wants to play a card, they place it from their hand onto the table;
+            // if not, the next player in turn becomes the currentPlayer.
+            if (userInput.equalsIgnoreCase("y")) {
+                discardPile.addFirst(drawnCard);
+                currentPlayer.removeCard(drawnCard);
+                handlePlayedCard(drawnCard, cardsDeck);
+            } else {
+                currentPlayer = playerManager.getNextPlayer();
+            }
+        } else {
+            System.out.println("This card cannot be played now.");
+            currentPlayer = playerManager.getNextPlayer();
+        }
+    }
+
+    private String optionUserInputYesOrNo() {
+        String userInput;
+        do {
+            System.out.println("Do you want to PLAY this card? Press 'Y' for yes or 'N' for no");
+            userInput = scanner.next();
+        }
+        while (!userInput.equalsIgnoreCase("n") && !userInput.equalsIgnoreCase("y"));
+        return userInput;
     }
 
     private int userChoice() {
@@ -315,22 +335,22 @@ public class GameController {
 
     public void startNewRound(CardsDeck cardsDeck) {
 
-       // playerManager.setClockwise(false);     //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
+        // playerManager.setClockwise(false);     //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
 
         clearPlayersHand();
         discardPile.clear();
 
 
-//       playerManager.getCurrentPlayer();
+       playerManager.getCurrentPlayer();
 
 
         cardsDeck.dealCards(playerManager.getPlayerList());
         Collections.shuffle(playerManager.getPlayerList());
-        playerManager.setSequenceAndFirstPlayer();
+//        playerManager.setSequenceAndFirstPlayer();
         playerManager.printPlayerOrderInColour();
         discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList(discardPile));       //first card from the cards deck is a first card in drawPile
 
-       // playerManager.setSequenceAndFirstPlayer();
+        // playerManager.setSequenceAndFirstPlayer();
         //currentPlayer = playerManager.getCurrentPlayer();
 
         handleFirstCardEffect(cardsDeck);
@@ -380,7 +400,6 @@ public class GameController {
         }
 
     }
-
 
 
 }
