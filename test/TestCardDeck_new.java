@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class TestCardDeck_new {
 
 
-    //Andere Test auslagern, ist zu lang hier!
+   //Test des Default-Konstruktors
     @Test
     public void testDefaultConstructor() {
         CardsDeck deck = new CardsDeck(); //Neue Instanze der Klasse CardsDeck
@@ -25,7 +25,7 @@ public class TestCardDeck_new {
         int expectedCardCount = 108; // UNO Standard
         assertEquals(expectedCardCount, deck.getCardsDeck().size());
         System.out.println("Excpected Cards Count: "  + expectedCardCount);
-        System.out.println("Facts Cards Count: "  + deck.getCardsDeck().size());
+        System.out.println("Fact Cards Count: "  + deck.getCardsDeck().size());
 
 
         //3. Sinnvolle UNO-Karten zum Überprüfen, ob sie im Kartendeck sind:
@@ -40,10 +40,12 @@ public class TestCardDeck_new {
     }
 
     //TODO:
-    //Eventuell nicht nötig, weil Konstruktor
+    //Eventuell nicht nötig, weil Konstruktor noch nicht benutzt ist
      // public CardsDeck(ArrayList<Card> cardsDeck) {
      //        this.cardsDeck = cardsDeck;
-     //    } noch nicht benutzt ist
+     //    }
+
+     //Test Konstruktor mit Parameters
 
      @Test
      public void testConstructorWithParameter() {
@@ -62,11 +64,14 @@ public class TestCardDeck_new {
 
          // Schritt 3: Überprüfung, ob die Kartenliste korrekt übernommen wurde
          // Erwartet wird, dass das interne cardsDeck exakt der übergebenen testList entspricht
+
          assertEquals("Die Kartenliste im Deck sollte gleich der übergebenen Liste sein.", testList, deck.getCardsDeck());
          System.out.println("Übergebene Liste wurde übernommen.");
 
          // Schritt 4: Test auf Referenzübernahme
          // Ändere die ursprüngliche Liste und prüfe, ob sich das auf das Deck auswirkt
+         //Das funktioniert nur, wenn equals() korrekt überschrieben ist – denn contains() verwendet intern equals() zum Vergleich.
+         //deswegen in der Klasse Card.java wurde die Methode equals überschrieben
          testList.add(new Card("3", false));
          System.out.println("Karte '3' zur ursprünglichen Liste hinzugefügt.");
          System.out.println("Deck enthält jetzt: " + deck.getCardsDeck());

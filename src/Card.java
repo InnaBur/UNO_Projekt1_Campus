@@ -1,12 +1,17 @@
 public class Card {
 
     private String cardName;
+    // Gibt an, ob es sich bei dieser Karte um eine Spezialkarte handelt (+4, Farbwahl etc.)
+    // Spezialkarten dürfen unabhängig von Farbe oder Zahl gespielt werden
     private boolean isSpecial;
 
+    //Konstruktor
     public Card(String cardName, boolean isSpecial) {
         this.cardName = cardName.toUpperCase();
         this.isSpecial = isSpecial;
     }
+
+    //Getters und Setters
 
     public String getCardName() {
         return cardName;
@@ -44,8 +49,7 @@ public class Card {
         return isSpecial == card.isSpecial && cardName.equals(card.cardName);
     }
 
-
-
+    //zum Debuggen oder Anzeigen
     @Override
     public String toString() {
         return "Card{" +
@@ -56,27 +60,37 @@ public class Card {
 
     public String karteToString() {
         return cardName;
-    }
+    } //TODO: Frage: ist irgendwo verwendet?
 
+    /**
+     * Überprüft, ob diese Karte auf die  oberste Karte gespielt werden darf.
+     *
+     * Regeln:
+     * - Spezialkarten "CC" (Color Change) und "+4" sind immer spielbar.
+     * - Sonst ist eine Karte spielbar, wenn Farbe oder Wert/Aktion übereinstimmen.
+     *
+     */
 
     public boolean isPlayableOn(Card topCard) {
         String thisName = this.cardName.toUpperCase();
         String topName = topCard.getCardName().toUpperCase();
 
         // Falls Karte ein Farbwechsel ist, darf sie immer gespielt werden
+        // Spezialkarten: Farbwahl oder +4 können immer gespielt werden
+
         if (thisName.contains("CC") || thisName.contains("+4")){ // +4 darf auch immer gelegt werden (obwohl gegen regel), damit der bluff funktioniert
             return true;
         }
 
-        // Farbe = erstes Zeiche
+        // Farbe ist immer das erste Zeichen
         char thisColor = thisName.charAt(0);
         char topColor = topName.charAt(0);
 
-        // Wert oder Aktion ( "5", "+2", "d", "x")
+        // Wert oder Aktion ( "5", "+2", "d", "x") -ab das "zweite" Zeichen (index 1)
         String thisValue = thisName.substring(1);
         String topValue = topName.substring(1);
 
-        // Spielbar wenn gleiche Farbe oder gleicher Wert/Aktion
+        // Karte ist spielbar bei gleicher Farbe oder gleichem Wert
         return thisColor == topColor || thisValue.equals(topValue);
     }
 
