@@ -7,7 +7,7 @@ public class PlayerManager {
     Scanner scanner = new Scanner(System.in);
     private ArrayList<Player> playerList;
     private boolean isClockwise;
-//    private int currentPlayerIndex;
+    //    private int currentPlayerIndex;
     private int humanPlayersCount;
     private Player currentPlayer;
 
@@ -42,7 +42,7 @@ public class PlayerManager {
     public void askPlayersNames() {
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {  // gemeinsame Anzahl der Spieler im Spiel
             for (int j = i; j < humanPlayersCount; j++) { // menschliche Spieler
-                System.out.println("Enter the name of Player " + (j + 1)+" : "); //j+1 - um Spieler 1 statt Spieler 0 zu sein
+                System.out.println("Enter the name of Player " + (j + 1) + " : "); //j+1 - um Spieler 1 statt Spieler 0 zu sein
                 playerList.add(new Player(scanner.next(), false));
                 //  neuen menschlichen Spieler wird erstellt
                 i++; //
@@ -144,13 +144,13 @@ public class PlayerManager {
             //In code: Index + 1--> right in array --> real-life Player gives to his left neighbour: clockwise.: Index + 1 (mit Modulo, damit es nach dem letzten Spieler wieder bei 0 beginnt - Rundenlogik. (1 + 1) % 4 = 2
             // Clockwise: go to the next player in the list
             currentPlayer = playerList.get((index + 1) % playerList.size());
-            System.out.println("Current Player: "  + currentPlayer);
+            System.out.println("Current Player: " + currentPlayer);
 
         } else {
-           // In code: Index - 1 --> left in array --> real-life Player gives to his right neighbour: counter-clockwise.: Index - 1 (Modulo verhindert negative Zahlen). (0 - 1 + 4) % 4 = 3
+            // In code: Index - 1 --> left in array --> real-life Player gives to his right neighbour: counter-clockwise.: Index - 1 (Modulo verhindert negative Zahlen). (0 - 1 + 4) % 4 = 3
             // Counterclockwise: go to the previous player in the list
             currentPlayer = playerList.get((index - 1 + playerList.size()) % playerList.size());
-            System.out.println("Current Player: "  + getCurrentPlayer());
+            System.out.println("Current Player: " + getCurrentPlayer());
         }
         return currentPlayer;
     }
@@ -158,7 +158,7 @@ public class PlayerManager {
 
     public void printPlayerOrder() {
         // Wenn isClockwise == true, dann steht im Text "Clock-wise", sonst == false "Counter-clock-wise
-       // System.out.println("\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
+        // System.out.println("\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
         System.out.println("\nPlayer order:");
         String style = "\u001B[30;47m"; // Black text on light gray background
         String reset = "\u001B[0m";
@@ -217,14 +217,61 @@ public class PlayerManager {
         this.humanPlayersCount = humanPlayersCount;
     }
 
-/*System.out.println("Current Player: "+manager.getCurrentPlayer().
+}
 
-    getName());
+/*
+Rundenlogik ohne Modulo:
 
-    // "x"-Karte wird gespielt → nächster Spieler wird übersprungen
-    Player skippedPlayer = manager.skipNextPlayer();
-System.out.println("Player after skip: "+skippedPLayer.getName());
+public Player getNextPlayer() {
+    int index = playerList.indexOf(currentPlayer);
+
+    if (isClockwise) {
+        index = index + 1;
+        // Wenn über das Ende hinaus, auf 0 zurücksetzen
+        if (index >= playerList.size()) {
+            index = 0;
+        }
+    } else {
+        index = index - 1;
+        // Wenn vor Anfang, auf letztes Element springen
+        if (index < 0) {
+            index = playerList.size() - 1;
+        }
+    }
+
+    currentPlayer = playerList.get(index);
+    System.out.println("Current Player: " + currentPlayer);
+    return currentPlayer;
+}
+
+
+public void printPlayerOrder() {
+    System.out.println("\nPlayer order:");
+    String style = "\u001B[30;47m"; // Black text on light gray background
+    String reset = "\u001B[0m";
+
+    int index = playerList.indexOf(currentPlayer);
+
+    for (int i = 0; i < playerList.size(); i++) {
+        System.out.println(style + " [" + playerList.get(index).getName() + "] " + reset);
+
+        if (isClockwise) {
+            index = index + 1;
+            if (index >= playerList.size()) {
+                index = 0;
+            }
+        } else {
+            index = index - 1;
+            if (index < 0) {
+                index = playerList.size() - 1;
+            }
+        }
+    }
+
+    System.out.println("\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
+}
+
 */
 
-}
+
 

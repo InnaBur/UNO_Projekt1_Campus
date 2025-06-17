@@ -1,7 +1,4 @@
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.Scanner;
+import java.util.*;
 
 public class GameController {
 
@@ -200,10 +197,10 @@ public class GameController {
     */
     private void prepareGame() {
         playerManager.preparePlayers();
-        playerManager.printPlayerOrder();
+        //playerManager.printPlayerOrder();
         playerManager.setSequenceAndFirstPlayer();
-
-
+        //playerManager.printPlayerOrder();
+//
     }
 
 
@@ -309,7 +306,7 @@ public class GameController {
 
     public void startNewRound(CardsDeck cardsDeck) {
 
-        playerManager.setClockwise(false);     //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
+       // playerManager.setClockwise(false);     //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
 
         clearPlayersHand();
         discardPile.clear();
@@ -319,6 +316,9 @@ public class GameController {
 
 
         cardsDeck.dealCards(playerManager.getPlayerList());
+        Collections.shuffle(playerManager.getPlayerList());
+        playerManager.setSequenceAndFirstPlayer();
+        playerManager.printPlayerOrder();
         discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList(discardPile));       //first card from the cards deck is a first card in drawPile
 
        /* Brauchen wir das? wenn RCC - CC, wenn runde nicht feritg ist und neu gemischt?
@@ -329,10 +329,12 @@ public class GameController {
                 card.setCardName("+4");
             }
             */
-        playerManager.setSequenceAndFirstPlayer();
-        currentPlayer = playerManager.getCurrentPlayer();
+       // playerManager.setSequenceAndFirstPlayer();
+        //currentPlayer = playerManager.getCurrentPlayer();
 
         handleFirstCardEffect(cardsDeck);
+//playerManager.getNextPlayer();
+
     }
 
     private void clearPlayersHand() {
