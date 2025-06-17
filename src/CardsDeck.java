@@ -22,12 +22,8 @@ public class CardsDeck {
         this.cardsDeck = cardsDeck;
     }
 
-
-
-
     // methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen,
     // mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
-
     public static String createColoredOutputForCard(String cardName) {
         String colorCode;
 
@@ -45,6 +41,7 @@ public class CardsDeck {
         } else {
             colorCode = "\u001B[30;45m"; // Schwarzer Text auf magentafarbenem Hintergrund (für +4, CC)
         }
+
         return colorCode + upperCardName + "\u001B[0m"; // Reset-Farbe
     }
 
@@ -60,13 +57,7 @@ public class CardsDeck {
     // and be removed from the card deck
     public Card getTopCardAndRemoveFromList(Deque<Card> discardPile) {
         if (cardsDeck.isEmpty()) {
-            System.out.println("DISKARD BEFOR RESHUFFLE!!!!!! ");
-            printDequeCardDeck(discardPile);
             reshuffleDiscardPileIntoDrawPile(discardPile);
-            System.out.println("RESHUFFLE!!!!!! ");
-            printCardDeck();
-//
-//            throw new IllegalStateException("Deck is empty, no cards to draw!");
         }
 
         Card top = cardsDeck.get(0);
@@ -74,18 +65,9 @@ public class CardsDeck {
         return top;
     }
 
-//    public void deleteCard(Card karte) {
-//        cardsDeck.remove(karte);
-//    }
-
-    //Methode, um eine Karte vom Kartendeck zu entfernen
     public void deleteCard(Card karte) {
-        if (karte == null) {
-            throw new IllegalArgumentException("Karte darf nicht null sein");
-        }
         cardsDeck.remove(karte);
     }
-
 
     //die oberste Karte vom Stapel, wie sie der Spieler sieht
     public String showTopCard() {
@@ -162,6 +144,7 @@ public class CardsDeck {
         System.out.println(count);
     }
 
+    //Help method for tests
     public void printDequeCardDeck(Deque<Card> list) {
         int count = 0;
         for (Card card : list) {
@@ -183,18 +166,10 @@ public class CardsDeck {
                 card.setCardName("+4");
             }
             cardsDeck.add(card);
-            System.out.println("RESCH CARD" + card);
             discardPile.pop();
         }
 
-//        for (Card card: discardPile) {
-//            cardsDeck.add(card);
-//            System.out.println("RESCH CARD" + card);
-//            discardPile.pop();
-//        }
         Collections.shuffle(cardsDeck);
-        System.out.println("GESHUFFLED NEEEEEW");
-        printCardDeck();
         discardPile.add(temp);
     }
 
