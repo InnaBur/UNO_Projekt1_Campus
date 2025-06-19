@@ -273,7 +273,7 @@ public class GameController {
         for (int i = 0; i < 4; i++) {
             next.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
         }
-        System.out.println("\u001B[30;46m[" + next.getName() + "]\u001B[0m \u001B[30;41mDraws 4 cards!\u001B[0m");
+        PrintManager.fourCardsMessage(next.getName());
     }
 
     private void twoCardsToNextPlayer(CardsDeck cardsDeck) {

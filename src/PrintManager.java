@@ -34,23 +34,27 @@ public class PrintManager {
         System.out.println("------------------------------");
     }
 
-    public static void printChangeColorMessage(String playersName,  String newCardName) {
-        System.out.println("\u001B[30;46m["+playersName +"]\u001B[0m  \u001B[30;45m! ! ! Color change ! ! !\u001B[0m to: "
+    public static void printChangeColorMessage(String playersName, String newCardName) {
+        System.out.println("\u001B[30;46m[" + playersName + "]\u001B[0m  \u001B[30;45m! ! ! Color change ! ! !\u001B[0m to: "
                 + CardsDeck.createColoredOutputForCard(newCardName));
     }
 
     public static void directionChangeMessage(String name, boolean clockwise) {
-        System.out.println("\u001B[30;46m["+name
+        System.out.println("\u001B[30;46m[" + name
                 + "]\u001B[0m made a \u001B[30;41mDirection change\u001B[0m to "
                 + (clockwise ? "Clockwise" : "Counter-clockwise"));
     }
 
     public static void twoCardsMessage(String name) {
-        System.out.println("\u001B[30;46m["+name +"]\u001B[0m \u001B[30;41mDraws 2 cards!\u001B[0m");
+        System.out.println("\u001B[30;46m[" + name + "]\u001B[0m \u001B[30;41mDraws 2 cards!\u001B[0m");
     }
 
     public static void skippMessage(String name) {
         System.out.println("\u001B[30;46m[" + name
                 + "]\u001B[0m lost her/his turn: \u001B[30;45mSkipped!\u001B[0m");
+    }
+
+    public static void fourCardsMessage(String name) {
+        System.out.println("\u001B[30;46m[" + name + "]\u001B[0m \u001B[30;41mDraws 4 cards!\u001B[0m");
     }
 }
