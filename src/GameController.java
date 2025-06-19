@@ -145,10 +145,10 @@ public class GameController {
     private void drawCard(CardsDeck cardsDeck) {
 
         Card drawnCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-        System.out.println("You drew: " + drawnCard);
+        //System.out.println("You drew: " + drawnCard.getCardName());
         cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-
-        System.out.println("Your new Card from the draw pile: " + drawnCard);
+        String colorOutputDrawnCard = CardsDeck.createColoredOutputForCard(drawnCard.getCardName());
+        System.out.println("Your new card from the draw pile: " + colorOutputDrawnCard);
         currentPlayer.showHand();
 
         optionDirectPlayableOnTopCard(drawnCard, cardsDeck);
@@ -207,7 +207,7 @@ public class GameController {
     private void showTopCard() {
         assert discardPile.peek() != null;
         String coloredTopCard = CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName());
-        System.out.println("The top card is [" + coloredTopCard + "]");
+        System.out.println("\nThe top card is [" + coloredTopCard + "]");
     }
 
     private boolean isCardExistAndPlayable(Card selectedCard) {
@@ -273,7 +273,7 @@ public class GameController {
         for (int i = 0; i < 4; i++) {
             next.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
         }
-        System.out.println(next.getName() + " \u001B[30;41mDraws 4 cards!\u001B[0m");
+        System.out.println("\u001B[30;46m[" + next.getName() + "]\u001B[0m \u001B[30;41mDraws 4 cards!\u001B[0m");
     }
 
     private void twoCardsToNextPlayer(CardsDeck cardsDeck) {
@@ -308,7 +308,7 @@ public class GameController {
             if (userColourChoice(input)) {
                 return input;
             }
-            PrintManager.printInvalidInput(". Enter R, G, B, or Y.");
+            // PrintManager.printInvalidInput(". Enter R, G, B, or Y.");
         }
     }
 

@@ -147,7 +147,7 @@ public class PlayerManager {
 
             System.out.println(style + " [" + playerList.get(index).getName() + "] " + reset);
         }
-        System.out.println("\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
+        System.out.println("\n\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
 
     }
 
