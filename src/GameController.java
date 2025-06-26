@@ -17,18 +17,83 @@ public class GameController {
 
         prepareGame();
         startNewRound(cardsDeck);
+        startGame(cardsDeck);
+    }
 
+    private void startGame(CardsDeck cardsDeck) {
         do {
             //  PrintManager.printLine();
 
             showTopCard();
             currentPlayer = playerManager.getCurrentPlayer();
-            currentPlayer.showHand();
 
-            gamePlay(cardsDeck);
+//            currentPlayer.showHand();
+//
+//            gamePlay(cardsDeck);
+
+            if (!currentPlayer.isBot()) {
+                currentPlayer.showHand();
+                gamePlay(cardsDeck);
+            } else {
+                currentPlayer.showHand();
+                Card botsCard = botsCardToPlay();
+                if (botsCard != null) {
+                    currentPlayer.removeCard(botsCard);
+                    discardPile.push(botsCard);
+
+                    if (isPlayersHandEmpty()) {
+                        System.out.println(currentPlayer.getName() + " has won the round!");
+                        isGameWinOrNewRound();
+                    } else {
+                        handlePlayedCard(botsCard, cardsDeck);
+                    }
+                } else {
+                    currentPlayer = playerManager.getNextPlayer();
+                }
+            }
+
 
         } while (!isExit);
     }
+
+    //which cards can  play Bot
+    private Card botsCardToPlay() {
+        ArrayList<Card> botsCardsToPlay = new ArrayList<>();
+        Card plusFour = null;
+        for (Card card : currentPlayer.getCardsInHand()) {
+            if (card.isPlayableOn(discardPile.peek())) {
+                if (card.getCardName().contains("+4")) {
+                    plusFour = card;
+                } else {
+                    botsCardsToPlay.add(card);
+                    System.out.println("TEST! botsCardToPlay - " + card);
+                }
+            }
+        }
+
+        if (!botsCardsToPlay.isEmpty()) {
+            Random random = new Random();
+
+            //bluff with 20% random
+            if (plusFour != null && random.nextDouble() < 0.2) {
+                return plusFour;
+            } else {
+                int index = random.nextInt(botsCardsToPlay.size());
+                System.out.println("TEST! Bot gives card " + botsCardsToPlay.get(index));
+                return botsCardsToPlay.get(index);
+            }
+
+        }
+
+        if (plusFour == null) {
+            //drawCard();
+        } else {
+            System.out.println("TEST! Bot gives card " + plusFour);
+        }
+        //if +4 exist - return +4 (honestly) or null
+        return plusFour;
+    }
+
 
     private void gamePlay(CardsDeck cardsDeck) {
 
@@ -144,15 +209,34 @@ public class GameController {
     //passende Karte legen, so muss er eine Strafkarte vom verdeckten Stapel ziehen.
     private void drawCard(CardsDeck cardsDeck) {
 
-        Card drawnCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-        System.out.println("You drew: " + drawnCard);
-        cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+        if (!currentPlayer.isBot()) {
+            Card drawnCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+            System.out.println("You drew: " + drawnCard);
+            cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile));
 
-        System.out.println("Your new Card from the draw pile: " + drawnCard);
-        currentPlayer.showHand();
+            System.out.println("Your new Card from the draw pile: " + drawnCard);
+            currentPlayer.showHand();
 
-        optionDirectPlayableOnTopCard(drawnCard, cardsDeck);
+            optionDirectPlayableOnTopCard(drawnCard, cardsDeck);
+        } else {
+            Card drawnCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+            System.out.println("TESTT!! BOT drew: " + drawnCard);
+            cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+
+            currentPlayer.showHand();
+
+            if (drawnCard.isPlayableOn(discardPile.peek())) {
+                currentPlayer.removeCard(drawnCard);
+                discardPile.addFirst(drawnCard);
+                handlePlayedCard(drawnCard, cardsDeck);
+            } else {
+                System.out.println("TEST BOT! This card cannot be played now.");
+                currentPlayer = playerManager.getNextPlayer();
+            }
+
     }
+
+}
 
 
     //Diese Karte kann Spieler
@@ -254,15 +338,26 @@ public class GameController {
 
     // Let the player choose a color
     private void changeColour(Card playedCard) {
-        String newColor = askForColor(); // Returns "R", "G", "B", or "Y"
 
-        // Update the card name to include the chosen color
-        playedCard.setCardName(newColor + "CC");
-        String newCardName = playedCard.getCardName();
-        CardsDeck.createColoredOutputForCard(newCardName);
+        String newColor = "";
+        if(!currentPlayer.isBot()) {
+             newColor = askForColor(); // Returns "R", "G", "B", or "Y"
+        } else {
+            Random random = new Random();
+            String [] col = new String[] {"R", "Y", "B", "G"};
+            int index = random.nextInt(col.length);
+            System.out.println("TEST! Bot gives card " + col[index]);
+            newColor = col[index];
 
-        PrintManager.printChangeColorMessage(currentPlayer.getName(), newCardName);
-        currentPlayer = playerManager.getNextPlayer();
+        }
+            // Update the card name to include the chosen color
+            playedCard.setCardName(newColor + "CC");
+            String newCardName = playedCard.getCardName();
+            CardsDeck.createColoredOutputForCard(newCardName);
+
+            PrintManager.printChangeColorMessage(currentPlayer.getName(), newCardName);
+            currentPlayer = playerManager.getNextPlayer();
+
     }
 
     private void plusFourCardSpecial() {
