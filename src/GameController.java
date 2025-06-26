@@ -224,7 +224,8 @@ public class GameController {
         if (!currentPlayer.isBot()) {
             Card drawnCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
 //            cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-
+//            String colorOutputDrawnCard = CardsDeck.createColoredOutputForCard(drawnCard.getCardName());
+//            System.out.println("Your new card from the draw pile: " + colorOutputDrawnCard);
             System.out.println("Your new Card from the draw pile: " + drawnCard.getCardName());
             currentPlayer.showHand();
 
@@ -315,7 +316,7 @@ public class GameController {
     private void showTopCard() {
         assert discardPile.peek() != null;
         String coloredTopCard = CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName());
-        System.out.println("The top card is [" + coloredTopCard + "]");
+        System.out.println("\nThe top card is [" + coloredTopCard + "]");
     }
 
     private boolean isCardExistAndPlayable(Card selectedCard) {
@@ -398,7 +399,10 @@ public class GameController {
 //        for (int i = 0; i < 4; i++) {
             next.addAllCards(cardsDeck.getNTopCardAndRemoveFromList(4, discardPile));
 //        }
+
         System.out.println(next.getName() + " \u001B[30;41mDraws 4 cards!\u001B[0m");
+//        PrintManager.fourCardsMessage(next.getName());
+
     }
 
     private void twoCardsToNextPlayer(CardsDeck cardsDeck) {
