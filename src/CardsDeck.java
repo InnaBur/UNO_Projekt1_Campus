@@ -5,7 +5,7 @@ import java.util.List;
 
 public class CardsDeck {
 
-    static final int NUMBER_OF_CARDS_IN_HAND = 2;
+    static final int NUMBER_OF_CARDS_IN_HAND = 7;
     //array für Farben-Buchstaben
     static final char[] COLORS = {'R', 'B', 'Y', 'G'};
     static final int NUMBER_OF_PLAYERS = 4;
@@ -184,7 +184,6 @@ public class CardsDeck {
     void reshuffleDiscardPileIntoDrawPile(Deque<Card> discardPile) {
 
         Card temp = discardPile.pop();
-
         for (Card card : discardPile) {
             if (card.getCardName().endsWith("CC")) {
                 card.setCardName("CC");

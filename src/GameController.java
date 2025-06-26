@@ -8,6 +8,7 @@ public class GameController {
     private final ScoreCalculator scoreCalculator = new ScoreCalculator();
     Scanner scanner = new Scanner(System.in);
     String[] colours = new String[]{"R", "Y", "B", "G"};
+    int counter = 0;
     // aktueller Spieler
     private Player currentPlayer;
     //die Bedingung für das Beenden des Spiels.
@@ -17,51 +18,48 @@ public class GameController {
         CardsDeck cardsDeck = new CardsDeck();
 
         prepareGame();
-        startNewRound(cardsDeck);
+        startRound(cardsDeck);
         startGame(cardsDeck);
     }
 
     private void startGame(CardsDeck cardsDeck) {
         do {
-            //  PrintManager.printLine();
-
             showTopCard();
             currentPlayer = playerManager.getCurrentPlayer();
 
-//            currentPlayer.showHand();
-//
-//            gamePlay(cardsDeck);
-
             if (!currentPlayer.isBot()) {
-                currentPlayer.showHand();
-                System.out.println("TEST CONTROLLER 46!!! Cards Deck for NOt BOT has cards " + cardsDeck.getCardsDeck().size());
-                gamePlay(cardsDeck);
+                playerPlays(cardsDeck);
+
             } else {
-                System.out.println("TEST CONTROLLER 40!!! Cards Deck  has cards " + cardsDeck.getCardsDeck().size());
-                currentPlayer.showHand();
-                Card botsCard = botsCardToPlay();
-                if (botsCard != null) {
-                    System.out.println("TEST CONTROLLER 41!!! Cards Deck  has cards " + cardsDeck.getCardsDeck().size());
-                    currentPlayer.removeCard(botsCard);
-                    discardPile.addFirst(botsCard);
-
-                    System.out.println("TEST!!! Diskard Pile has cards " + discardPile.size());
-                    System.out.println("TEST CONTROLLER 46!!! Cards Deck  has cards " + cardsDeck.getCardsDeck().size());
-
-                    if (isPlayersHandEmpty()) {
-                        System.out.println(currentPlayer.getName() + " has won the round!");
-                        cardsDeck = isGameWinOrNewRound();
-                    } else {
-                        handlePlayedCard(botsCard, cardsDeck);
-                    }
-                } else {
-                    System.out.println("TEST CONTROLLER 58 For DRAW!!! Cards Deck  has cards " + cardsDeck.getCardsDeck().size());
-                    drawCard(cardsDeck);
-                }
+                botPlays(cardsDeck);
             }
 
-
         } while (!isExit);
+    }
+
+    private void botPlays(CardsDeck cardsDeck) {
+        System.out.println("TEST Controller 41 - cards deck " + cardsDeck.getCardsDeck().size());
+        currentPlayer.showHand();
+        Card botsCard = botsCardToPlay();
+        if (botsCard != null) {
+            currentPlayer.removeCard(botsCard);
+            discardPile.addFirst(botsCard);
+
+            if (isPlayersHandEmpty()) {
+                System.out.println(currentPlayer.getName() + " has won the round!");
+                counter++;
+                isGameWinOrNewRound();
+            } else {
+                handlePlayedCard(botsCard, cardsDeck);
+            }
+        } else {
+            drawCard(cardsDeck);
+        }
+    }
+
+    private void playerPlays(CardsDeck cardsDeck) {
+        currentPlayer.showHand();
+        gamePlay(cardsDeck);
     }
 
     //which cards can  play Bot
@@ -141,24 +139,25 @@ public class GameController {
         playerManager.setSequenceAndFirstPlayer();
     }
 
-    public void startNewRound(CardsDeck cardsDeck) {
+    public CardsDeck startNewRound() {
+        CardsDeck cardsDeck = new CardsDeck();
+        startRound(cardsDeck);
+        return cardsDeck;
+    }
 
+    public void startRound(CardsDeck cardsDeck) {
         playerManager.setClockwise(false);     //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
 
         clearPlayersHand();
         discardPile.clear();
 
-//        playerManager.getCurrentPlayer();
-        System.out.println("TEST CONTROLLER 152 Cadrs Deck size " + cardsDeck.getCardsDeck().size());
         cardsDeck.dealCards(playerManager.getPlayerList());
-        System.out.println("TEST CONTROLLER 154 Cadrs Deck size " + cardsDeck.getCardsDeck().size());
         Collections.shuffle(playerManager.getPlayerList());
         playerManager.printPlayerOrderInColour();
         discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList(discardPile));       //first card from the cards deck is a first card in drawPile
-        System.out.println("TEST CONTROLLER 158 Cadrs Deck size " + cardsDeck.getCardsDeck().size());
+
         handleFirstCardEffect(cardsDeck);
     }
-
 
     private void playCard(CardsDeck cardsDeck) {
 
@@ -174,7 +173,7 @@ public class GameController {
             // Check if player has emptied their hand → they win the round
             if (isPlayersHandEmpty()) {
                 System.out.println(currentPlayer.getName() + " has won the round!");
-                cardsDeck = isGameWinOrNewRound();
+                isGameWinOrNewRound();
             } else {
                 handlePlayedCard(selectedCard, cardsDeck);
             }
@@ -187,18 +186,16 @@ public class GameController {
     }
 
     // Handle scoring and check if game ends
-    private CardsDeck isGameWinOrNewRound() {
+    private void isGameWinOrNewRound() {
         boolean isGameWin = handleRoundEnd(playerManager.getPlayerList());
-        CardsDeck cardsDeck = null;
         if (isGameWin) {
             //!!!!! Daten von DB
+            System.out.println("Ther are " + counter + " rounds!");
             isExit = true;
         } else {
-             cardsDeck = new CardsDeck();
-            System.out.println("TEST CONTROLLER 197 Cadrs Deck size " + cardsDeck.getCardsDeck().size());
-            startNewRound(cardsDeck);
+            CardsDeck newDeck = startNewRound();
+            startGame(newDeck);
         }
-        return cardsDeck;
     }
 
     private void invalidCardFromUserAndPenalty(CardsDeck cardsDeck) {
@@ -223,9 +220,6 @@ public class GameController {
 
         if (!currentPlayer.isBot()) {
             Card drawnCard = currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-//            cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-//            String colorOutputDrawnCard = CardsDeck.createColoredOutputForCard(drawnCard.getCardName());
-//            System.out.println("Your new card from the draw pile: " + colorOutputDrawnCard);
             System.out.println("Your new Card from the draw pile: " + drawnCard.getCardName());
             currentPlayer.showHand();
 
@@ -236,16 +230,13 @@ public class GameController {
 
             System.out.println("TEST FROM CONTROLLER 226!!! Cards Deck  has cards " + cardsDeck.getCardsDeck().size());
             System.out.println("TEST FROM CONTROLLER 226!!! Discard  has cards " + discardPile.size());
-            System.out.println("Player 1 have " + playerManager.getPlayerList().get(0).getCardsInHand().size() );
-            System.out.println("Player 2 have " + playerManager.getPlayerList().get(1).getCardsInHand().size() );
-            System.out.println("Player 3 have " + playerManager.getPlayerList().get(2).getCardsInHand().size() );
-            System.out.println("Player 4 have " + playerManager.getPlayerList().get(3).getCardsInHand().size() );
+            System.out.println("Player 1 have " + playerManager.getPlayerList().get(0).getCardsInHand().size());
+            System.out.println("Player 2 have " + playerManager.getPlayerList().get(1).getCardsInHand().size());
+            System.out.println("Player 3 have " + playerManager.getPlayerList().get(2).getCardsInHand().size());
+            System.out.println("Player 4 have " + playerManager.getPlayerList().get(3).getCardsInHand().size());
 
 
-
-
-
-            cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+//            cardsDeck.getCardsDeck().remove(cardsDeck.getTopCardAndRemoveFromList(discardPile));
 
             currentPlayer.showHand();
 
@@ -397,7 +388,7 @@ public class GameController {
     private void fourCardsToNextPlayer(CardsDeck cardsDeck) {
         Player next = playerManager.getNextPlayer();
 //        for (int i = 0; i < 4; i++) {
-            next.addAllCards(cardsDeck.getNTopCardAndRemoveFromList(4, discardPile));
+        next.addAllCards(cardsDeck.getNTopCardAndRemoveFromList(4, discardPile));
 //        }
 
         System.out.println(next.getName() + " \u001B[30;41mDraws 4 cards!\u001B[0m");
