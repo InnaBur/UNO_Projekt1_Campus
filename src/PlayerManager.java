@@ -116,13 +116,13 @@ public class PlayerManager {
             //In code: Index + 1--> right in array --> real-life Player gives to his left neighbour: clockwise.: Index + 1 (mit Modulo, damit es nach dem letzten Spieler wieder bei 0 beginnt - Rundenlogik. (1 + 1) % 4 = 2
             // Clockwise: go to the next player in the list
             currentPlayer = playerList.get((index + 1) % playerList.size());
-            System.out.println("Current Player: " + currentPlayer);
+            System.out.println("Current Player: " + currentPlayer.getName());
 
         } else {
             // In code: Index - 1 --> left in array --> real-life Player gives to his right neighbour: counter-clockwise.: Index - 1 (Modulo verhindert negative Zahlen). (0 - 1 + 4) % 4 = 3
             // Counterclockwise: go to the previous player in the list
             currentPlayer = playerList.get((index - 1 + playerList.size()) % playerList.size());
-            System.out.println("Current Player: " + getCurrentPlayer());
+            System.out.println("Current Player: " + getCurrentPlayer().getName());
         }
         return currentPlayer;
     }

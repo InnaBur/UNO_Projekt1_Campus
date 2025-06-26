@@ -47,6 +47,10 @@ public class Player {
         return card;
     }
 
+    public void addAllCards(ArrayList<Card> cards) {
+        cardsInHand.addAll(cards);
+    }
+
     public void showHand() {
         // System.out.print(name + ", Your cards are: ");
         // Schwarzer Text (30), Cyan Hintergrund (46)

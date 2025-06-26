@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
+import java.util.List;
 
 public class CardsDeck {
 
@@ -53,10 +54,35 @@ public class CardsDeck {
         this.cardsDeck = cardsDeck;
     }
 
-    //top card from the cards deck be added into draw pill or into players hand
+
+    public ArrayList<Card> getNTopCardAndRemoveFromList(int count, Deque<Card> discardPile) {
+
+        ArrayList<Card> drawnCards = new ArrayList<>();
+
+        while (drawnCards.size() < count) {
+            if (cardsDeck.isEmpty()) {
+                reshuffleDiscardPileIntoDrawPile(discardPile);
+            }
+
+            if (cardsDeck.isEmpty()) {
+
+                System.out.println("Not enough Cards! Only " + drawnCards.size() + " cards was drawn.");
+                break;
+            }
+            drawnCards.add(cardsDeck.remove(0));
+        }
+        System.out.println("TEST FROM CARDDECK!!! Cards Deck  has cards " + cardsDeck.size());
+        System.out.println("TEST FROM CARDDECK!!! Discard  has cards " + discardPile.size());
+        System.out.println("TEST FROM CARDDECK - drawn Cards " + drawnCards.size());
+
+        return drawnCards;
+    }
+
+            //top card from the cards deck be added into draw pill or into players hand
     // and be removed from the card deck
     public Card getTopCardAndRemoveFromList(Deque<Card> discardPile) {
-        if (cardsDeck.isEmpty()) {
+
+            if (cardsDeck.isEmpty()) {
             reshuffleDiscardPileIntoDrawPile(discardPile);
         }
 

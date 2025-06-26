@@ -59,4 +59,13 @@ public class Card {
     }
 
 
+    public boolean isBotCardPlayableOn(Card topCard) {
+        String thisName = this.cardName.toUpperCase();
+        String topName = topCard.getCardName().toUpperCase();
+
+
+
+
+        return true;
+    }
 }
