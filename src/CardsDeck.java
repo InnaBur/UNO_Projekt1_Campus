@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.List;
 
 public class CardsDeck {
 
@@ -55,7 +54,7 @@ public class CardsDeck {
     }
 
 
-    public ArrayList<Card> getNTopCardAndRemoveFromList(int count, Deque<Card> discardPile) {
+    public ArrayList<Card> getNTopCardAndRemoveFromCardDeck(int count, Deque<Card> discardPile) {
 
         ArrayList<Card> drawnCards = new ArrayList<>();
 
