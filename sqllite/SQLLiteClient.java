@@ -28,6 +28,7 @@ public class SQLLiteClient {
     }
 
     // Führt ein SQL-Statement (z.B. CREATE, INSERT, UPDATE, DELETE) aus
+    //TODO:zu DatabaseHelper vergleichen: in init auch create Table
     public void executeStatement(String sqlStatement) throws SQLException {
         Statement statement = this.connection.createStatement(); // Erstellt ein Statement-Objekt
         //Sie gibt an, wie lange die Datenbank maximal versuchen soll,

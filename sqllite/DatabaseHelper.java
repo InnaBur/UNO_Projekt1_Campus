@@ -31,6 +31,7 @@ public class DatabaseHelper {
     }
 
     // Spielstand speichern
+    //TODO: eventuell name ändern: nicht Round result wird gespeichert, sondern das gesamte Spiel
     public void saveRoundResult(String name, int sessionId, int roundNumber, int point, boolean isBot) throws SQLException {
         int isBotValue = isBot ? 1 : 0; // SQLite kennt kein echtes Boolean
         String insertSql = String.format(
@@ -72,5 +73,7 @@ public class DatabaseHelper {
 
 
     // Weitere Methoden wie loadScores() usw. wären hier möglich
+    //TODO: beim Ende des Spiels die Daten aus der Datenbank anzeigen
+
 
 }
