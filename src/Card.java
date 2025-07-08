@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Card {
 
     private String cardName;
@@ -42,15 +44,15 @@ public class Card {
         String topName = topCard.getCardName().toUpperCase();
 
         // Falls Karte ein Farbwechsel ist, darf sie immer gespielt werden
-        if (thisName.contains("CC") || thisName.contains("+4")){ // +4 darf auch immer gelegt werden (obwohl gegen regel), damit der bluff funktioniert
+        if (thisName.contains("CC") || thisName.contains("+4")) { // +4 darf auch immer gelegt werden (obwohl gegen regel), damit der bluff funktioniert
             return true;
         }
 
-        // Farbe = erstes Zeiche
+        // Farbe = erstes Zeichen
         char thisColor = thisName.charAt(0);
         char topColor = topName.charAt(0);
 
-        // Wert oder Aktion ( "5", "+2", "d", "x")
+        // Wert oder Aktion ("5", "+2", "d", "x")
         String thisValue = thisName.substring(1);
         String topValue = topName.substring(1);
 
@@ -59,13 +61,4 @@ public class Card {
     }
 
 
-    public boolean isBotCardPlayableOn(Card topCard) {
-        String thisName = this.cardName.toUpperCase();
-        String topName = topCard.getCardName().toUpperCase();
-
-
-
-
-        return true;
-    }
 }

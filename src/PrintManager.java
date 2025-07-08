@@ -57,4 +57,8 @@ public class PrintManager {
     public static void fourCardsMessage(String name) {
         System.out.println("\u001B[30;46m[" + name + "]\u001B[0m \u001B[30;41mDraws 4 cards!\u001B[0m");
     }
+
+    public static void sixCardsMessage(String name) {
+        System.out.println("\u001B[30;46m[" + name + "]\u001B[0m \u001B[30;41mDraws 6 cards!\u001B[0m");
+    }
 }

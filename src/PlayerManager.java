@@ -93,7 +93,7 @@ public class PlayerManager {
     }
 
     private boolean isPlayerCountCorrect() {
-       return humanPlayersCount < 0 || humanPlayersCount > NUMBER_OF_PLAYERS;
+        return humanPlayersCount < 0 || humanPlayersCount > NUMBER_OF_PLAYERS;
     }
 
     public Player getCurrentPlayer() {
@@ -111,7 +111,7 @@ public class PlayerManager {
         In a counter-clockwise game:Player passes to their right neighbor.
         In a circle, going clockwise means going to the left in real seating at a round table.
         */
-        int index = playerList.indexOf(currentPlayer);
+        int index = getCurrentPlayersIndex();
         if (isClockwise) {
             //In code: Index + 1--> right in array --> real-life Player gives to his left neighbour: clockwise.: Index + 1 (mit Modulo, damit es nach dem letzten Spieler wieder bei 0 beginnt - Rundenlogik. (1 + 1) % 4 = 2
             // Clockwise: go to the next player in the list
@@ -139,10 +139,10 @@ public class PlayerManager {
             int index;
             if (isClockwise) {
                 // forward order from currentPlayer
-                index = (playerList.indexOf(currentPlayer) + i) % playerList.size();
+                index = (getCurrentPlayersIndex() + i) % playerList.size();
             } else {
                 // backward order from currentPlayer
-                index = (playerList.indexOf(currentPlayer) - i + playerList.size()) % playerList.size();
+                index = (getCurrentPlayersIndex() - i + playerList.size()) % playerList.size();
             }
 
             System.out.println(style + " [" + playerList.get(index).getName() + "] " + reset);
@@ -175,6 +175,20 @@ public class PlayerManager {
         this.humanPlayersCount = humanPlayersCount;
     }
 
+    public int getCurrentPlayersIndex() {
+        return playerList.indexOf(currentPlayer);
+    }
+
+    public Player getPreviousPlayer() {
+        int index = getCurrentPlayersIndex();
+        int previousPlayerIndex = -1;
+        if (isClockwise) {
+            previousPlayerIndex = (index - 1 + playerList.size()) % playerList.size();
+        } else {
+            previousPlayerIndex = (index + 1 ) % playerList.size();
+        }
+        return playerList.get(previousPlayerIndex);
+    }
 }
 
 /*

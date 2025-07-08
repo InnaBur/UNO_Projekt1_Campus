@@ -96,6 +96,4 @@ public class ScoreCalculator {
         return null;
     }
 
-
-
 }
