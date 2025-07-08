@@ -498,6 +498,8 @@ public class GameController {
         if (gameWinner != null) {
             System.out.println("WoW! " + gameWinner.getName() + " has won the game with "
                     + gameWinner.getPoints() + " points!");
+            //TODO: Anna muss testen
+           dbHelper.showSessionData();
             return true;  // signal game over
         } else {
             System.out.println("Next round will start...");
