@@ -120,7 +120,7 @@ public class GameController {
                 drawTwoCardsPenalty(cardsDeck);
                 break;
             case 5:
-                Instructions.printGameInstructions();
+                PrintManager.printGameInstructions();
                 break;
             case 0:
                 System.out.println("Game is over!");
