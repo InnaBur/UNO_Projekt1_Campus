@@ -4,7 +4,7 @@ import java.util.Deque;
 
 public class CardsDeck {
 
-    static final int NUMBER_OF_CARDS_IN_HAND = 7;
+    static final int NUMBER_OF_CARDS_IN_HAND = 2;
     //array für Farben-Buchstaben
     static final char[] COLORS = {'R', 'B', 'Y', 'G'};
     static final int NUMBER_OF_PLAYERS = 4;
@@ -111,7 +111,7 @@ public class CardsDeck {
         }
 
         //4+ Karten und 4 karten Farbwechsel werden erstellt
-        createSpecialBlackCards("+4");
+       createSpecialBlackCards("+4");
         createSpecialBlackCards("CC");
     }
 
