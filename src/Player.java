@@ -38,10 +38,6 @@ public class Player {
         return cardsInHand;
     }
 
-    public void setCardsInHand(ArrayList<Card> cardsInHand) {
-        this.cardsInHand = cardsInHand;
-    }
-
     public Card addCard(Card card) {
         cardsInHand.add(card);
         return card;
