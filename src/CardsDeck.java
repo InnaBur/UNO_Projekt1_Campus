@@ -49,11 +49,6 @@ public class CardsDeck {
         return cardsDeck;
     }
 
-    public void setCardsDeck(ArrayList<Card> cardsDeck) {
-        this.cardsDeck = cardsDeck;
-    }
-
-
     public ArrayList<Card> getNTopCardAndRemoveFromCardDeck(int count, Deque<Card> discardPile) {
 
         ArrayList<Card> drawnCards = new ArrayList<>();
@@ -62,41 +57,25 @@ public class CardsDeck {
             if (cardsDeck.isEmpty()) {
                 reshuffleDiscardPileIntoDrawPile(discardPile);
             }
-
             if (cardsDeck.isEmpty()) {
-
                 System.out.println("Not enough Cards! Only " + drawnCards.size() + " cards was drawn.");
                 break;
             }
             drawnCards.add(cardsDeck.remove(0));
         }
-        System.out.println("TEST FROM CARDDECK!!! Cards Deck  has cards " + cardsDeck.size());
-        System.out.println("TEST FROM CARDDECK!!! Discard  has cards " + discardPile.size());
-        System.out.println("TEST FROM CARDDECK - drawn Cards " + drawnCards.size());
-
         return drawnCards;
     }
 
-            //top card from the cards deck be added into draw pill or into players hand
+    //top card from the cards deck be added into draw pill or into players hand
     // and be removed from the card deck
     public Card getTopCardAndRemoveFromList(Deque<Card> discardPile) {
 
-            if (cardsDeck.isEmpty()) {
+        if (cardsDeck.isEmpty()) {
             reshuffleDiscardPileIntoDrawPile(discardPile);
         }
-
         Card top = cardsDeck.get(0);
         cardsDeck.remove(cardsDeck.get(0));
         return top;
-    }
-
-    public void deleteCard(Card karte) {
-        cardsDeck.remove(karte);
-    }
-
-    //die oberste Karte vom Stapel, wie sie der Spieler sieht
-    public String showTopCard() {
-        return cardsDeck.get(0).getCardName();
     }
 
     public void createCardDeck() {
@@ -109,7 +88,6 @@ public class CardsDeck {
                 createColoredCards(color);
             }
         }
-
         //4+ Karten und 4 karten Farbwechsel werden erstellt
         createSpecialBlackCards("+4");
         createSpecialBlackCards("CC");
@@ -137,9 +115,6 @@ public class CardsDeck {
         cardsDeck.add(new Card("" + color + 0, false));
     }
 
-    public void drawCard() {
-    }
-
     public void shuffleCardDeck() {
         Collections.shuffle(cardsDeck);
     }
@@ -152,10 +127,6 @@ public class CardsDeck {
                 cardsDeck.remove(0);
             }
         }
-    }
-
-    public void clearDeck() {
-        cardsDeck.clear();
     }
 
 
@@ -192,11 +163,7 @@ public class CardsDeck {
             cardsDeck.add(card);
             discardPile.pop();
         }
-
         Collections.shuffle(cardsDeck);
         discardPile.add(temp);
     }
-
 }
-
-
