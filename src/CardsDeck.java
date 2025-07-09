@@ -95,7 +95,7 @@ public class CardsDeck {
 
     //4 Karten +4 und 4 karten Farbwechsel werden erstellt
     public void createSpecialBlackCards(String cardName) {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 40; i++) {
             cardsDeck.add(new Card(cardName, true));
         }
     }

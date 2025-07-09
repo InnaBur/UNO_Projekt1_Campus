@@ -110,30 +110,32 @@ public class GameController {
             case 2:
                 // Spielt Karte OHNE "UNO", wenn letzte 2 Karten auf Hand sind
                 if (currentPlayer.getCardsInHand().size() == 2) {
-                    System.out.println("You forgot to say UNO! You get 1 Penalty card");
+                    System.out.println("You forgot to say UNO! You get 1 penalty card");
                     drawOneCardPenalty(cardsDeck);
                     playCard(cardsDeck);
+
+
                 }else {
                     playCard(cardsDeck);
                 }
                 break;
             case 3:
                 if (currentPlayer.getCardsInHand().size() == 2) {
-                    System.out.println(currentPlayer.getName() + " said UNO!");
+                    System.out.println("\u001B[30;46m["+currentPlayer.getName()+ "] said UNO!\u001B[0m");
                     playCard(cardsDeck);
                 } else {
                     System.out.println("Too many cards for UNO!");
                 }
                 break;
             case 4:
-                System.out.println("Suggestions isn't allowed. Draw two cards!");
+                System.out.println("Suggestions are not allowed! You get 2 penalty cards");
                 drawTwoCardsPenalty(cardsDeck);
                 break;
             case 5:
                 PrintManager.printGameInstructions();
                 break;
             case 0:
-                System.out.println("Game is over!");
+                System.out.println("Game over!");
                 //saveYoDatenbank;
                 isExit = true;
         }
@@ -219,7 +221,8 @@ public class GameController {
 
     private void drawOneCardPenalty(CardsDeck cardsDeck) {
         currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+
+
     }
 
     private boolean isPlayersHandEmpty() {
@@ -319,7 +322,7 @@ public class GameController {
     private void showTopCard() {
         assert discardPile.peek() != null;
         String coloredTopCard = CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName());
-        System.out.println("\nThe top card is [" + coloredTopCard + "]");
+        System.out.println("\nThe top card is [" + coloredTopCard + "]\n");
     }
 
     private boolean isCardExistAndPlayable(Card selectedCard) {
@@ -547,19 +550,24 @@ public class GameController {
 
         // Check: if at start the top card is a direction change card (contains 'D')
         if (isTopCardSpecial("D")) {
+            showTopCard();
             directionChange();
 
         } else if (isTopCardSpecial("+2")) {
+            showTopCard();
             firstCardDrawTwo(cardsDeck);
 
         } else if (isTopCardSpecial("X")) {
+            showTopCard();
             firstCardSkipp();
 
         } else if (isTopCardSpecial("CC")) {
+            showTopCard();
             assert discardPile.peek() != null;
             changeColour(discardPile.peek());
 
         } else if (isTopCardSpecial("+4")) {
+            showTopCard();
             cardsDeck.getCardsDeck().add(discardPile.pop());
             discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList(discardPile));
             System.out.println(discardPile.peek());
