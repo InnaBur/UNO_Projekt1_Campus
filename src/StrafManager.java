@@ -7,5 +7,18 @@ public class StrafManager {
         PrintManager.fourCardsMessage(currentPlayer.getName());
     }
 
+    public static void sixCardsToCurrentPlayer(CardsDeck cardsDeck, Player currentPlayer, Deque<Card> discardPile) {
+        System.out.println("Bluff not confirmed");
+        currentPlayer.addAllCards(cardsDeck.getNTopCardAndRemoveFromCardDeck(6, discardPile));
+        PrintManager.sixCardsMessage(currentPlayer.getName());
+
+    }
+
+    public static void fourCardsToPrevPlayer(CardsDeck cardsDeck, Player prevPlayer, Deque<Card> discardPile) {
+        System.out.println("Bluff confirmed! Player " + prevPlayer.getName() + " bluffed!");
+//        Player prev = playerManager.getPreviousPlayer();
+        prevPlayer.addAllCards(cardsDeck.getNTopCardAndRemoveFromCardDeck(4, discardPile));
+        PrintManager.fourCardsMessage(prevPlayer.getName());
+    }
 
 }

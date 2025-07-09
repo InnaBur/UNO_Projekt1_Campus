@@ -445,25 +445,26 @@ public class GameController {
         assert topCard != null;
 
         if (hasPlayerPlayableCardNotPlus4(topCard, prevPlayer)) {
-            fourCardsToPrevPlayer(cardsDeck, prevPlayer);
+            StrafManager.fourCardsToPrevPlayer(cardsDeck, prevPlayer, discardPile);
         } else {
-            sixCardsToCurrentPlayer(cardsDeck);
+            StrafManager.sixCardsToCurrentPlayer(cardsDeck, currentPlayer, discardPile);
+            currentPlayer = playerManager.getNextPlayer();
         }
     }
 
-    private void fourCardsToPrevPlayer(CardsDeck cardsDeck, Player prevPlayer) {
-        System.out.println("Bluff confirmed! Player " + prevPlayer.getName() + " bluffed!");
-        Player prev = playerManager.getPreviousPlayer();
-        prev.addAllCards(cardsDeck.getNTopCardAndRemoveFromCardDeck(4, discardPile));
-        PrintManager.fourCardsMessage(prev.getName());
-    }
+//    private void fourCardsToPrevPlayer(CardsDeck cardsDeck, Player prevPlayer) {
+//        System.out.println("Bluff confirmed! Player " + prevPlayer.getName() + " bluffed!");
+//        Player prev = playerManager.getPreviousPlayer();
+//        prev.addAllCards(cardsDeck.getNTopCardAndRemoveFromCardDeck(4, discardPile));
+//        PrintManager.fourCardsMessage(prev.getName());
+//    }
 
-    private void sixCardsToCurrentPlayer(CardsDeck cardsDeck) {
-        System.out.println("Bluff not confirmed");
-        currentPlayer.addAllCards(cardsDeck.getNTopCardAndRemoveFromCardDeck(6, discardPile));
-        PrintManager.sixCardsMessage(currentPlayer.getName());
-        currentPlayer = playerManager.getNextPlayer();
-    }
+//    private void sixCardsToCurrentPlayer(CardsDeck cardsDeck) {
+//        System.out.println("Bluff not confirmed");
+//        currentPlayer.addAllCards(cardsDeck.getNTopCardAndRemoveFromCardDeck(6, discardPile));
+//        PrintManager.sixCardsMessage(currentPlayer.getName());
+//
+//    }
 
     private void twoCardsToNextPlayer(CardsDeck cardsDeck) {
         Player next = playerManager.getNextPlayer();
@@ -570,15 +571,29 @@ public class GameController {
     public boolean hasPlayerPlayableCardNotPlus4(Card topCard, Player player) {
 
         ArrayList<Card> playersCards = player.getCardsInHand();
+Card temp = topCard;
+discardPile.pop();
 
-        String topName = topCard.getCardName().toUpperCase();
-
+//        String topName = topCard.getCardName().toUpperCase();
+        String topNameBefor = discardPile.peek().getCardName().toUpperCase();
         for (Card card : playersCards) {
             String cardName = card.getCardName().toUpperCase();
-            if ((cardName.charAt(0) == topName.charAt(0))) {
+            System.out.println("TEST Top card name " + topNameBefor.charAt(0));
+            System.out.println("TEST Player card name " + cardName.charAt(0));
+            if ((cardName.charAt(0) == topNameBefor.charAt(0))) {
+                discardPile.addFirst(topCard);
                 return true;
             }
         }
+//        for (Card card : playersCards) {
+//            String cardName = card.getCardName().toUpperCase();
+//            System.out.println("TEST Top card name " + topName.charAt(0));
+//            System.out.println("TEST Player card name " + cardName.charAt(0));
+//            if ((cardName.charAt(0) == topName.charAt(0))) {
+//                return true;
+//            }
+//        }
+        discardPile.addFirst(topCard);
         return false;
     }
 
