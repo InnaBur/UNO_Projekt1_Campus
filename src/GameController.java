@@ -217,6 +217,11 @@ public class GameController {
         currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
     }
 
+    private void drawOneCardPenalty(CardsDeck cardsDeck) {
+        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+    }
+
     private boolean isPlayersHandEmpty() {
         return currentPlayer.getCardsInHand().isEmpty();
     }
