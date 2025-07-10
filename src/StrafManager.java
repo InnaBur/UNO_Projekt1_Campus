@@ -33,4 +33,9 @@ public class StrafManager {
        drawTwoCardsPenalty(cardsDeck, currentPlayer, discardPile);
     }
 
+    public static void twoCardsToNextPlayer(CardsDeck cardsDeck, Player next, Deque<Card> discardPile) {
+        next.addAllCards(cardsDeck.getNTopCardAndRemoveFromCardDeck(2, discardPile));
+        PrintManager.twoCardsMessage(next.getName());
+    }
+
 }
