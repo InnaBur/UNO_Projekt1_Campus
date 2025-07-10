@@ -44,10 +44,21 @@ public class GameController {
         currentPlayer.showHand();
         Card botsCard = botsCardToPlay(cardsDeck);
         if (botsCard != null) {
+            if (currentPlayer.getCardsInHand().size() == 2) {
+                Random random = new Random();
+                int uno = random.nextInt() % 2;
+                if (uno == 0) {
+                    System.out.println(currentPlayer.getName() + " forgot to say UNO and get 1 penalty card");
+                    StrafManager.drawOneCardPenalty(cardsDeck, currentPlayer, discardPile);
+                } else {
+                    System.out.println(currentPlayer.getName() + " says UNO!");
+                }
+            }
             currentPlayer.removeCard(botsCard);
             discardPile.addFirst(botsCard);
             System.out.println(currentPlayer.getName() + " plays "
                     + CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName()));
+
             if (isPlayersHandEmpty()) {
                 System.out.println(currentPlayer.getName() + " has won the round!");
                 counter++;
@@ -91,14 +102,6 @@ public class GameController {
                 return botsCardsToPlay.get(index);
             }
         }
-
-//        if (plusFour != null) {
-//            System.out.println("TEST! Bot gives card " + plusFour);
-////            drawCard(cardsDeck);
-//        } else {
-//            System.out.println("TEST ELSE! Bot gives card " + plusFour);
-//        }
-        //if +4 exist - return +4 (honestly) or null
         return plusFour;
     }
 
@@ -111,10 +114,23 @@ public class GameController {
                 drawCard(cardsDeck);
                 break;
             case 2:
+                // Spielt Karte OHNE "UNO", wenn letzte 2 Karten auf Hand sind
+                if (currentPlayer.getCardsInHand().size() == 2) {
+                    System.out.println("You forgot to say UNO! You get 1 penalty card");
+                    StrafManager.drawOneCardPenalty(cardsDeck, currentPlayer, discardPile);
+                    playCard(cardsDeck);
+                }else {
+                    playCard(cardsDeck);
+                }
                 playCard(cardsDeck);
                 break;
             case 3:
-                System.out.println(currentPlayer.getName() + " said UNO!");
+                if (currentPlayer.getCardsInHand().size() == 2) {
+                    System.out.println("\u001B[30;46m["+currentPlayer.getName()+ "] said UNO!\u001B[0m");
+                    playCard(cardsDeck);
+                } else {
+                    System.out.println("Too many cards for UNO!");
+                }
                 break;
             case 4:
                 System.out.println("Suggestions isn't allowed. Draw two cards!");

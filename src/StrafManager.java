@@ -19,4 +19,10 @@ public class StrafManager {
         PrintManager.fourCardsMessage(prevPlayer.getName());
     }
 
+    public static void drawOneCardPenalty(CardsDeck cardsDeck, Player currentPlayer, Deque<Card> discardPile) {
+        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+
+
+    }
+
 }
