@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.*;
 
 public class GameController {
@@ -14,9 +15,27 @@ public class GameController {
     //die Bedingung für das Beenden des Spiels.
     private boolean isExit = false;
 
+    //Test: DatabaseHelper
+    private DatabaseHelper dbHelper;
+    private int sessionId;
+    private int roundNumber;
+
+    public void setDatabaseHelper(DatabaseHelper dbHelper) {
+        this.dbHelper = dbHelper;
+    }
+
+    public GameController() {
+        this.sessionId = generateSessionId(); //  Zufallszahl oder Zähler
+        this.roundNumber = 1; //TODO: hier eventuell nicht nötig. Weil beim Exit ist nicht hochgezählt
+    }
+
+    //Um Session ID zu speichern:
+    private int generateSessionId() {
+        return (int) (Math.random() * 10000); // Beispiel: Zufalls-ID
+    }
+
     public void run() {
         CardsDeck cardsDeck = new CardsDeck();
-
         prepareGame();
         currentPlayer = playerManager.getCurrentPlayer();
         startRound(cardsDeck);
@@ -135,9 +154,19 @@ public class GameController {
                 PrintManager.printGameInstructions();
                 break;
             case 0:
+
+                System.out.println("Game is over!");
+                ArrayList<Player> players = playerManager.getPlayers(); // Zugriff auf Players hier
+                //SaveToDB
+                dbHelper.saveGameState(players, sessionId, roundNumber);
+
                 System.out.println("Game over!");
                 //saveYoDatenbank;
+
                 isExit = true;
+                System.out.println("Current game state is saved in the database!");
+
+
         }
     }
 
@@ -147,6 +176,8 @@ public class GameController {
     private void prepareGame() {
         playerManager.preparePlayers();
         playerManager.setSequenceAndFirstPlayer();
+
+
     }
 
     public CardsDeck startNewRound() {
@@ -534,11 +565,34 @@ public class GameController {
         // 2. Print ranking
         scoreCalculator.printRanking(players);
 
+        //2.1 Save GameState into the DB
+
+        try {
+            // Tabelle nur beim ersten Mal anlegen
+            dbHelper.initDatabaseIfNeeded();
+            //Results werden in die DB gespeichert
+            for (Player p : players) {
+                dbHelper.saveRoundResult(
+                        p.getName(),
+                        sessionId,
+                        roundNumber,
+                        p.getPoints(),
+                        p.isBot()
+                );
+            }
+            // Runde hochzählen für die nächste Runde!
+            roundNumber++;
+        } catch (SQLException e) {
+            System.out.println("Fehler beim Speichern in die Datenbank: " + e.getMessage());
+        }
+
         // 3. Check if someone won the entire game (500+ points)
         Player gameWinner = scoreCalculator.checkForGameWinner(players);
         if (gameWinner != null) {
             System.out.println("WoW! " + gameWinner.getName() + " has won the game with "
                     + gameWinner.getPoints() + " points!");
+            //TODO: Anna muss testen
+           dbHelper.showSessionData();
             return true;  // signal game over
         } else {
             System.out.println("Next round will start...");

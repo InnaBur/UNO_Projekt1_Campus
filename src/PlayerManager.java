@@ -16,6 +16,10 @@ public class PlayerManager {
         isClockwise = false; // Startet gegen den Uhrzeigersinn
     }
 
+    public ArrayList<Player> getPlayers() {
+        return playerList;
+    }
+
     public void setCurrentPlayer() {
         if (!playerList.isEmpty()) {
             this.currentPlayer = playerList.get(0);
@@ -28,6 +32,7 @@ public class PlayerManager {
         askPlayersCount();
         askPlayersNamesAndCreateBots();
         showPlayersAtBeginn();
+
     }
 
     public void setSequenceAndFirstPlayer() {
