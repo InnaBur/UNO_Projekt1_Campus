@@ -38,10 +38,6 @@ public class Player {
         return cardsInHand;
     }
 
-    public void setCardsInHand(ArrayList<Card> cardsInHand) {
-        this.cardsInHand = cardsInHand;
-    }
-
     public Card addCard(Card card) {
         cardsInHand.add(card);
         return card;
@@ -54,7 +50,7 @@ public class Player {
     public void showHand() {
         // System.out.print(name + ", Your cards are: ");
         // Schwarzer Text (30), Cyan Hintergrund (46)
-        System.out.print("\n\u001B[30;46m[" + name + "]\u001B[0m, your cards are: ");
+        System.out.print("\u001B[30;46m[" + name + "]\u001B[0m, your cards are: ");
         for (Card x : cardsInHand) {
             String colorCardOutput = CardsDeck.createColoredOutputForCard(x.getCardName());  // Farbige Darstellung
             System.out.print("[" + colorCardOutput + "] ");

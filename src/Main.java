@@ -20,6 +20,11 @@ public class Main {
         controller.setDatabaseHelper(dbHelper);
         // 5. Spiel starten
         controller.run();
+
+        PrintManager.printGameInstructions();
+        System.out.println("Game starts");
+        new GameController().run();
+
     }
 
 
