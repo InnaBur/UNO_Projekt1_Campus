@@ -1,21 +1,19 @@
 public class PrintManager {
 
     public static void showMenu() {
-        System.out.println("\u001B[30;47m"); // Black text on light gray background
-        System.out.println("""
-                            Make your choice:                 
-                  ┌────────────┬────────────┬────────────┐               
-                  │ [1] Draw   │ [2] Play   │ [3] Play   │            
-                  │     a card │     a card │     & UNO  │             
-                  ├────────────┼────────────┼────────────┤            
-                  │ [4] Suggest│ [5] Help   │ [0] Exit   │             
-                  │     a move │     rules  │            │            
-                  ├────────────┼────────────┼────────────┤             
-                         
-                """);
-        System.out.print("\u001B[0m"); // Reset colors
-    }
+        String color = "\u001B[30;47m"; // Black text on light gray background
+        String reset = "\u001B[0m";
 
+        System.out.println(color + " Enter a number to choose an action (0–5): " + reset);
+        System.out.println(color + "  ┌────────────┬────────────┬────────────┐ " + reset);
+        System.out.println(color + "  │ [1] Draw   │ [2] Play   │ [3] Play   │ " + reset);
+        System.out.println(color + "  │     a card │     a card │     & UNO  │ " + reset);
+        System.out.println(color + "  ├────────────┼────────────┼────────────┤ " + reset);
+        System.out.println(color + "  │ [4] Give   │ [5] Help   │ [0] Exit   │ " + reset);
+        System.out.println(color + "  │     advice │            │            │ " + reset);
+        System.out.println(color + "  └────────────┴────────────┴────────────┘ " + reset);
+
+    }
     public static void printInvalidInput(String s) {
         System.out.println("Invalid input " + s);
     }

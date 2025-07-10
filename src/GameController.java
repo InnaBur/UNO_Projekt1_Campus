@@ -3,7 +3,6 @@ import java.util.*;
 public class GameController {
 
     private final PlayerManager playerManager = new PlayerManager();
-    // menschliche Spieler
     private final Deque<Card> discardPile = new ArrayDeque<>();
     private final ScoreCalculator scoreCalculator = new ScoreCalculator();
     Scanner scanner = new Scanner(System.in);
@@ -40,76 +39,10 @@ public class GameController {
         } while (!isExit);
     }
 
-    private void botPlays(CardsDeck cardsDeck) {
-        currentPlayer.showHand();
-        Card botsCard = botsCardToPlay(cardsDeck);
-        if (botsCard != null) {
-            if (currentPlayer.getCardsInHand().size() == 2) {
-                Random random = new Random();
-                int uno = random.nextInt() % 2;
-                if (uno == 0) {
-                    System.out.println(currentPlayer.getName() + " forgot to say UNO and get 1 penalty card");
-                    StrafManager.drawOneCardPenalty(cardsDeck, currentPlayer, discardPile);
-                } else {
-                    System.out.println(currentPlayer.getName() + " says UNO!");
-                }
-            }
-            currentPlayer.removeCard(botsCard);
-            discardPile.addFirst(botsCard);
-            System.out.println(currentPlayer.getName() + " plays "
-                    + CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName()));
-
-            if (isPlayersHandEmpty()) {
-                System.out.println(currentPlayer.getName() + " has won the round!");
-                counter++;
-                isGameWinOrNewRound();
-            } else {
-                handlePlayedCard(botsCard, cardsDeck);
-            }
-        } else {
-            drawCard(cardsDeck);
-        }
-    }
-
-    private void playerPlays(CardsDeck cardsDeck) {
-        currentPlayer.showHand();
-        gamePlay(cardsDeck);
-    }
-
-    //in diese Methode ist verrechnen, welche Karte der Bot spielen kann, um dann die Möglichkeit des Bluffs
-    //an 20% zu setzen
-    private Card botsCardToPlay(CardsDeck cardsDeck) {
-        ArrayList<Card> botsCardsToPlay = new ArrayList<>();
-        Card plusFour = null;
-        for (Card card : currentPlayer.getCardsInHand()) {
-            if (card.isPlayableOn(discardPile.peek())) {
-                if (card.getCardName().contains("+4")) {
-                    plusFour = card;
-                } else {
-                    botsCardsToPlay.add(card);
-                }
-            }
-        }
-
-        if (!botsCardsToPlay.isEmpty()) {
-            Random random = new Random();
-
-            //bluff with 20% random
-            if (plusFour != null && random.nextDouble() < 0.2) {
-                return plusFour;
-            } else {
-                int index = random.nextInt(botsCardsToPlay.size());
-                return botsCardsToPlay.get(index);
-            }
-        }
-        return plusFour;
-    }
-
-
+    //In diese Methode gibt es das Auswahlmenü mit verschiedenen Möglichkeiten des Ablaufs des Spiels
     private void gamePlay(CardsDeck cardsDeck) {
 
         switch (userChoice()) {
-
             case 1:
                 drawCard(cardsDeck);
                 break;
@@ -119,22 +52,16 @@ public class GameController {
                     System.out.println("You forgot to say UNO! You get 1 penalty card");
                     StrafManager.drawOneCardPenalty(cardsDeck, currentPlayer, discardPile);
                     playCard(cardsDeck);
-                }else {
+                } else {
                     playCard(cardsDeck);
                 }
-                playCard(cardsDeck);
                 break;
             case 3:
-                if (currentPlayer.getCardsInHand().size() == 2) {
-                    System.out.println("\u001B[30;46m["+currentPlayer.getName()+ "] said UNO!\u001B[0m");
-                    playCard(cardsDeck);
-                } else {
-                    System.out.println("Too many cards for UNO!");
-                }
+                playerSaysUno(cardsDeck);
                 break;
             case 4:
                 System.out.println("Suggestions isn't allowed. Draw two cards!");
-                drawTwoCardsPenalty(cardsDeck);
+                StrafManager.drawTwoCardsPenalty(cardsDeck, currentPlayer, discardPile);
                 break;
             case 5:
                 PrintManager.printGameInstructions();
@@ -144,6 +71,11 @@ public class GameController {
                 //saveYoDatenbank;
                 isExit = true;
         }
+    }
+
+    private void playerPlays(CardsDeck cardsDeck) {
+        currentPlayer.showHand();
+        gamePlay(cardsDeck);
     }
 
     /*In this method, the number of human players and bots is determined,
@@ -160,8 +92,10 @@ public class GameController {
         return cardsDeck;
     }
 
+    //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise
+    //first card from the cards deck is a first card in drawPile
     public void startRound(CardsDeck cardsDeck) {
-        playerManager.setClockwise(false);     //Spielrichtung zu Beginn der neuen Runde auf counter-clockwise)
+        playerManager.setClockwise(false);
 
         playerManager.clearPlayersHand();
         discardPile.clear();
@@ -169,7 +103,8 @@ public class GameController {
         cardsDeck.dealCards(playerManager.getPlayerList());
         Collections.shuffle(playerManager.getPlayerList());
         playerManager.printPlayerOrderInColour();
-        discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList(discardPile));       //first card from the cards deck is a first card in drawPile
+
+        discardPile.addFirst(cardsDeck.getTopCardAndRemoveFromList(discardPile));
         handleFirstCardEffect(cardsDeck);
     }
 
@@ -193,11 +128,77 @@ public class GameController {
             }
         } else {
             // Invalid or unplayable card is penalty
-            invalidCardFromUserAndPenalty(cardsDeck);
-
+            StrafManager.invalidCardFromUserAndPenalty(cardsDeck, currentPlayer, discardPile);
+            currentPlayer = playerManager.getNextPlayer();
         }
 
     }
+    /* In diese Methode spielt der Bot die Karte, wenn er sie hat und randomly
+     sagt UNO, wenn er vorletzte Karte hat
+     */
+    private void botPlays(CardsDeck cardsDeck) {
+        currentPlayer.showHand();
+        Card botsCard = botsCardToPlay(cardsDeck);
+        if (botsCard != null) {
+            botSaysUnoOrNot(cardsDeck);
+            currentPlayer.removeCard(botsCard);
+            discardPile.addFirst(botsCard);
+            System.out.println(currentPlayer.getName() + " plays "
+                    + CardsDeck.createColoredOutputForCard(discardPile.peek().getCardName()));
+
+            if (isPlayersHandEmpty()) {
+                System.out.println(currentPlayer.getName() + " has won the round!");
+                counter++;
+                isGameWinOrNewRound();
+            } else {
+                handlePlayedCard(botsCard, cardsDeck);
+            }
+        } else {
+            drawCard(cardsDeck);
+        }
+    }
+
+    private void botSaysUnoOrNot(CardsDeck cardsDeck) {
+        if (currentPlayer.getCardsInHand().size() == 2) {
+            Random random = new Random();
+            int uno = random.nextInt() % 2;
+            if (uno == 0) {
+                System.out.println(currentPlayer.getName() + " forgot to say UNO and get 1 penalty card");
+                StrafManager.drawOneCardPenalty(cardsDeck, currentPlayer, discardPile);
+            } else {
+                System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "] said UNO!\u001B[0m");
+            }
+        }
+    }
+
+    //in diese Methode ist verrechnen, welche Karte der Bot spielen kann, um dann die Möglichkeit des Bluffs
+    //an 20% zu setzen
+    private Card botsCardToPlay(CardsDeck cardsDeck) {
+        ArrayList<Card> botsCardsToPlay = new ArrayList<>();
+        Card plusFour = null;
+        for (Card card : currentPlayer.getCardsInHand()) {
+            if (card.isPlayableOn(discardPile.peek())) {
+                if (card.getCardName().contains("+4")) {
+                    plusFour = card;
+                } else {
+                    botsCardsToPlay.add(card);
+                }
+            }
+        }
+
+        if (!botsCardsToPlay.isEmpty()) {
+            Random random = new Random();
+            //bluff with 20% random
+            if (plusFour != null && random.nextDouble() < 0.2) {
+                return plusFour;
+            } else {
+                int index = random.nextInt(botsCardsToPlay.size());
+                return botsCardsToPlay.get(index);
+            }
+        }
+        return plusFour;
+    }
+
 
     // Handle scoring and check if game ends
     private void isGameWinOrNewRound() {
@@ -212,17 +213,6 @@ public class GameController {
         }
     }
 
-    private void invalidCardFromUserAndPenalty(CardsDeck cardsDeck) {
-        PrintManager.printInvalidInput(" or card cannot be played. You receive 2 penalty cards.");
-        drawTwoCardsPenalty(cardsDeck);
-        // next player
-        currentPlayer = playerManager.getNextPlayer();
-    }
-
-    private void drawTwoCardsPenalty(CardsDeck cardsDeck) {
-        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-    }
 
     private boolean isPlayersHandEmpty() {
         return currentPlayer.getCardsInHand().isEmpty();
@@ -335,9 +325,7 @@ public class GameController {
             twoCardsToNextPlayer(cardsDeck);
 
         } else if (cardName.contains("+4")) {
-
-            plusFourCardSpecial(playedCard, cardsDeck); //!!!!!Sollte geschrieben werden
-
+            plusFourCardSpecial(playedCard, cardsDeck);
         }
         // When the player plays "CC", ask for the color and update the card name
         else if (cardName.equals("CC")) {
@@ -351,30 +339,31 @@ public class GameController {
     private boolean botDecidesToCheckBluff(Player currentPlayer) {
         Random random = new Random();
         boolean decidesToCheck = random.nextBoolean();
-        System.out.println(currentPlayer.getName() + (decidesToCheck ? " decides to check bluff." : " decides not to check bluff."));
+        System.out.println(currentPlayer.getName() + (decidesToCheck ? " decides to check bluff." :
+                " decides not to check bluff."));
         return decidesToCheck;
     }
 
 
     private boolean askPlayerIfCheckBluff() {
-        int antwort;
+        String antwort;
         boolean chose = false;
         boolean validInput = false;
 
         do {
-            System.out.println("Do you want to check bluff? 1- if yes, 0 - no");
-            antwort = scanner.nextInt();
+            System.out.println("Do you want to check bluff? y- if yes, n - no");
+            antwort = scanner.nextLine();
 
             switch (antwort) {
-                case 1:
+                case "y":
                     chose = true;
                     validInput = true;
                     break;
-                case 0:
+                case "n":
                     validInput = true;
                     break;
                 default:
-                    System.out.println("Invalid input. Please enter 1 or 0.");
+                    System.out.println("Invalid input. Please enter y or n.");
             }
 
         } while (!validInput);
@@ -603,6 +592,15 @@ public class GameController {
 //        }
         discardPile.addFirst(topCard);
         return false;
+    }
+
+    private void playerSaysUno(CardsDeck cardsDeck) {
+        if (currentPlayer.getCardsInHand().size() == 2) {
+            System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "] said UNO!\u001B[0m");
+            playCard(cardsDeck);
+        } else {
+            System.out.println("Too many cards for UNO!");
+        }
     }
 
 }
