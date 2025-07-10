@@ -28,19 +28,19 @@ public class ScoreCalculator {
         cardPoints.put("CC", 50);
     }
 
-    // Berechnet die Gesamtpunktzahl für eine Handkartenliste
+    //  Gesamtpunktzahl für eine Hand
     public int calculatePoints(ArrayList<Card> hand) {
         int total = 0;
 
         for (Card card : hand) {
             String name = card.getCardName();
-            total += cardPoints.get(name); // setzt voraus, dass Karte immer vorhanden ist
+            total += cardPoints.get(name);
         }
 
         return total;
     }
 
-    // Verleiht dem Gewinner einer Runde die Punkte aller gegnerischen Handkarten
+    //  Gewinner einer Runde bekommt die Punkte aller Handkarten der Gegenspieler
     public int awardPointsToWinner(ArrayList<Player> allPlayers, Player winner) {
         int total = 0;
 

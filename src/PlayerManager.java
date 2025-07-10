@@ -58,7 +58,7 @@ public class PlayerManager {
         for (Player player : playerList) {
             System.out.print(player.getName() + ", ");
         }
-        System.out.print("Welcome in game!");
+        System.out.print("Welcome to the game!");
         System.out.println();
         System.out.println("-----------------------------");
     }
