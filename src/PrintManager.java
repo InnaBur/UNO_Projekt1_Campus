@@ -1,18 +1,19 @@
 public class PrintManager {
 
     public static void showMenu() {
-        String color = "\u001B[30;47m"; // Black text on light gray background
-        String reset = "\u001B[0m";
-
-        System.out.println(color + " Enter a number to choose an action (0–5): " + reset);
-        System.out.println(color + "  ┌────────────┬────────────┬────────────┐ " + reset);
-        System.out.println(color + "  │ [1] Draw   │ [2] Play   │ [3] Play   │ " + reset);
-        System.out.println(color + "  │     a card │     a card │     & UNO  │ " + reset);
-        System.out.println(color + "  ├────────────┼────────────┼────────────┤ " + reset);
-        System.out.println(color + "  │ [4] Give   │ [5] Help   │ [0] Exit   │ " + reset);
-        System.out.println(color + "  │     advice │            │            │ " + reset);
-        System.out.println(color + "  └────────────┴────────────┴────────────┘ " + reset);
-
+        System.out.println("\u001B[30;47m"); // Black text on light gray background
+        System.out.println("""
+                            Make your choice:                 
+                  ┌────────────┬────────────┬────────────┐               
+                  │ [1] Draw   │ [2] Play   │ [3] Play   │            
+                  │     a card │     a card │     & UNO  │             
+                  ├────────────┼────────────┼────────────┤            
+                  │ [4] Suggest│ [5] Help   │ [0] Exit   │             
+                  │     a move │     rules  │            │            
+                  ├────────────┼────────────┼────────────┤             
+                         
+                """);
+        System.out.print("\u001B[0m"); // Reset colors
     }
 
     public static void printInvalidInput(String s) {
@@ -98,14 +99,14 @@ public class PrintManager {
         System.out.println("- You can play a card if it matches the color or number of the top discard.");
         System.out.println("- " + YELLOW + "Special wild card choose color" + RESET + " can be played anytime, but " + RED + "wild draw four" + RESET + " has rules.");
         System.out.println("- If you can't play, then draw one card. If it's playable, you may use it.");
-        System.out.println("- " + RED + BOLD + "Use 'Play & UNO' when you have 2 cards." + RESET + " If you forget, you receive " + RED + "1 penalty card." + RESET + "\n");
+        System.out.println("- " + RED + BOLD + "Say 'UNO!' before you have only one card left." + RESET + " If you forget, you receive " + RED + "1 penalty card." + RESET + "\n");
 
         System.out.println(BOLD + " Action Cards:" + RESET);
         System.out.println("1. " + BLUE + "Draw Two" + RESET + ": Next player draws 2 cards and skips their turn.");
         System.out.println("2. " + GREEN + "Reverse" + RESET + ": Changes the direction of play.");
         System.out.println("3. " + RED + "Skip" + RESET + ": Next player loses their turn.");
         System.out.println("4. " + PURPLE + "Wild Color" + RESET + ": Choose the next color to play on discard pile.");
-        System.out.println("5. " + RED + BOLD + "Wild Draw Four" + RESET + ": Choose color and next player draws 4 cards. " + RED + "Only play if you have no matching color, except for Skip, Draw Two, or Reverse cards." + RESET + "\n");
+        System.out.println("5. " + RED + BOLD + "Wild Draw Four" + RESET + ": Choose color and next player draws 4 cards. " + RED + "Only play if you have no matching color." + RESET + "\n");
 
         System.out.println(BOLD + " Penalties:" + RESET);
         System.out.println("- Forgot to say UNO: " + RED + "1 card" + RESET + ".");

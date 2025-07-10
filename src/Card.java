@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class Card {
 
     private String cardName;
@@ -22,10 +20,6 @@ public class Card {
         return isSpecial;
     }
 
-    public void setSpecial(boolean special) {
-        isSpecial = special;
-    }
-
     @Override
     public String toString() {
         return "Card{" +
@@ -34,21 +28,17 @@ public class Card {
                 '}';
     }
 
-    public String karteToString() {
-        return cardName;
-    }
-
-
     public boolean isPlayableOn(Card topCard) {
         String thisName = this.cardName.toUpperCase();
         String topName = topCard.getCardName().toUpperCase();
 
         // Falls Karte ein Farbwechsel ist, darf sie immer gespielt werden
-        if (thisName.contains("CC") || thisName.contains("+4")) { // +4 darf auch immer gelegt werden (obwohl gegen regel), damit der bluff funktioniert
+        // +4 darf auch immer gelegt werden (obwohl gegen regel), damit der bluff funktioniert
+        if (thisName.contains("CC") || thisName.contains("+4")){
             return true;
         }
 
-        // Farbe = erstes Zeichen
+        // Farbe = erstes Zeiche
         char thisColor = thisName.charAt(0);
         char topColor = topName.charAt(0);
 
@@ -59,6 +49,4 @@ public class Card {
         // Spielbar wenn gleiche Farbe oder gleicher Wert/Aktion
         return thisColor == topColor || thisValue.equals(topValue);
     }
-
-
 }
