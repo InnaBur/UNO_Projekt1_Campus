@@ -7,17 +7,12 @@ public class PlayerManager {
     Scanner scanner = new Scanner(System.in);
     private ArrayList<Player> playerList;
     private boolean isClockwise;
-    //    private int currentPlayerIndex;
     private int humanPlayersCount;
     private Player currentPlayer;
 
     public PlayerManager() {
         playerList = new ArrayList<>();
         isClockwise = false; // Startet gegen den Uhrzeigersinn
-    }
-
-    public ArrayList<Player> getPlayers() {
-        return playerList;
     }
 
     public void setCurrentPlayer() {
@@ -32,7 +27,6 @@ public class PlayerManager {
         askPlayersCount();
         askPlayersNamesAndCreateBots();
         showPlayersAtBeginn();
-
     }
 
     public void setSequenceAndFirstPlayer() {
@@ -63,7 +57,7 @@ public class PlayerManager {
         for (Player player : playerList) {
             System.out.print(player.getName() + ", ");
         }
-        System.out.print("Welcome to the game!");
+        System.out.print("Welcome in game!");
         System.out.println();
         System.out.println("-----------------------------");
     }
@@ -111,20 +105,24 @@ public class PlayerManager {
         isClockwise = !isClockwise;
     }
 
-    public Player getNextPlayer() {
-        /*In a clockwise game:Player passes to their left neighbor.
+    /*In a clockwise game:Player passes to their left neighbor.
         In a counter-clockwise game:Player passes to their right neighbor.
         In a circle, going clockwise means going to the left in real seating at a round table.
         */
+    public Player getNextPlayer() {
+
         int index = getCurrentPlayersIndex();
         if (isClockwise) {
-            //In code: Index + 1--> right in array --> real-life Player gives to his left neighbour: clockwise.: Index + 1 (mit Modulo, damit es nach dem letzten Spieler wieder bei 0 beginnt - Rundenlogik. (1 + 1) % 4 = 2
+            //In code: Index + 1--> right in array --> real-life Player gives to his left neighbour:
+            // clockwise.: Index + 1 (mit Modulo, damit es nach dem letzten Spieler wieder bei 0 beginnt - Rundenlogik.
+            // (1 + 1) % 4 = 2
             // Clockwise: go to the next player in the list
             currentPlayer = playerList.get((index + 1) % playerList.size());
             System.out.println("Current Player: " + currentPlayer.getName());
 
         } else {
-            // In code: Index - 1 --> left in array --> real-life Player gives to his right neighbour: counter-clockwise.: Index - 1 (Modulo verhindert negative Zahlen). (0 - 1 + 4) % 4 = 3
+            // In code: Index - 1 --> left in array --> real-life Player gives to his right neighbour:
+            // counter-clockwise.: Index - 1 (Modulo verhindert negative Zahlen). (0 - 1 + 4) % 4 = 3
             // Counterclockwise: go to the previous player in the list
             currentPlayer = playerList.get((index - 1 + playerList.size()) % playerList.size());
             System.out.println("Current Player: " + getCurrentPlayer().getName());
@@ -149,7 +147,6 @@ public class PlayerManager {
                 // backward order from currentPlayer
                 index = (getCurrentPlayersIndex() - i + playerList.size()) % playerList.size();
             }
-
             System.out.println(style + " [" + playerList.get(index).getName() + "] " + reset);
         }
         System.out.println("\n\u001B[30;41mGame Direction :\u001B[0m " + (isClockwise ? "Clockwise" : "Counter-clockwise"));
@@ -174,10 +171,6 @@ public class PlayerManager {
 
     public int getHumanPlayersCount() {
         return humanPlayersCount;
-    }
-
-    public void setHumanPlayersCount(int humanPlayersCount) {
-        this.humanPlayersCount = humanPlayersCount;
     }
 
     public int getCurrentPlayersIndex() {
