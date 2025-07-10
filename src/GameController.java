@@ -122,7 +122,7 @@ public class GameController {
             // Check if player has emptied their hand → they win the round
             if (isPlayersHandEmpty()) {
                 System.out.println(currentPlayer.getName() + " has won the round!");
-                isGameWinOrNewRound();
+                isGameWinOrNewRound(playerManager.getPlayerList(), counter);
             } else {
                 handlePlayedCard(selectedCard, cardsDeck);
             }
@@ -149,7 +149,7 @@ public class GameController {
             if (isPlayersHandEmpty()) {
                 System.out.println(currentPlayer.getName() + " has won the round!");
                 counter++;
-                isGameWinOrNewRound();
+                isGameWinOrNewRound(playerManager.getPlayerList(), counter);
             } else {
                 handlePlayedCard(botsCard, cardsDeck);
             }
@@ -201,13 +201,14 @@ public class GameController {
 
 
     // Handle scoring and check if game ends
-    private void isGameWinOrNewRound() {
+    private void isGameWinOrNewRound(ArrayList<Player> players, int round) {
         boolean isGameWin = handleRoundEnd(playerManager.getPlayerList());
         if (isGameWin) {
             //!!!!! Daten von DB
             System.out.println("Ther are " + counter + " rounds!");
             isExit = true;
         } else {
+
             CardsDeck newDeck = startNewRound();
             startGame(newDeck);
         }
@@ -482,7 +483,10 @@ public class GameController {
 
         // 2. Print ranking
         scoreCalculator.printRanking(players);
-
+        for (Player player: players) {
+            DBManager.addDatenIntoDB(players, 1, counter);
+            System.out.println(player.getName() + " has " + player.getPoints());
+        }
         // 3. Check if someone won the entire game (500+ points)
         Player gameWinner = scoreCalculator.checkForGameWinner(players);
         if (gameWinner != null) {
