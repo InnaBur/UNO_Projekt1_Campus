@@ -21,8 +21,21 @@ public class StrafManager {
 
     public static void drawOneCardPenalty(CardsDeck cardsDeck, Player currentPlayer, Deque<Card> discardPile) {
         currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+    }
 
+    public static void drawTwoCardsPenalty(CardsDeck cardsDeck, Player currentPlayer, Deque<Card> discardPile) {
+        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+        currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+    }
 
+    public static void invalidCardFromUserAndPenalty(CardsDeck cardsDeck, Player currentPlayer, Deque<Card> discardPile) {
+        PrintManager.printInvalidInput(" or card cannot be played. You receive 2 penalty cards.");
+       drawTwoCardsPenalty(cardsDeck, currentPlayer, discardPile);
+    }
+
+    public static void twoCardsToNextPlayer(CardsDeck cardsDeck, Player next, Deque<Card> discardPile) {
+        next.addAllCards(cardsDeck.getNTopCardAndRemoveFromCardDeck(2, discardPile));
+        PrintManager.twoCardsMessage(next.getName());
     }
 
 }
