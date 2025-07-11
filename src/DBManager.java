@@ -11,41 +11,61 @@ public class DBManager {
 
     //Sucht "Score" eines Spielers in einer Session
     private static final String SELECT_BYPLAYERANDSESSION = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Player = '%1s' AND Session = %2d;";
-
     private static final String SELECT_BY_SESSION = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Session = 1;";
+    static String selectAllScores = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Session = 1 GROUP BY Player;";
 
-
-    public static void addDatenIntoDB(ArrayList<Player> players, int session, int round) {
+    public static SqliteClient createTableInDB() {
+        SqliteClient client = null;
         try {
-            SqliteClient client = new SqliteClient("uno.sqlite");
+             client = new SqliteClient("uno.sqlite");
 
             if (client.tableExists("Sessions")) {
                 client.executeStatement("DROP TABLE Sessions;");
             }
             //Tabelle wird hier neu erstellt
             client.executeStatement(CREATETABLE);
-
-            for (Player player : players) {
-                client.executeStatement(String.format(INSERT_TEMPLATE, player.getName(), session, round, player.getPoints()));
-            }
-//            client.executeStatement(String.format(INSERT_TEMPLATE, "Hans", 1, 1, 0));
-//            client.executeStatement(String.format(INSERT_TEMPLATE, "Anita", 1, 2, 20));
-//            client.executeStatement(String.format(INSERT_TEMPLATE, "Hans", 1, 2, 100));
-            ArrayList<HashMap<String, String>> results = new ArrayList<>();
-
-            for (Player player: players) {
-                results = client.executeQuery(String.format(SELECT_BYPLAYERANDSESSION, player.getName(), 1));
-                HashMap<String, String> map = results.get(0);
-                System.out.println(map.get("Player") + " hat derzeit:  " + map.get("Score") + " Punkte");
-                }
-
-//            for (HashMap<String, String> map : results) {
-//                System.out.println(map.get("Player") + " hat derzeit:  " + map.get("Score") + " Punkte");
-//            }
-
         } catch (SQLException ex) {
             System.out.println("Ups! Something went wrong:" + ex.getMessage());
             ex.printStackTrace();
         }
+        return client;
     }
+
+    public static void addDatenIntoDB(ArrayList<Player> players, int session, int round, SqliteClient client) throws SQLException {
+        client.executeStatement("DELETE FROM Sessions WHERE Session = " + session + ";");
+
+        for (Player player : players) {
+            client.executeStatement(String.format(INSERT_TEMPLATE, player.getName(), session, round, player.getPoints()));
+        }
+    }
+
+    public static void takeDatenFromDB(int session, SqliteClient client) {
+        try {
+            String selectAllScores = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Session = " + session + " GROUP BY Player;";
+            ArrayList<HashMap<String, String>> results = client.executeQuery(selectAllScores);
+
+            for (HashMap<String, String> map : results) {
+                System.out.println(map.get("Player") + " hat derzeit: " + map.get("Score") + " Punkte");
+            }
+
+            if (results.isEmpty()) {
+                System.out.println("There is no data in DB");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void cleanDB(SqliteClient client) {
+        try {
+            if (client.tableExists("Sessions")) {
+                client.executeStatement("DROP TABLE Sessions;");
+            }
+
+            client.executeStatement(CREATETABLE);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.*;
 
 public class GameController {
@@ -13,11 +14,14 @@ public class GameController {
     //die Bedingung für das Beenden des Spiels.
     private boolean isExit = false;
 
+    SqliteClient client = DBManager.createTableInDB();
+
     //in diese Methode ist Kartendeck vorbereitet, spiel ist vorbereitet und angefangen
     public void run() {
         CardsDeck cardsDeck = new CardsDeck();
 
         prepareGame();
+        DBManager.cleanDB(client);
         currentPlayer = playerManager.getCurrentPlayer();
         startRound(cardsDeck);
         startGame(cardsDeck);
@@ -68,6 +72,7 @@ public class GameController {
                 break;
             case 0:
                 System.out.println("Game is over!");
+                DBManager.takeDatenFromDB(1, client);
                 //saveYoDatenbank;
                 isExit = true;
         }
@@ -204,7 +209,7 @@ public class GameController {
     private void isGameWinOrNewRound(ArrayList<Player> players, int round) {
         boolean isGameWin = handleRoundEnd(playerManager.getPlayerList());
         if (isGameWin) {
-            //!!!!! Daten von DB
+            DBManager.takeDatenFromDB(1, client);
             System.out.println("Ther are " + counter + " rounds!");
             isExit = true;
         } else {
@@ -483,17 +488,20 @@ public class GameController {
 
         // 2. Print ranking
         scoreCalculator.printRanking(players);
-        for (Player player: players) {
-            DBManager.addDatenIntoDB(players, 1, counter);
-            System.out.println(player.getName() + " has " + player.getPoints());
+        try {
+            DBManager.addDatenIntoDB(players, 1, counter, client);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        // 3. Check if someone won the entire game (500+ points)
+
         Player gameWinner = scoreCalculator.checkForGameWinner(players);
         if (gameWinner != null) {
             System.out.println("WoW! " + gameWinner.getName() + " has won the game with "
                     + gameWinner.getPoints() + " points!");
             return true;  // signal game over
         } else {
+            DBManager.takeDatenFromDB(1, client);
             System.out.println("Next round will start...");
             return false; // game continues
         }
