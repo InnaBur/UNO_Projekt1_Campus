@@ -35,36 +35,12 @@ public class DBManager {
         client.executeStatement("DELETE FROM Sessions WHERE Session = " + session + ";");
 
         for (Player player : players) {
-            System.out.println("Inserting player: " + player.getName());
             client.executeStatement(String.format(INSERT_TEMPLATE, player.getName(), session, round, player.getPoints()));
         }
-
-
     }
 
-    //    public static void addDatenIntoDB(ArrayList<Player> players, int session, int round) {
-//        try {
-//            SqliteClient client = new SqliteClient("uno.sqlite");
-//
-//            if (client.tableExists("Sessions")) {
-//                client.executeStatement("DROP TABLE Sessions;");
-//            }
-//            //Tabelle wird hier neu erstellt
-//            client.executeStatement(CREATETABLE);
-//
-//            for (Player player : players) {
-//                System.out.println("Inserting player: " + player.getName());
-//                client.executeStatement(String.format(INSERT_TEMPLATE, player.getName(), session, round, player.getPoints()));
-//            }
-//
-//        } catch (SQLException ex) {
-//            System.out.println("Ups! Something went wrong:" + ex.getMessage());
-//            ex.printStackTrace();
-//        }
-//    }
     public static void takeDatenFromDB(int session, SqliteClient client) {
         try {
-//            SqliteClient client = new SqliteClient("uno.sqlite");
             String selectAllScores = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Session = " + session + " GROUP BY Player;";
             ArrayList<HashMap<String, String>> results = client.executeQuery(selectAllScores);
 

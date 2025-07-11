@@ -490,11 +490,10 @@ public class GameController {
         scoreCalculator.printRanking(players);
         try {
             DBManager.addDatenIntoDB(players, 1, counter, client);
-            DBManager.takeDatenFromDB(1, client);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
 
         Player gameWinner = scoreCalculator.checkForGameWinner(players);
         if (gameWinner != null) {
@@ -502,6 +501,7 @@ public class GameController {
                     + gameWinner.getPoints() + " points!");
             return true;  // signal game over
         } else {
+            DBManager.takeDatenFromDB(1, client);
             System.out.println("Next round will start...");
             return false; // game continues
         }
