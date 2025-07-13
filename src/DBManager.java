@@ -10,8 +10,6 @@ public class DBManager {
     private static final String INSERT_TEMPLATE = "INSERT INTO Sessions (Player, Session, Round, Score) VALUES ('%1s', %2d, %3d, %4d);";
 
     //Sucht "Score" eines Spielers in einer Session
-    private static final String SELECT_BYPLAYERANDSESSION = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Player = '%1s' AND Session = %2d;";
-    private static final String SELECT_BY_SESSION = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Session = 1;";
     static String selectAllScores = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Session = 1 GROUP BY Player;";
 
     public static SqliteClient createTableInDB() {
@@ -43,11 +41,10 @@ public class DBManager {
         try {
             String selectAllScores = "SELECT Player, SUM(Score) AS Score FROM Sessions WHERE Session = " + session + " GROUP BY Player;";
             ArrayList<HashMap<String, String>> results = client.executeQuery(selectAllScores);
-
+            System.out.println("Data from Database: ");
             for (HashMap<String, String> map : results) {
                 System.out.println(map.get("Player") + " hat derzeit: " + map.get("Score") + " Punkte");
             }
-
             if (results.isEmpty()) {
                 System.out.println("There is no data in DB");
             }
@@ -61,11 +58,9 @@ public class DBManager {
             if (client.tableExists("Sessions")) {
                 client.executeStatement("DROP TABLE Sessions;");
             }
-
             client.executeStatement(CREATETABLE);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-
 }
