@@ -21,9 +21,9 @@ public class GameController {
         CardsDeck cardsDeck = new CardsDeck();
 
         prepareGame();
-        DBManager.cleanDB(client);
+
         currentPlayer = playerManager.getCurrentPlayer();
-        startRound(cardsDeck);
+        startRound(cardsDeck); //
         startGame(cardsDeck);
     }
 
@@ -89,6 +89,7 @@ public class GameController {
     private void prepareGame() {
         playerManager.preparePlayers();
         playerManager.setSequenceAndFirstPlayer();
+        DBManager.cleanDB(client);
     }
 
     public CardsDeck startNewRound() {
