@@ -2,15 +2,37 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 
-public class CardsDeck {
+/**
+ * Die Klasse CardsDeck verwaltet das UNO-Kartendeck:
+ * Es enthält Methoden zum Erstellen, Mischen, Ziehen und Austeilen von Karten.
+ */
 
-    static final int NUMBER_OF_CARDS_IN_HAND = 2;
-    //array für Farben-Buchstaben
+public class CardsDeck {
+    /**
+     * Anzahl der Karten, die jeder Spieler am Anfang bekommt.
+     */
+    static final int NUMBER_OF_CARDS_IN_HAND = 7;
+
+    /**
+     * array für Farben-Buchstaben
+     * Verfügbare Farben für normale Karten: R = Rot, B = Blau, Y = Gelb, G = Grün.
+     */
     static final char[] COLORS = {'R', 'B', 'Y', 'G'};
+
+    /**
+     * Anzahl der Spieler im Spiel.
+     */
     static final int NUMBER_OF_PLAYERS = 4;
-    //Kartendeck list
+
+    /**
+     * Das aktuelle Kartendeck.
+     */
     private ArrayList<Card> cardsDeck;
 
+    /**
+     * Konstruktor
+     * Erstellt ein neues, vollständiges und gemischtes UNO-Kartendeck.
+     */
 
     public CardsDeck() {
         this.cardsDeck = new ArrayList<>();
@@ -18,17 +40,27 @@ public class CardsDeck {
         shuffleCardDeck();
     }
 
+    /**
+     * Konstruktor
+     * Alternativ: Erzeugt ein Kartendeck aus einer bestehenden Liste von Karten (z. B. für Tests).
+     *
+     * @param cardsDeck Eine vorbereitete Kartenliste.
+     */
+
     public CardsDeck(ArrayList<Card> cardsDeck) {
         this.cardsDeck = cardsDeck;
     }
 
-    // methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen,
-    // mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
+    /**
+     * Gibt den farbig formatierten Namen einer Karte in der Konsolenausgabe zurück.
+     * Nutzt ANSI-Escape-Sequenzen, um Karten farblich darzustellen.
+     *
+     * @param cardName Name der Karte ("R5", "G+2", "+4")
+     * @return Farbige Zeichenfolge in der Konsole.
+     */
     public static String createColoredOutputForCard(String cardName) {
         String colorCode;
-
         String upperCardName = cardName.toUpperCase(); // absichern für Testung
-
         // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, CC)
         if (upperCardName.startsWith("R")) {
             colorCode = "\u001B[30;41m"; // Schwarzer Text auf rotem Hintergrund
@@ -41,18 +73,27 @@ public class CardsDeck {
         } else {
             colorCode = "\u001B[30;45m"; // Schwarzer Text auf magentafarbenem Hintergrund (für +4, CC)
         }
-
         return colorCode + upperCardName + "\u001B[0m"; // Reset-Farbe
     }
 
+    /**
+     * Getter:
+     * Gibt das aktuelle Karten-Deck zurück.
+     * @return Liste aller verfügbaren Karten im Deck.
+     */
     public ArrayList<Card> getCardsDeck() {
         return cardsDeck;
     }
 
+    /**
+     * Gibt die obersten {@code count} Karten vom Deck und entfernt sie.
+     * Wenn das Deck leer ist, wird der Ablagestapel neu gemischt.
+     * @param count        Anzahl der Karten, die gezogen werden sollen.
+     * @param discardPile  Der Ablagestapel (für Re-Shuffle bei leerem Deck).
+     * @return Liste der gezogenen Karten.
+     */
     public ArrayList<Card> getNTopCardAndRemoveFromCardDeck(int count, Deque<Card> discardPile) {
-
         ArrayList<Card> drawnCards = new ArrayList<>();
-
         while (drawnCards.size() < count) {
             if (cardsDeck.isEmpty()) {
                 reshuffleDiscardPileIntoDrawPile(discardPile);
@@ -66,8 +107,14 @@ public class CardsDeck {
         return drawnCards;
     }
 
-    //top card from the cards deck be added into draw pill or into players hand
-    // and be removed from the card deck
+    /**
+     * Gibt die oberste Karte vom Deck zurück und entfernt sie.
+     * Mischt bei Bedarf den Ablagestapel neu ein.
+     *
+     * @param discardPile Der Ablagestapel.
+     * @return Die gezogene Karte.
+     */
+
     public Card getTopCardAndRemoveFromList(Deque<Card> discardPile) {
 
         if (cardsDeck.isEmpty()) {
@@ -78,12 +125,14 @@ public class CardsDeck {
         return top;
     }
 
-    public void createCardDeck() {
 
-        // Karten von 1 bis 9 und drei Sondere Karten jede Farbe zwei Mal erstellen wurden,
-        // Karte '0' jede Farbe wird nur ein Mal erstellen
-        for (char color : COLORS) {
-            createZeroCard(color);
+    /**
+     * Erstellt das vollständige UNO-Deck mit farbigen und schwarzen Spezialkarten.
+     */
+    public void createCardDeck() {
+        // Hier werden die Karten von 1 bis 9 und drei Sondere Karten jede Farbe 2 Mal erstellt
+            for (char color : COLORS) {
+            createZeroCard(color);   // Karte '0' jede Farbe wird nur ein Mal erstellen
             for (int i = 0; i < 2; i++) {
                 createColoredCards(color);
             }
@@ -93,13 +142,22 @@ public class CardsDeck {
         createSpecialBlackCards("CC");
     }
 
+    /**
+     * Fügt vier schwarze Spezialkarten (z.B. "+4" oder "CC") ins Deck ein.
+     *
+     * @param cardName Kartenname.
+     */
     //4 Karten +4 und 4 karten Farbwechsel werden erstellt
-    public void createSpecialBlackCards(String cardName) {
-        for (int i = 0; i < 40; i++) {
+        public void createSpecialBlackCards(String cardName) {
+        for (int i = 0; i < 4; i++) {
             cardsDeck.add(new Card(cardName, true));
         }
     }
 
+    /**
+     * Erstellt farbige Karten (1–9, +2, D, X) für eine bestimmte Farbe.
+     * @param color Farbzeichen ('R', 'G', 'B', 'Y')
+     */
     public void createColoredCards(char color) {
 
         for (int i = 0; i < 9; i++) {
@@ -111,14 +169,27 @@ public class CardsDeck {
         cardsDeck.add(new Card(color + "X", true));  //einen Umzug überspringen
     }
 
+
+    /**
+     * Fügt eine farbige Nullkarte dem Deck hinzu.
+     * @param color Farbzeichen ('R', 'G', 'B', 'Y')
+     */
     public void createZeroCard(char color) {
         cardsDeck.add(new Card("" + color + 0, false));
     }
 
+    /**
+     * Mischt das Kartendeck zufällig.
+     */
     public void shuffleCardDeck() {
         Collections.shuffle(cardsDeck);
     }
 
+
+    /**
+     * Gibt jedem Spieler eine bestimmte Anzahl an Startkarten.
+     * @param players Liste der Spieler.
+     */
     public void dealCards(ArrayList<Player> players) {
 
         for (int i = 0; i < NUMBER_OF_PLAYERS; i++) {
@@ -130,7 +201,10 @@ public class CardsDeck {
     }
 
 
-    //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden
+    /**
+     * Testmethode: Gibt alle Karten des aktuellen Decks aus.
+     * Sollte im finalen Spiel entfernt werden.
+     */
     public void printCardDeck() {
         int count = 0;
         for (Card card : cardsDeck) {
@@ -140,7 +214,10 @@ public class CardsDeck {
         System.out.println(count);
     }
 
-    //Help method for tests
+    /**
+     * Testmethode: Gibt alle Karten eines Deque-Stapels aus (z.B. Ablagestapel).
+     * @param list Stapel von Karten.
+     */
     public void printDequeCardDeck(Deque<Card> list) {
         int count = 0;
         for (Card card : list) {
@@ -150,7 +227,11 @@ public class CardsDeck {
         System.out.println(count);
     }
 
-    //neu shuffle cardDeck, if discard is empty
+    /**
+     * Mischt den Ablagestapel zurück ins Kartendeck, wenn das Deck leer ist.
+     * Die oberste Karte des Ablagestapels wird dabei nicht gemischt und bleibt unverändert oben liegen.
+     * @param discardPile Der Ablagestapel mit bereits gespielten Karten.
+     */
     void reshuffleDiscardPileIntoDrawPile(Deque<Card> discardPile) {
 
         Card temp = discardPile.pop();
