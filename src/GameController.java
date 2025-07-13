@@ -153,8 +153,6 @@ public class GameController {
         return cardsDeck;
     }
 
-
-
     /**
      * Startet eine neue Spielrunde:
      * - Setzt die Spielrichtung zurück
@@ -313,8 +311,6 @@ public class GameController {
         return plusFour;
     }
 
-
-
     /**
      * Prüft, ob das Spiel nach dem aktuellen Rundenende gewonnen ist oder eine neue Runde gestartet werden soll.
      *
@@ -348,9 +344,6 @@ public class GameController {
     private boolean isPlayersHandEmpty() {
         return currentPlayer.getCardsInHand().isEmpty();
     }
-
-
-
 
     /**
      * Zieht eine Karte vom Kartenstapel für den aktuellen Spieler (menschlich oder Bot).
@@ -593,10 +586,6 @@ public class GameController {
         return chose;
     }
 
-
-
-
-
     /**
      * Lässt den Spieler (oder Bot) eine neue Farbe wählen, wenn eine Farbwechselkarte ("CC") gespielt wurde.
      * Die gewählte Farbe wird an den Kartennamen angehängt (z.B. "RCC").
@@ -665,8 +654,6 @@ public class GameController {
         // Ermöglicht dem nächsten Spieler, einen Bluff zu überprüfen
         checkBluffOrNot(cardsDeck);
     }
-
-
     /**
      * Prüft, ob der nächste Spieler den Bluff nach einer +4-Karte aufdecken möchte.
      * - Ein menschlicher Spieler wird gefragt.
@@ -726,7 +713,6 @@ public class GameController {
         }
     }
 
-
     /**
      * Überspringt den nächsten Spieler:
      * Gibt eine Nachricht aus und setzt den aktuellen Spieler auf den übernächsten Spieler.
@@ -736,8 +722,6 @@ public class GameController {
         PrintManager.skippMessage(playerManager.getNextPlayer().getName());
         currentPlayer = playerManager.getNextPlayer();
     }
-
-
 
     /**
      * Wechselt die Spielrichtung (Uhrzeigersinn <-> Gegenuhrzeigersinn),
@@ -754,20 +738,38 @@ public class GameController {
         playerManager.printPlayerOrderInColour();
     }
 
+    /**
+     * Fragt den aktuellen Spieler nach der gewünschten Farbe,
+     * die nach dem Ausspielen einer Farbwahlkarte (z.B. "CC" oder "+4") gesetzt werden soll.
+     *
+     * @return Die gewählte Farbe als String: "R", "G", "B" oder "Y".
+     */
     // Helper-Method for CC-card
     public String askForColor() {
+        // Druckt Aufforderung zur Farbauswahl für den aktuellen Spieler
         PrintManager.colorChoice(currentPlayer.getName());
         while (true) {
             String input = scanner.nextLine();
             if (userColourChoice(input)) {
                 return input;
             } else {
+                // Wiederhole, wenn Eingabe ungültig ist
                 System.out.println("Enter R, G, B, or Y.");
             }
         }
     }
 
+
+    /**
+     * Prüft, ob die Eingabe eine gültige Farbe für das UNO-Spiel darstellt.
+     * Gültige Eingaben sind: R (Rot), G (Grün), B (Blau), Y (Gelb).
+     *
+     * @param input Die Eingabe des Spielers.
+     * @return true, wenn die Eingabe gültig ist, sonst false.
+     */
+
     private boolean userColourChoice(String input) {
+        // Vergleicht Eingabe mit den erlaubten Farbcodes (unabhängig von Groß-/Kleinschreibung)
         return input.equalsIgnoreCase("R") || input.equalsIgnoreCase("G") ||
                 input.equalsIgnoreCase("B") || input.equalsIgnoreCase("Y");
     }
@@ -810,79 +812,142 @@ public class GameController {
         }
     }
 
+    /**
+     * Prüft die erste Karte im Ablagestapel und führt gegebenenfalls ihren Effekt aus.
+     * Spezielle Karten wie Richtungswechsel, Aussetzen, +2, Farbwahl und +4 werden dabei berücksichtigt.
+     *
+     * @param cardsDeck Das aktuelle Kartendeck, das im Spiel verwendet wird.
+     */
     public void handleFirstCardEffect(CardsDeck cardsDeck) {
 
-        // Check: if at start the top card is a direction change card (contains 'D')
+        // Prüfen, ob es sich um eine Richtungswechsel-Karte handelt
         if (isTopCardSpecial("D")) {
             showTopCard();
-            directionChange();
+            directionChange(); // Spielrichtung umkehren
 
+        // Prüfen, ob es sich um eine +2-Karte handelt
         } else if (isTopCardSpecial("+2")) {
             showTopCard();
-            firstCardDrawTwo(cardsDeck);
+            firstCardDrawTwo(cardsDeck); // Aktueller Spieler muss zwei Karten ziehen
 
+        // Prüfen, ob es sich um eine Aussetzen-Karte handelt
         } else if (isTopCardSpecial("X")) {
             showTopCard();
-            firstCardSkipp();
+            firstCardSkipp(); // Aktueller Spieler wird übersprungen
 
+        // Prüfen, ob es sich um eine Farbwahlkarte (CC) handelt
         } else if (isTopCardSpecial("CC")) {
             showTopCard();
             assert discardPile.peek() != null;
-            changeColour(discardPile.peek());
+            changeColour(discardPile.peek());  // Spieler wählt eine Farbe
 
+        // Prüfen, ob es sich um eine +4-Karte handelt (darf am Anfang nicht gespielt werden)
         } else if (isTopCardSpecial("+4")) {
             showTopCard();
+            // +4 darf nicht als Startkarte gelten → zurück ins Deck und neue Karte ziehen
             cardsDeck.getCardsDeck().add(discardPile.pop());
             discardPile.push(cardsDeck.getTopCardAndRemoveFromList(discardPile));
-            showTopCard();
+            showTopCard(); // Neue Karte anzeigen
         }
 
     }
 
+    /**
+     * Effekt der Startkarte: Aussetzen (Skip) –
+     * Der aktuelle Spieler wird übersprungen und der nächste Spieler ist an der Reihe.
+     */
     private void firstCardSkipp() {
+        // Nachricht: Spieler wird übersprungen
         PrintManager.skippMessage(playerManager.getCurrentPlayer().getName());
         currentPlayer = playerManager.getNextPlayer();
+        // Hinweis in Farbe, dass der nächste Spieler dran ist
         System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "]\u001B[0m, it's your turn!");
     }
 
+    /**
+     * Effekt der Startkarte: +2 –
+     * Der aktuelle Spieler muss zwei Strafkarten ziehen und wird danach übersprungen.
+     *
+     * @param cardsDeck Das aktuelle Kartendeck, aus dem gezogen wird.
+     */
     private void firstCardDrawTwo(CardsDeck cardsDeck) {
+        // Aktueller Spieler bestimmen
         currentPlayer = playerManager.getCurrentPlayer();
+        // Zwei Karten vom Stapel ziehen
         currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
         currentPlayer.addCard(cardsDeck.getTopCardAndRemoveFromList(discardPile));
+        // Hinweis ausgeben
         PrintManager.twoCardsMessage(currentPlayer.getName());
+        // Nächster Spieler ist dran
         currentPlayer = playerManager.getNextPlayer();
     }
 
+
+    /**
+     * Prüft, ob die oberste Karte des Ablagestapels ein bestimmtes Symbol enthält
+     * (z.B. "D" für Richtungswechsel, "+2" für Zieh-zwei etc.).
+     *
+     * @param s Das gesuchte Symbol (z.B. "D", "+2", "X", "+4", "CC").
+     * @return true, wenn das Symbol in der Kartensignatur enthalten ist.
+     */
     private boolean isTopCardSpecial(String s) {
         return discardPile.peek().getCardName().toUpperCase().contains(s);
     }
 
-    public boolean hasPlayerPlayableCardNotPlus4(Card topCard, Player player) {
 
+    /**
+     * Prüft, ob ein Spieler mindestens eine passende Karte auf der Hand hat,
+     * die **nicht** die +4-Karte ist.
+     * Diese Methode wird verwendet, um einen möglichen Bluff beim Ausspielen einer +4-Karte zu überprüfen.
+     *
+     * @param topCard Die aktuell oberste Karte auf dem Ablagestapel (die +4-Karte).
+     * @param player  Der Spieler, der überprüft werden soll (ob er blufft).
+     * @return true, wenn der Spieler eine Karte hat, die auf die vorherige Karte passt (Farbe),
+     *         andernfalls false.
+     */
+
+    public boolean hasPlayerPlayableCardNotPlus4(Card topCard, Player player) {
+        // Alle Karten des Spielers holen
         ArrayList<Card> playersCards = player.getCardsInHand();
+        // Temporär die +4-Karte vom Ablagestapel entfernen, um die darunterliegende Karte zu prüfen
         discardPile.pop();
 
+        // Die Karte unter der +4-Karte (vorherige Karte auf dem Ablagestapel)
         String topNameBefor = discardPile.peek().getCardName().toUpperCase();
+
+        // Durch alle Karten des Spielers iterieren
         for (Card card : playersCards) {
+
+            // Wenn eine Karte mit derselben Farbe wie die vorherige Karte vorhanden ist
             String cardName = card.getCardName().toUpperCase();
             if ((cardName.charAt(0) == topNameBefor.charAt(0))) {
-                discardPile.push(topCard);
-                return true;
+                discardPile.push(topCard); // +4-Karte wieder auf Ablagestapel legen
+                return true;  // Spieler hätte andere Karte legen können → Bluff!
             }
         }
-        discardPile.push(topCard);
+        // Kein Bluff: Spieler hatte keine passende Karte
+        discardPile.push(topCard); // +4-Karte wieder auf Ablagestapel legen
         return false;
     }
 
+    /**
+     * Diese Methode wird aufgerufen, wenn ein Spieler "UNO!" sagen möchte.
+     * Wenn der Spieler genau zwei Karten auf der Hand hat, darf er "UNO!" rufen und eine Karte spielen.
+     * Ansonsten wird eine Warnung ausgegeben, dass er zu viele Karten hat.
+     *
+     * @param cardsDeck Das aktuelle Kartendeck des Spiels.
+     */
     private void playerSaysUno(CardsDeck cardsDeck) {
+        // Prüfen, ob der Spieler genau 2 Karten auf der Hand hat
         if (currentPlayer.getCardsInHand().size() == 2) {
+            // UNO korrekt gesagt → Spielzug fortsetzen
             System.out.println("\u001B[30;46m[" + currentPlayer.getName() + "] said UNO!\u001B[0m");
-            playCard(cardsDeck);
+            playCard(cardsDeck); // Spieler darf eine Karte ausspielen
         } else {
+            // Falsche Anzahl an Karten → "UNO" nicht erlaubt
             System.out.println("Too many cards for UNO!");
         }
     }
-
 }
 
 
