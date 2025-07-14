@@ -1,8 +1,13 @@
-public class Main {
-    public static void main(String[] args) {
-        System.out.println("Game starts");
+import java.sql.SQLException;
 
-        new SpielVerwaltung().run();
-        //test
+public class Main {
+    public static void main(String[] args) throws SQLException {
+
+        PrintManager.printGameInstructions();
+        System.out.println("Game starts");
+        new GameController().run();
+
     }
+
+
 }
