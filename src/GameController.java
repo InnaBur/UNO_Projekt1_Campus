@@ -8,12 +8,12 @@ public class GameController {
     private final ScoreCalculator scoreCalculator = new ScoreCalculator();
     Scanner scanner = new Scanner(System.in);
     String[] colours = new String[]{"R", "Y", "B", "G"};
+    // Rounds counter
     int counter = 0;
     // aktueller Spieler
     private Player currentPlayer;
     //die Bedingung für das Beenden des Spiels.
     private boolean isExit = false;
-
     SqliteClient client = DBManager.createTableInDB();
 
     //in diese Methode ist Kartendeck vorbereitet, spiel ist vorbereitet und angefangen
@@ -23,7 +23,7 @@ public class GameController {
         prepareGame();
 
         currentPlayer = playerManager.getCurrentPlayer();
-        startRound(cardsDeck); //
+        startRound(cardsDeck);
         startGame(cardsDeck);
     }
 
@@ -73,7 +73,6 @@ public class GameController {
             case 0:
                 System.out.println("Game is over!");
                 DBManager.takeDatenFromDB(1, client);
-                //saveYoDatenbank;
                 isExit = true;
         }
     }
@@ -128,7 +127,7 @@ public class GameController {
             // Check if player has emptied their hand → they win the round
             if (isPlayersHandEmpty()) {
                 System.out.println(currentPlayer.getName() + " has won the round!");
-                isGameWinOrNewRound(playerManager.getPlayerList(), counter);
+                isGameWinOrNewRound();
             } else {
                 handlePlayedCard(selectedCard, cardsDeck);
             }
@@ -155,7 +154,7 @@ public class GameController {
             if (isPlayersHandEmpty()) {
                 System.out.println(currentPlayer.getName() + " has won the round!");
                 counter++;
-                isGameWinOrNewRound(playerManager.getPlayerList(), counter);
+                isGameWinOrNewRound();
             } else {
                 handlePlayedCard(botsCard, cardsDeck);
             }
@@ -207,14 +206,13 @@ public class GameController {
 
 
     // Handle scoring and check if game ends
-    private void isGameWinOrNewRound(ArrayList<Player> players, int round) {
+    private void isGameWinOrNewRound() {
         boolean isGameWin = handleRoundEnd(playerManager.getPlayerList());
         if (isGameWin) {
             DBManager.takeDatenFromDB(1, client);
             System.out.println("Ther are " + counter + " rounds!");
             isExit = true;
         } else {
-
             CardsDeck newDeck = startNewRound();
             startGame(newDeck);
         }
