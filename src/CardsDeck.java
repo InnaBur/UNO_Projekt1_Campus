@@ -11,7 +11,6 @@ public class CardsDeck {
     //Kartendeck list
     private ArrayList<Card> cardsDeck;
 
-
     public CardsDeck() {
         this.cardsDeck = new ArrayList<>();
         createCardDeck();
@@ -20,29 +19,6 @@ public class CardsDeck {
 
     public CardsDeck(ArrayList<Card> cardsDeck) {
         this.cardsDeck = cardsDeck;
-    }
-
-    // methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen,
-    // mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
-    public static String createColoredOutputForCard(String cardName) {
-        String colorCode;
-
-        String upperCardName = cardName.toUpperCase(); // absichern für Testung
-
-        // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, CC)
-        if (upperCardName.startsWith("R")) {
-            colorCode = "\u001B[30;41m"; // Schwarzer Text auf rotem Hintergrund
-        } else if (upperCardName.startsWith("G")) {
-            colorCode = "\u001B[30;42m"; // Schwarzer Text auf grünem Hintergrund
-        } else if (upperCardName.startsWith("B")) {
-            colorCode = "\u001B[30;44m"; // Schwarzer Text auf blauem Hintergrund
-        } else if (upperCardName.startsWith("Y")) {
-            colorCode = "\u001B[30;43m"; // Schwarzer Text auf gelbem Hintergrund
-        } else {
-            colorCode = "\u001B[30;45m"; // Schwarzer Text auf magentafarbenem Hintergrund (für +4, CC)
-        }
-
-        return colorCode + upperCardName + "\u001B[0m"; // Reset-Farbe
     }
 
     public ArrayList<Card> getCardsDeck() {
@@ -129,21 +105,10 @@ public class CardsDeck {
         }
     }
 
-
     //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden
     public void printCardDeck() {
         int count = 0;
         for (Card card : cardsDeck) {
-            System.out.println(card);
-            count++;
-        }
-        System.out.println(count);
-    }
-
-    //Help method for tests
-    public void printDequeCardDeck(Deque<Card> list) {
-        int count = 0;
-        for (Card card : list) {
             System.out.println(card);
             count++;
         }
@@ -165,5 +130,28 @@ public class CardsDeck {
         }
         Collections.shuffle(cardsDeck);
         discardPile.add(temp);
+    }
+
+    // methode für Farbanzeige: ANSI-Farbcodes (ANSI Escape Codes) sind spezielle Zeichenfolgen,
+    // mit denen du Text in der Konsole/Terminal einfärben oder formatieren kannst.
+    public static String createColoredOutputForCard(String cardName) {
+        String colorCode;
+
+        String upperCardName = cardName.toUpperCase(); // absichern für Testung
+
+        // Kartenname beginnt mit R, G, B, Y (Farben) oder ist schwarz (+4, CC)
+        if (upperCardName.startsWith("R")) {
+            colorCode = "\u001B[30;41m"; // Schwarzer Text auf rotem Hintergrund
+        } else if (upperCardName.startsWith("G")) {
+            colorCode = "\u001B[30;42m"; // Schwarzer Text auf grünem Hintergrund
+        } else if (upperCardName.startsWith("B")) {
+            colorCode = "\u001B[30;44m"; // Schwarzer Text auf blauem Hintergrund
+        } else if (upperCardName.startsWith("Y")) {
+            colorCode = "\u001B[30;43m"; // Schwarzer Text auf gelbem Hintergrund
+        } else {
+            colorCode = "\u001B[30;45m"; // Schwarzer Text auf magentafarbenem Hintergrund (für +4, CC)
+        }
+
+        return colorCode + upperCardName + "\u001B[0m"; // Reset-Farbe
     }
 }
