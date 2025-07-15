@@ -317,11 +317,8 @@ public class GameController {
      *
      * <p>Wenn ein Spieler mindestens 500 Punkte erreicht hat, wird das Spiel beendet.
      * Ansonsten wird eine neue Runde mit einem neu gemischten Kartendeck gestartet.</p>
-     *
-     * @param players Die aktuelle Liste aller Spieler.
-     * @param round   Die aktuelle Rundenzahl.
      */
-    private void isGameWinOrNewRound(ArrayList<Player> players, int round) {
+    private void isGameWinOrNewRound() {
         // Ermittelt, ob ein Spieler nach dieser Runde das Spiel gewonnen hat
         boolean isGameWin = handleRoundEnd(playerManager.getPlayerList());
         if (isGameWin) {
