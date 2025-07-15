@@ -197,8 +197,7 @@ public class CardsDeck {
         }
     }
 
-
-    //TODO:Diese Methode ist nur für zwischen Testung. Muss gelöscht werden
+    //Diese Methode ist nur für zwischen Testung. Muss gelöscht werden
     public void printCardDeck() {
         int count = 0;
         for (Card card : cardsDeck) {
@@ -246,4 +245,5 @@ public class CardsDeck {
         Collections.shuffle(cardsDeck);
         discardPile.add(temp);
     }
-}
+
+    }

@@ -21,12 +21,12 @@ public class GameController {
     private final ScoreCalculator scoreCalculator = new ScoreCalculator();
     Scanner scanner = new Scanner(System.in);
     String[] colours = new String[]{"R", "Y", "B", "G"};
+    // Rounds counter
     int counter = 0;
     // aktueller Spieler
     private Player currentPlayer;
     //die Bedingung für das Beenden des Spiels.
     private boolean isExit = false;
-
     SqliteClient client = DBManager.createTableInDB();
 
     /**
@@ -107,6 +107,7 @@ public class GameController {
                 System.out.println("Game is over!");
                 //Daten aus DB
                 DBManager.takeDatenFromDB(1, client);
+                //saveYoDatenbank;
                 isExit = true;
         }
     }
@@ -197,7 +198,7 @@ public class GameController {
             // Überprüfen Sie, ob der Spieler seine Hand geleert hat → er gewinnt die Runde
             if (isPlayersHandEmpty()) {
                 System.out.println(currentPlayer.getName() + " has won the round!");
-                isGameWinOrNewRound(playerManager.getPlayerList(), counter);
+                isGameWinOrNewRound();
             } else {
                 handlePlayedCard(selectedCard, cardsDeck);
             }
@@ -231,7 +232,7 @@ public class GameController {
             if (isPlayersHandEmpty()) {
                 System.out.println(currentPlayer.getName() + " has won the round!");
                 counter++;
-                isGameWinOrNewRound(playerManager.getPlayerList(), counter);
+                isGameWinOrNewRound();
             } else {
                 handlePlayedCard(botsCard, cardsDeck);
             }
