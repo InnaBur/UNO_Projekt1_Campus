@@ -21,8 +21,5 @@ public class Main {
         System.out.println("Game starts");
         // Haupt-Spielsteuerung starten
         new GameController().run();
-
     }
-
-
 }
