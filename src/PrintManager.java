@@ -1,25 +1,47 @@
+/**
+ * Die Klasse PrintManager enthält alle Ausgabefunktionen für das UNO-Spiel.
+ * Dazu gehören Menüanzeigen, Spielhinweise, Anweisungen und farbige Texte in der Konsole.
+ */
+
 public class PrintManager {
 
+
+    /**
+     * Zeigt das Hauptmenü des Spiels im Konsolenfenster an.
+     * Verwendet ANSI-Farbcodes für eine optisch ansprechende Darstellung.
+     */
     public static void showMenu() {
-        System.out.println("\u001B[30;47m"); // Black text on light gray background
-        System.out.println("""
-                            Make your choice:                 
-                  ┌────────────┬────────────┬────────────┐               
-                  │ [1] Draw   │ [2] Play   │ [3] Play   │            
-                  │     a card │     a card │     & UNO  │             
-                  ├────────────┼────────────┼────────────┤            
-                  │ [4] Suggest│ [5] Help   │ [0] Exit   │             
-                  │     a move │     rules  │            │            
-                  ├────────────┼────────────┼────────────┤             
-                         
-                """);
-        System.out.print("\u001B[0m"); // Reset colors
+        String color = "\u001B[30;47m"; // Black text on light gray background
+        String reset = "\u001B[0m";
+
+        System.out.println(color + " Enter a number to choose an action (0–5): " + reset);
+        System.out.println(color + "  ┌────────────┬────────────┬────────────┐ " + reset);
+        System.out.println(color + "  │ [1] Draw   │ [2] Play   │ [3] Play   │ " + reset);
+        System.out.println(color + "  │     a card │     a card │     & UNO  │ " + reset);
+        System.out.println(color + "  ├────────────┼────────────┼────────────┤ " + reset);
+        System.out.println(color + "  │ [4] Give   │ [5] Help   │ [0] Exit   │ " + reset);
+        System.out.println(color + "  │     advice │            │            │ " + reset);
+        System.out.println(color + "  └────────────┴────────────┴────────────┘ " + reset);
+
     }
 
+
+    /**
+     * Gibt eine Fehlermeldung bei ungültiger Benutzereingabe aus.
+     *
+     * @param s Die fehlerhafte Eingabe.
+     */
     public static void printInvalidInput(String s) {
         System.out.println("Invalid input " + s);
     }
 
+
+
+    /**
+     * Fragt den Spieler nach der nächsten Farbe (z.B. nach einer Farbwechsel-Karte).
+     *
+     * @param name Der Name des Spielers.
+     */
     public static void colorChoice(String name) {
         System.out.println("\u001B[30;46m[" + name + "]\u001B[0m, choose the next color: " +
                 "\u001B[30;41m[R]\u001B[0m Red, " +
@@ -28,38 +50,85 @@ public class PrintManager {
                 "\u001B[30;43m[Y]\u001B[0m Yellow");
     }
 
+
+    /**
+     * Gibt eine einfache Trennlinie aus.
+     */
     public static void printLine() {
         System.out.println("------------------------------");
     }
 
+
+    /**
+     * Gibt eine Meldung aus, wenn ein Spieler die Farbe mit einer Karte ändert.
+     *
+     * @param playersName Name des Spielers.
+     * @param newCardName Neue Farbe (als Kartenname) z. B. "R".
+     */
     public static void printChangeColorMessage(String playersName, String newCardName) {
         System.out.println("\u001B[30;46m[" + playersName + "]\u001B[0m  \u001B[30;45m! ! ! Color change ! ! !\u001B[0m to: "
                 + CardsDeck.createColoredOutputForCard(newCardName));
     }
 
+
+
+    /**
+     * Gibt eine Nachricht aus, wenn die Spielrichtung geändert wurde.
+     *
+     * @param name      Name des Spielers.
+     * @param clockwise true = im Uhrzeigersinn, false = gegen den Uhrzeigersinn.
+     */
     public static void directionChangeMessage(String name, boolean clockwise) {
         System.out.println("\u001B[30;46m[" + name
                 + "]\u001B[0m made a \u001B[30;41mDirection change\u001B[0m to "
                 + (clockwise ? "Clockwise" : "Counter-clockwise"));
     }
 
+
+    /**
+     * Gibt eine Nachricht aus, dass ein Spieler 2 Karten ziehen muss.
+     *
+     * @param name Name des betroffenen Spielers.
+     */
     public static void twoCardsMessage(String name) {
         System.out.println("\u001B[30;46m[" + name + "]\u001B[0m \u001B[30;41mDraws 2 cards!\u001B[0m");
     }
 
+
+    /**
+     * Gibt eine Nachricht aus, dass der Spieler übersprungen wurde.
+     *
+     * @param name Name des Spielers.
+     */
     public static void skippMessage(String name) {
         System.out.println("\u001B[30;46m[" + name
                 + "]\u001B[0m lost her/his turn: \u001B[30;45mSkipped!\u001B[0m");
     }
 
+
+    /**
+     * Gibt eine Nachricht aus, dass ein Spieler 4 Karten ziehen muss.
+     *
+     * @param name Name des Spielers.
+     */
     public static void fourCardsMessage(String name) {
         System.out.println("\u001B[30;46m[" + name + "]\u001B[0m \u001B[30;41mDraws 4 cards!\u001B[0m");
     }
 
+
+    /**
+     * Gibt eine Nachricht aus, dass ein Spieler 6 Karten ziehen muss
+     * (z.B. nach falscher Challenge).
+     *
+     * @param name Name des Spielers.
+     */
     public static void sixCardsMessage(String name) {
         System.out.println("\u001B[30;46m[" + name + "]\u001B[0m \u001B[30;41mDraws 6 cards!\u001B[0m");
     }
 
+    /**
+     * Gibt die Spielregeln und Anleitungen farbig formatiert in der Konsole aus.
+     */
     public static void printGameInstructions() {
 
         final String RED = "\u001B[31m";
@@ -146,7 +215,6 @@ public class PrintManager {
         System.out.println("- " + PURPLE + "+4 and CC" + RESET + " are wild cards\n");
 
         System.out.println(BOLD + "Tip:" + RESET + " Play smart, bluff wisely, and " + RED + BOLD + "don't forget to say UNO!" + RESET + "\n");
-
         System.out.println(BOLD + "Have fun and good luck!" + RESET + "\n");
     }
 }
